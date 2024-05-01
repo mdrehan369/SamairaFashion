@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 // import { useAxios } from "../../hooks/useAxios.js"
-import { Button, Container, Spinner, SearchBar } from '../../components';
+import { Container, Spinner, SearchBar } from '../../components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIndianRupeeSign, faRupee } from '@fortawesome/free-solid-svg-icons';
+import { faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 
@@ -16,25 +16,19 @@ function Products() {
     const [search, setSearch] = useState("");
     const [category, setCatgory] = useState('All');
 
-    useEffect(() => {
-        ; (async () => {
-            try {
-                const res = await axios.get("/api/v1/products");
-                setResponse(res.data.data);
-            } catch (err) {
-                console.log(err)
-            } finally {
-                setLoader(false);
-            }
-        })()
-    }, []);
+
 
     useEffect(() => {
-        if (search) {
+
             setLoader(true);
             ; (async () => {
                 try {
-                    const res = await axios.get(`/api/v1/products/search?search=${search}`);
+                    let res;
+                    if (search) {
+                        res = await axios.get(`/api/v1/products/search?search=${search}`);
+                    } else {
+                        res = await axios.get("/api/v1/products");
+                    }
                     setResponse(res.data.data);
                 } catch (err) {
                     console.log(err)
@@ -42,11 +36,10 @@ function Products() {
                     setLoader(false);
                 }
             })()
-        }
     }, [search])
 
     return (
-        <Container className='overflow-y-scroll h-full'>
+        <Container className='overflow-y-scroll h-full mt-10'>
             <div className='w-full flex items-center justify-center gap-10'>
                 <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
                 <select className='w-[10%] p-4 rounded-lg text-lg font-medium' value={category} onChange={(e) => setCatgory(e.target.value)}>

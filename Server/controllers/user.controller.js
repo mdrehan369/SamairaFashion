@@ -72,7 +72,7 @@ const logoutController = asyncHandler(async(req, res) => {
     .clearCookie("accessToken", options)
     .json(new ApiResponse(200, {}, "User logged Out"))
 
-})
+});
 
 const getCurrentUserController = asyncHandler(async(req, res) => {
 
@@ -84,11 +84,66 @@ const getCurrentUserController = asyncHandler(async(req, res) => {
         "User fetched successfully"
     ))
 
+});
+
+const getAllUsersController = asyncHandler(async(req, res) => {
+
+    const users = await userModel.find({});
+
+    res
+    .status(200)
+    .json(new ApiResponse(200, users, "All users fetched successfully"));
+
+});
+
+const searchUserController = asyncHandler(async(req, res) => {
+
+    const { search } = req.query;
+
+    if(!search) throw new ApiError(400, "No Search Query");
+
+    const products = await userModel.aggregate([
+        {
+          '$match': {
+            '$or': [
+              {
+                'firstName': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'lastName': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'number': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'email': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }
+            ]
+          }
+        }
+      ]);
+
+    res
+    .status(200)
+    .json(new ApiResponse(200, products, "products fetched"));
+
+
 })
 
 export {
     signupController,
     loginController,
     logoutController,
-    getCurrentUserController
+    getCurrentUserController,
+    getAllUsersController,
+    searchUserController
 }

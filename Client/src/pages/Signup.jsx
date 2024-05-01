@@ -43,9 +43,9 @@ function Signup() {
                 </div>
                 <div className='flex flex-col items-center justify-start h-[90%]'>
                     <Input type="text" name="address" register={register} placeholder='address' required />
-                    <Input type='text' name='city' register={register} placeholder='City' required />
-                    <Input type='text' name='State' register={register} placeholder='State' required />
-                    <Input type='number' name='Pincode' register={register} placeholder='Pincode' required />
+                    <Input type='text' name="city" register={register} placeholder='City' required />
+                    <Input type='text' name="state" register={register} placeholder='State' required />
+                    <Input type='number' name="pincode" register={register} placeholder='Pincode' required />
                     <Button type='submit'>
                         Sign Up
                     </Button>
