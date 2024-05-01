@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useAxios } from "../../hooks/useAxios.js"
+// import { useAxios } from "../../hooks/useAxios.js"
 import { Button, Container, Spinner, SearchBar } from '../../components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIndianRupeeSign, faRupee } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { NavLink } from 'react-router-dom';
+
+//TODO text color highlighting on searching
 
 function Products() {
 
@@ -56,13 +59,13 @@ function Products() {
             </div>
             {!loader ?
                 <div className='grid grid-cols-3 overflow-scroll gap-10 m-8'>
-                    {response.map((res, index) => (res.category === category || category === 'All') && <div key={index} className='flex flex-col items-start justify-start bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 transition-all'>
+                    {response.map((res, index) => (res.category === category || category === 'All') && <NavLink to={`/admin/product/${res._id}`} key={index} className='flex flex-col items-start justify-start bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 transition-all'>
                         <img src={res.image.url} className='w-[100%] p-4 h-[80%] object-cover' />
                         <h1 className='px-4 text-stone-700 font-bold text-xl'>{res.title}</h1>
                         <h2 className='px-4 text-xl font-bold text-stone-900'>
                             <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />{res.price}
                         </h2>
-                    </div>)}
+                    </NavLink>)}
                 </div>
                 : <Spinner />
             }

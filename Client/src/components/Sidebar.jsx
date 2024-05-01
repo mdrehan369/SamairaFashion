@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
-    <div className="bg-gray-800 text-white w-64 flex flex-col justify-between">
+    <div className="bg-gray-800 text-white w-[20%] flex flex-col justify-between">
       <div className="p-4 flex flex-col items-start justify-start gap-4">
         {/* Sidebar content */}
         <h2 className="text-2xl font-bold">Dashboard</h2>
