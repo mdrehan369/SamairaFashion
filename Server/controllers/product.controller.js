@@ -53,7 +53,8 @@ const deleteProductController = asyncHandler(async (req, res) => {
 
 const getAllProductsController = asyncHandler(async (req, res) => {
 
-    const products = await productModel.find({});
+    const { page } = req.query;
+    const products = await productModel.find({}).limit(12).skip(page*12);
 
     return res
     .status(200)
