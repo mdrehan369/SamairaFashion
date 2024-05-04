@@ -8,7 +8,7 @@ function Button({
 }) {
     return (
         <button
-        className={twMerge('bg-black bg-opacity-70 hover:bg-opacity-80 text-white dark:bg-blue-800 hover:dark:bg-blue-900 rounded-lg w-[5vw] py-2 font-normal hover:shadow-xl shadow-black text-[1.1rem] border-2 border-black', className)}
+        className={twMerge('bg-black hover:bg-opacity-80 disabled:bg-opacity-50 text-gray-200 dark:bg-blue-800 hover:dark:bg-blue-900 rounded py-4 px-6 hover:shadow-xl shadow-black text-lg font-medium border-0 border-black', className)}
         {...props}>
             {children}
         </button>

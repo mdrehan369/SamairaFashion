@@ -42,8 +42,8 @@ function Header() {
                     {
                         status ? <NavLink to='/admin'><i className="fi fi-rr-user"></i></NavLink>
                             : <>
-                                <NavLink to='/signin'><Button className='hover:bg-white hover:text-black hover:dark:text-white transition'>Sign In</Button></NavLink>
-                                <NavLink to='/signup'><Button className='bg-white text-black hover:bg-black hover:text-white dark:text-white transition box-border'>Sign Up</Button></NavLink>
+                                <NavLink to='/signin'><Button className='transition py-2 px-3'>Sign In</Button></NavLink>
+                                <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink>
                             </>
                     }
                     <li onClick={toggleTheme}><i className={`fi fi-rr-${theme === 'dark'?'sun':'moon-stars'}`}></i></li>

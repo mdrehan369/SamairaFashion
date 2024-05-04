@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 // import { useAxios } from "../../hooks/useAxios.js"
-import { Button, Container, Spinner, SearchBar } from '../../components';
+import { Container, Spinner, SearchBar } from '../../components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIndianRupeeSign, faRupee } from '@fortawesome/free-solid-svg-icons';
+import { faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 

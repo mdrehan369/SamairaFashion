@@ -11,6 +11,7 @@ import Orders from "./admin/Orders";
 import Products from "./admin/Products";
 import AddProduct from "./admin/AddProduct";
 import ProductPage from "./ProductPage";
+import UserProductPage from "./UserProductPage";
 
 export {
     Home,
@@ -25,5 +26,6 @@ export {
     Orders,
     Products,
     AddProduct,
-    ProductPage
+    ProductPage,
+    UserProductPage
 }
