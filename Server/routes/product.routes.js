@@ -21,6 +21,6 @@ router.route("/search").get(getSearchProductsController);
 
 router.route("/product").post(verifyAdmin, upload.single("image"), addProductController);
 router.route("/product/:productId").delete(verifyAdmin, deleteProductController);
-router.route("/category").delete(verifyAdmin, getProductsByCategory);
+router.route("/category").get(getProductsByCategory);
 
 export default router;

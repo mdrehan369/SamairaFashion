@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asynchandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadToCloudinary, deleteImage } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 const addProductController = asyncHandler(async(req, res) => {
 
@@ -70,7 +71,20 @@ const getProductController = asyncHandler(async (req, res) => {
         throw new ApiError(400, "No Product ID provided");
     }
 
-    const product = await productModel.findById(productId);
+    const product = await productModel.aggregate([
+      {
+        '$match': {
+          '_id': new mongoose.Types.ObjectId(productId)
+        }
+      }, {
+        '$lookup': {
+          'from': 'reviews', 
+          'localField': '_id', 
+          'foreignField': 'product', 
+          'as': 'reviews'
+        }
+      }
+    ]);
 
     if(!product) {
         throw new ApiError(400, "Wrong product ID");
@@ -107,11 +121,17 @@ const getSearchProductsController = asyncHandler(async (req, res) => {
 
 const getProductsByCategory = asyncHandler(async (req, res) => {
 
-    const { category } = req.query;
+    let { category, limit } = req.query;
     if(!category) {
         res.redirect("/")
         return;
     }
+
+    if(!limit) {
+      limit = 1000
+    }
+
+    limit = Number(limit);
 
     const products = await productModel.aggregate([
         {
@@ -122,6 +142,8 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
           '$sort': {
             'createdAt': -1
           }
+        }, {
+          '$limit': limit
         }
       ]);
 

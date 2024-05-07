@@ -50,7 +50,13 @@ const productSchema = new mongoose.Schema({
     itemsSold: {
         type: Number,
         default: 0
+    },
+
+    reviews: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review"
     }
+    
 }, {timestamps: true});
 
 export const productModel = new mongoose.model("Product", productSchema);
