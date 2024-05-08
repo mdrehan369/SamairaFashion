@@ -145,7 +145,7 @@ function RelatedProducts({ category }) {
                 console.log(err);
             }
         })()
-    })
+    }, [])
 
     return (
         <>
@@ -210,65 +210,67 @@ function UserProductPage() {
                 setLoader(false);
             }
 
-        })()
+        })();
     }, [])
 
     return (
-        !loader ?
-            <Container className='flex flex-col justify-start items-center gap-10'>
-                <div className='w-[100%] h-auto flex items-start justify-evenly mt-10'>
-                    <div className='w-[40%] h-full'>
-                        <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
-                    </div>
-                    <form className='w-[40%] h-[100%] flex flex-col items-start justify-start gap-6'>
-                        <h1 className='text-2xl font-bold text-stone-800 tracking-wider'>{product.title}</h1>
-                        <h2 className='text-lg text-stone-700 tracking-wide w-[90%] font-[450]'>{product.description.slice(0, 100)}...</h2>
-                        <div>
-                            <h1 className='text-md relative font-bold text-gray-500 w-fit'>
-                                <div className=' absolute bg-gray-500 top-[50%] left-0 h-[2px] w-full'></div>
-                                <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.comparePrice}</h1>
-                            <h1 className='text-2xl font-bold text-stone-800 mt-2'><FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.price}
-                                <span class="bg-pink-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{((product.comparePrice - product.price) / product.comparePrice).toFixed(2) * 100}%</span>
-                            </h1>
+        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]'>
+            {!loader ?
+                <>
+                    <div className='w-[100%] h-auto flex items-start justify-evenly mt-10'>
+                        <div className='w-[40%] h-full'>
+                            <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                         </div>
-                        <div>
-                            <p className='text-sm text-stone-600 font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
-                            <div className='flex items-center justify-start gap-4 mt-2'>
-                                {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black' : 'border-gray-300'} text-sm text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
-                                    {size}
-                                </div>)}
+                        <form className='w-[40%] h-[100%] flex flex-col items-start justify-start gap-6'>
+                            <h1 className='text-2xl font-bold text-stone-800 tracking-wider'>{product.title}</h1>
+                            <h2 className='text-lg text-stone-700 tracking-wide w-[90%] font-[450]'>{product.description.slice(0, 100)}...</h2>
+                            <div>
+                                <h1 className='text-md relative font-bold text-gray-500 w-fit'>
+                                    <div className=' absolute bg-gray-500 top-[50%] left-0 h-[2px] w-full'></div>
+                                    <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.comparePrice}</h1>
+                                <h1 className='text-2xl font-bold text-stone-800 mt-2'><FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.price}
+                                    <span class="bg-pink-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{((product.comparePrice - product.price) / product.comparePrice).toFixed(2) * 100}%</span>
+                                </h1>
                             </div>
-                        </div>
-                        <div>
-                            <p className='text-sm font-bold text-stone-600'>Quantity:</p>
-                            <div className='flex items-center justify-around border-[1px] border-gray-300 rounded-none w-32 mt-2 py-3'>
-                                <div><FontAwesomeIcon icon={faMinus} className='cursor-pointer' onClick={() => quantity >= 2 && setQuantity(quantity - 1)} /></div>
-                                <div className='text-stone-600'>{quantity}</div>
-                                <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
+                            <div>
+                                <p className='text-sm text-stone-600 font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
+                                <div className='flex items-center justify-start gap-4 mt-2'>
+                                    {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black' : 'border-gray-300'} text-sm text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
+                                        {size}
+                                    </div>)}
+                                </div>
                             </div>
-                            <span className='text-xs mt-4 text-stone-700 font-medium'>Subtotal: <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /><span className='font-bold text-stone-700'>{product.price * quantity}</span></span>
-                        </div>
-                        <div className='w-full flex flex-col items-center justify-center gap-4'>
-                            <Button className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></Button>
-                            <Button className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
-                        </div>
-                    </form>
-                </div>
-                <div className='w-full mt-10 flex flex-col items-center justify-start gap-0'>
-                    <div className='flex items-center justify-center gap-0'>
-                        <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Description')}>Description</h1>
-                        <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Reviews')}>Reviews</h1>
-                        <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Write')}>Write A Review</h1>
+                            <div>
+                                <p className='text-sm font-bold text-stone-600'>Quantity:</p>
+                                <div className='flex items-center justify-around border-[1px] border-gray-300 rounded-none w-32 mt-2 py-3'>
+                                    <div><FontAwesomeIcon icon={faMinus} className='cursor-pointer' onClick={() => quantity >= 2 && setQuantity(quantity - 1)} /></div>
+                                    <div className='text-stone-600'>{quantity}</div>
+                                    <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
+                                </div>
+                                <span className='text-xs mt-4 text-stone-700 font-medium'>Subtotal: <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /><span className='font-bold text-stone-700'>{product.price * quantity}</span></span>
+                            </div>
+                            <div className='w-full flex flex-col items-center justify-center gap-4'>
+                                <Button className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></Button>
+                                <Button className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
+                            </div>
+                        </form>
                     </div>
-                    <div className='w-full h-auto min-h-[50vh]'>
-                        {page === 'Description' && <Description text={product.description} />}
-                        {page === 'Reviews' && <Reviews product={productId} />}
-                        {page === 'Write' && <Write setPage={setPage} product={productId} />}
+                    <div className='w-full mt-10 flex flex-col items-center justify-start gap-0'>
+                        <div className='flex items-center justify-center gap-0'>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Description')}>Description</h1>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Reviews')}>Reviews</h1>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider`} onClick={() => setPage('Write')}>Write A Review</h1>
+                        </div>
+                        <div className='w-full h-auto min-h-[50vh]'>
+                            {page === 'Description' && <Description text={product.description} />}
+                            {page === 'Reviews' && <Reviews product={productId} />}
+                            {page === 'Write' && <Write setPage={setPage} product={productId} />}
+                        </div>
                     </div>
-                </div>
-                <RelatedProducts category={product.category} />
-            </Container>
-            : <Spinner />
+                    <RelatedProducts category={product.category} />
+                </>
+                : <Spinner className='h-[90vh]' />}
+        </Container>
     )
 }
 //<div className='bg-black absolute bottom-0 left-0 w-full h-[2px]'></div>

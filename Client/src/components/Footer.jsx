@@ -1,53 +1,50 @@
-import React from 'react'
+import React from 'react';
+import logo from "../assets/logo.avif"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLocation, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faFacebook, faInstagram, faPinterest } from "@fortawesome/free-brands-svg-icons";
+import Button from './Button';
+import { NavLink } from 'react-router-dom';
 
-function Footer() {
-  return (
-    <footer className='w-full h-[30vh] text-center bg-black text-gray-400'>
-      
-        <div className=' flex p-4 ml-11 '>
-
-          <div className='flex flex-col h-[40%] items-start justify-between w-1/3'>
-            <h1 className='text-5xl font-bold m-3 text-gray-400'>
-              <span className='text-yellow-600 '>सुकून</span> Space
-            </h1>
-           <div id="phone" className=' flex m-2'>
-              <div>
-              <i class="fa-solid fa-phone text-2xl mr-2"></i>
-              </div>
-              <div>
-                 (+91) 6290197369
-              </div>
-           </div>
-           <div id="gmail" className='flex m-2'>
-              <div>
-              <i class="fa-regular fa-envelope text-2xl mr-2"></i>
-              </div>
-              <div>
-                SukoonSpace@company.com
-              </div>
-           </div>
-          </div>
-          <div className=' w-52'>
-            <p className=' text-xl text-yellow-600 text-left '>Contributors:</p>
-            <ul><li className=' text-lg my-2 text-left'>Md Rehan</li>
-            <li className=' text-lg my-2 text-left'>Vishal Kumar</li>
-            <li className=' text-lg my-2 text-left'>Md Asiful Ameen</li>
-            <li className=' text-lg my-2 text-left'>Khushi Srivastava</li></ul>
-          </div>
-          <div className='w-1/3 ml-64 flex flex-col items-start'>
-            <div className=' text-2xl text-yellow-600'>About Sukoon Space</div>
-            <div className='text-left '>A mental health care webpage offers resources, support, and information on various mental health conditions. It provides access to therapy, medication management, and self-care techniques, fostering understanding and promoting well-being for individuals seeking mental health support.</div>
-            <div id="logo" className='flex items-center justify-center'>
-              <i class="fa-brands fa-github text-2xl m-2"></i>
-              <i class="fa-brands fa-square-x-twitter text-2xl m-2"></i>
-              <i class="fa-brands fa-linkedin text-2xl m-2"></i>
-              <i class="fa-brands fa-facebook text-2xl m-2"></i>
+const Footer = () => {
+    return (
+        <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full h-[50vh] relative bottom-0 left-0'>
+            <div className='w-full h-[90%] mt-10 flex items-start justify-between px-4'>
+                <div className='space-y-1'>
+                    <img src={logo} alt="logo" />
+                    <p><FontAwesomeIcon icon={faLocation} className='text-white mr-2' /><span>29A/H/2 Palm Avenue,Kolkata 700019, West Bengal, India</span></p>
+                    <p><FontAwesomeIcon icon={faPhone} className='text-white mr-2' /><span>+97 15216 60581</span></p>
+                    <p><FontAwesomeIcon icon={faEnvelope} className='text-white mr-2' /><span>samaira.shop1@gmail.com</span></p>
+                </div>
+                <div className='flex flex-col items-start justify-start gap-2'>
+                    <h1 className='font-bold text-lg text-white'>POLICIES</h1>
+                    <NavLink to='/policies/shipping' className='hover:underline cursor-pointer'>Shipping Policy</NavLink>
+                    <NavLink to='/policies/privacy' className='hover:underline cursor-pointer'>Privacy Policy</NavLink>
+                    <NavLink to='/policies/refund' className='hover:underline cursor-pointer'>Refund Policy</NavLink>
+                    <NavLink to='/policies/terms' className='hover:underline cursor-pointer'>Terms Of Service</NavLink>
+                </div>
+                <div className='flex flex-col items-start justify-start gap-2'>
+                    <h1 className='font-bold text-white text-lg'>INFORMATION</h1>
+                    <NavLink to='/policies/contact' className='hover:underline cursor-pointer'>Contact</NavLink>
+                    <NavLink to='/policies/aboutus' className='hover:underline cursor-pointer'>About Us</NavLink>
+                </div>
+                <div className='flex flex-col items-start justify-start gap-2'>
+                    <h1 className='font-bold text-lg text-white'>NEWSLETTER SIGN UP</h1>
+                    <h3>Sign up for exclusive updates, new arrivals & insider only discounts</h3>
+                    <div className='flex items-center justify-start gap-4 w-full'>
+                        <input className='w-[80%] py-3 px-3 bg-[#232323] border-[1px] border-white' placeholder='Enter Your Email Address' />
+                        <Button className='bg-white text-black font-extrabold rounded-none py-3 text-sm'>SUBMIT</Button>
+                    </div>
+                    <div>
+                        <FontAwesomeIcon icon={faFacebook} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-blue-800' />
+                        <FontAwesomeIcon icon={faInstagram} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-pink-500' />
+                        <FontAwesomeIcon icon={faPinterest} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-red-500' />
+                    </div>
+                </div>
             </div>
-          </div>
+            <div className='w-full text-center p-2 font-bold text-white'>Samaira Fashion. All Rights Reserved.</div>
+        </footer>
+    );
+};
 
-        </div>
-    </footer>
-  )
-}
-
-export default Footer
+export default Footer;
