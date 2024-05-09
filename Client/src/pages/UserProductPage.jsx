@@ -104,7 +104,7 @@ function Write({ setPage, product }) {
 
     return (
 
-        <form onSubmit={handleSubmit(submit)} className='flex items-center justify-center gap-6 mt-4'>
+        <form onSubmit={handleSubmit(submit)} className='flex items-start justify-center gap-6 mt-4'>
             <div className='w-fit h-full flex flex-col items-start justify-start self-start'>
                 <h1 className='text-md font-medium text-stone-700'>Rating: {rating}</h1>
                 <div className='flex items-center justify-center text-2xl gap-2'>
@@ -115,13 +115,14 @@ function Write({ setPage, product }) {
                     }
                 </div>
             </div>
-            <div className='w-[30%] h-[100%] flex flex-col items-center justify-center gap-4'>
+            <div className='w-[30%] h-[100%] flex flex-col items-center justify-start gap-4'>
                 <Input label='Title' register={register} name='title' placeholder='ex. Brilliant Product...' />
                 <label htmlFor="image" className='flex flex-col self-start ml-10 items-start justify-center gap-2'><span className='text-stone-700 font-medium'>Upload A Picture(Optional)</span><FontAwesomeIcon icon={faArrowUpFromBracket} className='text-gray-600 bg-gray-100 border-dashed opacity-70 border-gray-600 cursor-pointer size-28 border-2 p-3' /></label>
                 <input type="file" name="image" hidden id='image' onChange={(e) => setImage(e.target.files[0])} />
             </div>
             <div className='w-[40%] h-[100%] flex flex-col items-start justify-start gap-4'>
-                <TextArea label='Description' register={register} name='description' placeholder='ex. A very impressive product and service. The best website to buy Abayas!...' className='w-full' />
+                <TextArea label='Description' register={register} name='description' placeholder='ex. A very impressive product and service. The best website to buy Abayas!...' className='w-full h-48' />
+
                 <div className='flex items-center justify-between w-full'>
                     <span className={`${error && 'p-2'} bg-red-200 text-red-800 rounded font-medium`}>{error && <FontAwesomeIcon icon={faTriangleExclamation} className='mr-1' />}{error}</span>
                     <Button className='self-end' type='submit'>Submit</Button>
@@ -200,7 +201,7 @@ function UserProductPage({ key }) {
     }, [productId])
 
     return (
-        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]' onLoad={(e) => window.scrollTo(0, 0)}>
+        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]'>
             {!loader ?
                 <>
                     <div className='w-[100%] h-auto flex items-start justify-evenly mt-10'>

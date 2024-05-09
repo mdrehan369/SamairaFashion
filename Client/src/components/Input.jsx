@@ -11,7 +11,7 @@ function Input({
     ...props
 }) {
     return (
-        <div className='flex flex-col items-start justify-start w-fit'>
+        <div className='flex flex-col items-start justify-start w-full'>
             <label
                 htmlFor={name}
                 className={`${labelSize} font-medium text-stone-700`}
