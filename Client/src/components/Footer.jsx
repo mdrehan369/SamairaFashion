@@ -7,6 +7,7 @@ import Button from './Button';
 import { NavLink } from 'react-router-dom';
 
 const Footer = () => {
+
     return (
         <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full h-[50vh] relative bottom-0 left-0'>
             <div className='w-full h-[90%] mt-10 flex items-start justify-between px-4'>
@@ -18,10 +19,10 @@ const Footer = () => {
                 </div>
                 <div className='flex flex-col items-start justify-start gap-2'>
                     <h1 className='font-bold text-lg text-white'>POLICIES</h1>
-                    <NavLink to='/policies/shipping' className='hover:underline cursor-pointer'>Shipping Policy</NavLink>
-                    <NavLink to='/policies/privacy' className='hover:underline cursor-pointer'>Privacy Policy</NavLink>
-                    <NavLink to='/policies/refund' className='hover:underline cursor-pointer'>Refund Policy</NavLink>
-                    <NavLink to='/policies/terms' className='hover:underline cursor-pointer'>Terms Of Service</NavLink>
+                    <NavLink to='/policies/shipping' className='hover:underline cursor-pointer hover:text-white'>Shipping Policy</NavLink>
+                    <NavLink to='/policies/privacy' className='hover:underline cursor-pointer hover:text-white'>Privacy Policy</NavLink>
+                    <NavLink to='/policies/refund' className='hover:underline cursor-pointer hover:text-white'>Refund Policy</NavLink>
+                    <NavLink to='/policies/terms' className='hover:underline cursor-pointer hover:text-white'>Terms Of Service</NavLink>
                 </div>
                 <div className='flex flex-col items-start justify-start gap-2'>
                     <h1 className='font-bold text-white text-lg'>INFORMATION</h1>
@@ -36,9 +37,9 @@ const Footer = () => {
                         <Button className='bg-white text-black font-extrabold rounded-none py-3 text-sm'>SUBMIT</Button>
                     </div>
                     <div>
-                        <FontAwesomeIcon icon={faFacebook} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-blue-800' />
-                        <FontAwesomeIcon icon={faInstagram} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-pink-500' />
-                        <FontAwesomeIcon icon={faPinterest} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-red-500' />
+                        <a href="https://www.facebook.com/samairafashionofficial" target='__blank'><FontAwesomeIcon icon={faFacebook} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-blue-800' /></a>
+                        <a href="https://www.instagram.com/samaira.fashion/" target='__blank'><FontAwesomeIcon icon={faInstagram} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-pink-500' /></a>
+                        <a href="https://www.pinterest.com/samairashop/" target='__blank'><FontAwesomeIcon icon={faPinterest} className='size-6 m-2 hover:scale-[1.2] transition-all cursor-pointer hover:text-red-500' /></a>
                     </div>
                 </div>
             </div>
