@@ -121,7 +121,7 @@ const getSearchProductsController = asyncHandler(async (req, res) => {
 
 const getProductsByCategory = asyncHandler(async (req, res) => {
 
-    let { category, limit } = req.query;
+    let { category, limit, attribute, order, page } = req.query;
     if(!category) {
         res.redirect("/")
         return;
@@ -131,21 +131,38 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
       limit = 1000
     }
 
-    limit = Number(limit);
+    if(!order) {
+      order = -1;
+    }
 
-    const products = await productModel.aggregate([
-        {
-          '$match': {
-            'category': category
-          }
-        }, {
-          '$sort': {
-            'createdAt': -1
-          }
-        }, {
-          '$limit': limit
+    if(!attribute) {
+      attribute = 'createdAt'
+    }
+
+    limit = Number(limit);
+    order = Number(order);
+
+    const obj = [
+      {
+        '$match': {
+          'category': category
         }
-      ]);
+      }, 
+      {
+        '$sort': {
+        }
+      },
+      {
+        '$skip': page ? (page-1)*limit : 0
+      },
+      {
+        '$limit': limit
+      }
+    ];
+
+    obj[1]['$sort'][attribute] = order;
+
+    const products = await productModel.aggregate(obj);
 
     res
     .status(200)

@@ -7,6 +7,7 @@ import Container from "./Container";
 import Input from "./Input"
 import TextArea from "./TextArea"
 import SearchBar from "./SearchBar";
+import Card from "./Card";
 
 export {
     Carousel,
@@ -17,5 +18,6 @@ export {
     Container,
     Input,
     TextArea,
-    SearchBar
+    SearchBar,
+    Card
 }

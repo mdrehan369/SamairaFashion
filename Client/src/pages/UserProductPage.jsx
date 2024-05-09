@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import axios from "axios"
 import { useForm } from "react-hook-form"
-import { Button, Container, Input, Spinner, TextArea } from "../components/index.js"
+import { Button, Card, Container, Input, Spinner, TextArea } from "../components/index.js"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faIndianRupeeSign, faArrowLeft, faArrowRight, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import sizeChart from "../assets/sizeChart.webp"
@@ -135,6 +135,7 @@ function RelatedProducts({ category }) {
 
     const [products, setProducts] = useState([]);
     const counter = useRef(0);
+    const [loader, setLoader] = useState(true);
 
     useEffect(() => {
         ; (async () => {
@@ -143,6 +144,8 @@ function RelatedProducts({ category }) {
                 setProducts(response.data.data);
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoader(false);
             }
         })()
     }, [])
@@ -155,7 +158,7 @@ function RelatedProducts({ category }) {
                     if (counter.current > 0) {
                         counter.current -= 1;
                     }
-                    document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
+                    document.getElementById('scroll').style.transform = `translateX(${100 * counter.current}vw)`;
                 }}><FontAwesomeIcon className='size-6' icon={faChevronLeft} /></button>
                 <button className='absolute top-[40%] right-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl size-16 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' disabled={counter.current === 2} onClick={() => {
                     if (counter.current < 2) {
@@ -164,24 +167,7 @@ function RelatedProducts({ category }) {
                     document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
                 }} ><FontAwesomeIcon icon={faChevronRight} className='size-6' /></button>
                 <div className={`flex items-center justify-between mx-0 w-[300vw] gap-10 transition-transform scroll-smooth duration-500 ease-in-out`} id='scroll'>
-                    {products.map((res, index) => <NavLink reloadDocument to={`/product/${res._id}`} key={index} className='flex flex-col items-center justify-between rounded-sm cursor-pointer w-[25vw] hover:bg-gray-200 hover:border-gray-400 border-white border-[1px] transition-all p-4 gap-0 overflow-hidden hover:shadow-lg relative' onMouseEnter={(e) => { e.currentTarget.lastElementChild.classList.remove('invisible'); e.currentTarget.lastElementChild.classList.add('translatee-y-[-4em]'); e.currentTarget.lastElementChild.classList.add('animate-bounce-once') }} onMouseLeave={(e) => { e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.replace('translate-y-[-4em]', 'noe'); e.currentTarget.lastElementChild.classList.remove('animate-bounce-once') }}>
-                        <span class="bg-pink-500 z-10 text-white text-md font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 absolute top-6 left-6">-{((res.comparePrice - res.price) / res.comparePrice).toFixed(2) * 100}%</span>
-                        <div className='overflow-hidden'>
-                            <img src={res.image.url} className='w-[100%] p-0 transition-all duration-500 ease-in-out h-[60vh] object-cover hover:scale-[1.2]' />
-                        </div>
-                        <h1 className='px-4 text-gray-700 mt-2 text-center w-full text-sm h-10 hover:underline'>{res.title}</h1>
-                        <div className='flex items-center justify-between w-full mt-4'>
-                            <h2 className='px-0 text-sm text-start font-bold relative text-stone-600'>
-                                <div className='w-full h-[2px] bg-stone-600 absolute top-[50%] left-0'></div>
-                                <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />{res.comparePrice}
-                            </h2>
-                            <h2 className='px-0 text-lg text-end font-bold text-stone-900'>
-                                <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />{res.price.toString()[0] + "," + res.price.toString().slice(1)}
-                            </h2>
-                        </div>
-                        <Button className='text-sm w-[90%] mt-4 py-3 transition-transform duration-300 border-2 border-black rounded-sm font-bold invisible'>ADD TO CART</Button>
-                    </NavLink>)
-                    }
+                    {products.map((res, index) => <Card productLoader={loader} res={res} key={index} />)}
                 </div>
 
             </div>
@@ -189,7 +175,7 @@ function RelatedProducts({ category }) {
     )
 }
 
-function UserProductPage() {
+function UserProductPage({ key }) {
 
     const { productId } = useParams();
     const [product, setProduct] = useState({});
@@ -211,10 +197,10 @@ function UserProductPage() {
             }
 
         })();
-    }, [])
+    }, [productId])
 
     return (
-        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]'>
+        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]' onLoad={(e) => window.scrollTo(0, 0)}>
             {!loader ?
                 <>
                     <div className='w-[100%] h-auto flex items-start justify-evenly mt-10'>
@@ -269,10 +255,9 @@ function UserProductPage() {
                     </div>
                     <RelatedProducts category={product.category} />
                 </>
-                : <Spinner className='h-[90vh]' />}
+                : <Spinner className='h-[90vh] flex w-full items-center justify-center' />}
         </Container>
     )
 }
-//<div className='bg-black absolute bottom-0 left-0 w-full h-[2px]'></div>
 
 export default UserProductPage
