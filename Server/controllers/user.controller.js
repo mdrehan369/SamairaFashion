@@ -2,6 +2,8 @@ import { userModel } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { cartItemModel } from "../models/cartItem.model.js"
+import mongoose from "mongoose";
 
 const options = {
     httpOnly: true,
@@ -84,11 +86,71 @@ const getCurrentUserController = asyncHandler(async(req, res) => {
         "User fetched successfully"
     ))
 
+});
+
+const addToCartController = asyncHandler(async(req, res) => {
+
+    const { productId, quantity } = req.body;
+
+    if(!productId) throw new ApiError(400, "No Product ID");
+
+    await cartItemModel.create({
+        user: req.user._id,
+        product: productId,
+        quantity
+    });
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Added To Cart"));
+
+});
+
+const getAllCartItems = asyncHandler(async (req, res) => {
+
+    const cartItems = await cartItemModel.aggregate([
+        {
+          '$match': {
+            'user': new mongoose.Types.ObjectId(req.user._id)
+          }
+        }, {
+          '$lookup': {
+            'from': 'products', 
+            'localField': 'product',
+            'foreignField': '_id', 
+            'as': 'product'
+          }
+        }
+      ]);
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, cartItems, "Cart Fetched Successfully"));
+
+})
+
+const updateCartController = asyncHandler(async (req, res) => {
+
+    const { cartItemId, quantity } = req.query;
+    if(!cartItemId || !quantity) throw new ApiError(400, "Some Queries Are Missing");
+
+    if(quantity == 0) {
+        await cartItemModel.findByIdAndDelete(cartItemId);
+    } else {
+        await cartItemModel.findByIdAndUpdate(cartItemId, { quantity });
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Updated Successfully"))
 })
 
 export {
     signupController,
     loginController,
     logoutController,
-    getCurrentUserController
+    getCurrentUserController,
+    addToCartController,
+    getAllCartItems,
+    updateCartController
 }

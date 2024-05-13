@@ -56,8 +56,8 @@ function Header() {
                     <li><i className="fi fi-rr-search"></i></li>
                     {status && <NavLink to='/cart' className={({ isActive }) => isActive && `bg-black text-white py-2 px-3 rounded-full`}><i className="fi fi-rr-shopping-cart"></i></NavLink>}
                     {
-                        status ? <NavLink to='/admin'><i className="fi fi-rr-user"></i></NavLink>
-                            : <>
+                        !status &&
+                            <>
                                 <NavLink to='/signin'><Button className='transition py-2 px-3'>Sign In</Button></NavLink>
                                 <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink>
                             </>

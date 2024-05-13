@@ -1,10 +1,13 @@
 import express from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
+    addToCartController,
+    getAllCartItems,
     getCurrentUserController,
     loginController,
     logoutController,
-    signupController
+    signupController,
+    updateCartController
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -15,6 +18,9 @@ router.route("/signin").post(loginController);
 //Protected Routes
 
 router.route("/logout").get(verifyJWT, logoutController);
-router.route("/user").get(verifyJWT, getCurrentUserController)
+router.route("/user").get(verifyJWT, getCurrentUserController);
+router.route("/cart").post(verifyJWT, addToCartController);
+router.route("/cart").get(verifyJWT, getAllCartItems);
+router.route("/cart").put(verifyJWT, updateCartController);
 
 export default router;

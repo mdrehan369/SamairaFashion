@@ -1,11 +1,32 @@
 import { faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import Button from './Button';
 import { Hourglass } from 'react-loader-spinner';
+import axios from "axios"
 
 function Card({ res, productLoader }) {
+
+    const [isIndia, setIsIndia] = useState(false);
+    let dirham_to_rupees = 22;
+
+    useEffect(() => {
+        ; (async () => {
+            try {
+                const response = await axios.get(`http://ip-api.com/json`);
+                if(response.data.countryCode === 'IN') {
+                    setIsIndia(true);
+                } else {
+                    const response = await axios.get('http://www.floatrates.com/daily/aed.json');
+                    dirham_to_rupees = Math.floor(response.data.inr.rate);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+    }, []);
+
     return (
         <NavLink to={`/product/${res?._id}`} className='flex flex-col items-center justify-center rounded-sm cursor-pointer w-[22vw] h-[70vh] hover:bg-gray-200 hover:border-gray-400 border-white border-[1px] transition-all p-4 gap-0 overflow-hidden hover:shadow-lg relative'
 
@@ -25,10 +46,10 @@ function Card({ res, productLoader }) {
                         <div className='flex items-center justify-between w-full mt-4'>
                             <h2 className='px-0 text-sm text-start font-bold relative text-stone-600'>
                                 <div className='w-full h-[2px] bg-stone-600 absolute top-[50%] left-0'></div>
-                                <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />{res?.comparePrice}
+                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.comparePrice : Math.floor(res?.comparePrice/dirham_to_rupees)}
                             </h2>
                             <h2 className='px-0 text-lg text-end font-bold text-stone-900'>
-                                <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />{res?.price.toString()[0] + "," + res?.price.toString().slice(1)}
+                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.price.toString()[0] + "," + res?.price.toString().slice(1) : Math.floor(res?.price/dirham_to_rupees)}
                             </h2>
                         </div>
                         <Button className='text-sm w-[90%] mt-4 py-3 transition-transform duration-300 border-2 border-black rounded-sm font-bold invisible'>ADD TO CART</Button>

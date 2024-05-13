@@ -183,7 +183,25 @@ function UserProductPage({ key }) {
     const [loader, setLoader] = useState(true);
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
+    const [isIndia, setIsIndia] = useState(false);
     const [page, setPage] = useState("Description");
+    let dirham_to_rupees = 22;
+
+    useEffect(() => {
+        ; (async () => {
+            try {
+                const response = await axios.get(`http://ip-api.com/json`);
+                if (response.data.countryCode === 'IN') {
+                    setIsIndia(true);
+                } else {
+                    const response = await axios.get('http://www.floatrates.com/daily/aed.json');
+                    dirham_to_rupees = Math.floor(response.data.inr.rate);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+    }, []);
 
     useEffect(() => {
         ; (async () => {
@@ -198,7 +216,7 @@ function UserProductPage({ key }) {
             }
 
         })();
-    }, [productId])
+    }, [productId]);
 
     return (
         <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh]'>
@@ -214,8 +232,9 @@ function UserProductPage({ key }) {
                             <div>
                                 <h1 className='text-md relative font-bold text-gray-500 w-fit'>
                                     <div className=' absolute bg-gray-500 top-[50%] left-0 h-[2px] w-full'></div>
-                                    <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.comparePrice}</h1>
-                                <h1 className='text-2xl font-bold text-stone-800 mt-2'><FontAwesomeIcon icon={faIndianRupee} className='mr-1' />{product.price}
+                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />:'Dhs.'}{isIndia ? product.comparePrice : Math.floor(product.comparePrice/dirham_to_rupees)}</h1>
+                                <h1 className='text-2xl font-bold text-stone-800 mt-2'>
+                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />: 'Dhs.' }{isIndia ? product.price : Math.floor(product.price/dirham_to_rupees)}
                                     <span class="bg-pink-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{((product.comparePrice - product.price) / product.comparePrice).toFixed(2) * 100}%</span>
                                 </h1>
                             </div>
@@ -234,7 +253,7 @@ function UserProductPage({ key }) {
                                     <div className='text-stone-600'>{quantity}</div>
                                     <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
                                 </div>
-                                <span className='text-xs mt-4 text-stone-700 font-medium'>Subtotal: <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /><span className='font-bold text-stone-700'>{product.price * quantity}</span></span>
+                                <span className='text-xs mt-4 text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price/dirham_to_rupees) * quantity}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
                                 <Button className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></Button>
