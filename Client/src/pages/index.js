@@ -16,6 +16,7 @@ import Privacy from "./policies/Privacy";
 import Shipping from "./policies/Shipping";
 import Refund from "./policies/Refund";
 import Terms from "./policies/Terms";
+import CheckoutPage from "./CheckoutPage";
 
 export {
     Home,
@@ -35,5 +36,6 @@ export {
     Privacy,
     Terms,
     Refund,
-    Shipping
+    Shipping,
+    CheckoutPage
 }

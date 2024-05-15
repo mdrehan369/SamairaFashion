@@ -90,15 +90,25 @@ const getCurrentUserController = asyncHandler(async(req, res) => {
 
 const addToCartController = asyncHandler(async(req, res) => {
 
-    const { productId, quantity } = req.body;
+    const { productId, quantity, size, color } = req.body;
 
     if(!productId) throw new ApiError(400, "No Product ID");
 
-    await cartItemModel.create({
-        user: req.user._id,
-        product: productId,
-        quantity
-    });
+    const cartItem = await cartItemModel.findOne({ user: req.user._id, product: productId });
+
+    if(cartItem) {
+        cartItem.quantity += 1;
+        await cartItem.save();
+    } else {
+        await cartItemModel.create({
+            user: req.user._id,
+            product: productId,
+            quantity,
+            size: size || 0,
+            color: color || 'default'
+        });
+    
+    }
 
     return res
     .status(200)

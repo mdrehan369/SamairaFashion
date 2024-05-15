@@ -1,31 +1,15 @@
 import { faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 import Button from './Button';
 import { Hourglass } from 'react-loader-spinner';
-import axios from "axios"
+import { useSelector } from 'react-redux';
 
 function Card({ res, productLoader }) {
 
-    const [isIndia, setIsIndia] = useState(false);
-    let dirham_to_rupees = 22;
+    const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
 
-    useEffect(() => {
-        ; (async () => {
-            try {
-                const response = await axios.get(`http://ip-api.com/json`);
-                if(response.data.countryCode === 'IN') {
-                    setIsIndia(true);
-                } else {
-                    const response = await axios.get('http://www.floatrates.com/daily/aed.json');
-                    dirham_to_rupees = Math.floor(response.data.inr.rate);
-                }
-            } catch (err) {
-                console.log(err);
-            }
-        })();
-    }, []);
 
     return (
         <NavLink to={`/product/${res?._id}`} className='flex flex-col items-center justify-center rounded-sm cursor-pointer w-[22vw] h-[70vh] hover:bg-gray-200 hover:border-gray-400 border-white border-[1px] transition-all p-4 gap-0 overflow-hidden hover:shadow-lg relative'

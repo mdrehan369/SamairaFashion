@@ -4,8 +4,6 @@ import straight from "../assets/straight.webp"
 import tyedye from "../assets/tyedye.jpg"
 import farasha from "../assets/farasha.webp"
 import umbrella from "../assets/umbrella.webp"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faIndianRupeeSign, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { NavLink } from 'react-router-dom'
 import axios from 'axios'
 

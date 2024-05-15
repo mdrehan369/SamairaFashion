@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadToCloudinary, deleteImage } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
+import stripe from "stripe"
 
 const addProductController = asyncHandler(async(req, res) => {
 
@@ -168,6 +169,38 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, products, "Products fetched"));
 
+});
+
+const createCheckoutSessionController = asyncHandler(async (req, res) => {
+
+  const { cart, isIndia, dirham_to_rupees } = req.body;
+  if(!cart) throw new ApiError("No Cart Given");
+
+  const stripeObj = new stripe('sk_test_51PGhn5JZgatvWpsFlm5HShtaCorWwyvHuLgR4XqMbHskZPtLfrFVoVsLVIvBSIuWcp3VGGP2OZommjs6qfgpAd6S00HiiERHKg')
+
+  const items = cart.map((item) => ({
+    price_data: {
+      currency: isIndia ? 'inr' : 'aed' ,
+      product_data: {
+        name: item.product[0].title,
+      },
+      unit_amount: isIndia ? item.product[0].price * 100 : Math.floor((item.product[0].price * 100)/dirham_to_rupees)
+    },
+    quantity: item.quantity
+  }))
+
+  const session = await stripeObj.checkout.sessions.create({
+    line_items: items,
+    payment_method_types: ['card'],
+    mode: 'payment',
+    success_url: 'http://localhost:5173/'
+  });
+
+  console.log(session)
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
 export {
@@ -176,5 +209,6 @@ export {
     getAllProductsController,
     getProductController,
     getProductsByCategory,
-    getSearchProductsController
+    getSearchProductsController,
+    createCheckoutSessionController
 }
