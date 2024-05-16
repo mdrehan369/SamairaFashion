@@ -116,6 +116,16 @@ const addToCartController = asyncHandler(async(req, res) => {
 
 });
 
+const deleteAllCartItemsController = asyncHandler(async (req, res) => {
+
+    await cartItemModel.delete({ user: req.user._id });
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "All Items Deleted"));
+
+})
+
 const getAllCartItems = asyncHandler(async (req, res) => {
 
     const cartItems = await cartItemModel.aggregate([
@@ -162,5 +172,6 @@ export {
     getCurrentUserController,
     addToCartController,
     getAllCartItems,
-    updateCartController
+    updateCartController,
+    deleteAllCartItemsController
 }

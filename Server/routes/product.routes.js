@@ -7,7 +7,8 @@ import {
     getAllProductsController,
     getProductController,
     getProductsByCategory,
-    getSearchProductsController
+    getSearchProductsController,
+    retriveCheckoutSessionController
 } from "../controllers/product.controller.js";
 import { verifyAdmin } from "../middlewares/admin.middleware.js";
 import { upload } from "../utils/cloudinary.js";
@@ -24,6 +25,7 @@ router.route("/search").get(getSearchProductsController);
 router.route("/product").post(verifyAdmin, upload.single("image"), addProductController);
 router.route("/product/:productId").delete(verifyAdmin, deleteProductController);
 router.route("/category").get(getProductsByCategory);
-router.route("/create-checkout").post(verifyJWT, createCheckoutSessionController)
+router.route("/create-checkout").post(verifyJWT, createCheckoutSessionController);
+router.route("/retrieve/:sessionId").get(verifyJWT, retriveCheckoutSessionController);
 
 export default router;

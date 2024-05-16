@@ -5,13 +5,17 @@ import {
     addOrderController,
     getAllOrdersController,
     markDeliveredController,
-    cancelOrderController
+    cancelOrderController,
+    getOrderController,
+    updateOrderController
 } from "../controllers/order.controller.js"
 
 const router = express.Router();
 
 router.route("/").post(verifyJWT, addOrderController);
 router.route("/").get(verifyJWT, getAllOrdersController);
+router.route("/order/:orderId").get(verifyJWT, getOrderController);
+router.route("/order/:orderId").put(verifyJWT, updateOrderController);
 router.route("/delivered/:orderId").get(verifyJWT, markDeliveredController);
 router.route("/cancel/:orderId").get(verifyJWT, cancelOrderController);
 
