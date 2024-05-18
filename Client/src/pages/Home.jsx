@@ -49,9 +49,9 @@ function Home() {
             <div className='w-full h-full my-10 space-y-10'>
                 <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>
-                        <div className='h-[3px] bg-stone-800 w-[30%] rounded-full'></div>
-                        <h1 className='font-bold text-stone-800 text-center text-[1.35rem]  decoration-stone-700 w-[30%]'>OUR BEST SELLING CATEGORIES</h1>
-                        <div className='h-[3px] bg-stone-800 w-[30%] rounded-full'></div>
+                        <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full'></div>
+                        <h1 className='font-bold text-stone-800 text-center text-[1.35rem] dark:text-[#e4e4e4] w-[30%]'>OUR BEST SELLING CATEGORIES</h1>
+                        <div className='h-[3px] bg-stone-800 w-[30%] dark:bg-[#e4e4e4] rounded-full'></div>
                     </div>
                     <div className='w-full h-[50%] flex items-start justify-center gap-4 cursor-pointer'>
                         <NavLink className='w-[22%] h-full relative' {...hoverEffect} to='/shop?category=Straight'>
@@ -85,13 +85,13 @@ function Home() {
                     </div>
                 </div>
                 <div className='flex items-center justify-center gap-6 mb-10'>
-                    <div className='h-[3px] bg-stone-800 w-[30%] rounded-full'></div>
-                    <h1 className='font-bold text-stone-800 text-center text-[1.35rem]  decoration-stone-700 w-[30%]'>NEW ARRIVALS</h1>
-                    <div className='h-[3px] bg-stone-800 w-[30%] rounded-full'></div>
+                    <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full'></div>
+                    <h1 className='font-bold text-stone-800 dark:text-[#e4e4e4] text-center text-[1.35rem]  decoration-stone-700 w-[30%]'>NEW ARRIVALS</h1>
+                    <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full'></div>
                 </div>
                 <div className='flex flex-col items-center justify-start'>
                     {!loader ?
-                        <div className='grid grid-cols-4 overflow-scroll gap-6 m-10 bg-[#fafafa]'>
+                        <div className='grid grid-cols-4 overflow-scroll gap-6 m-10 bg-transparent'>
                             {response.map((res, index) => <Card res={res} key={index} productLoader={productLoader} />)}
                         </div>
                         : <Spinner />}
