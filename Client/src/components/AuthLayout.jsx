@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useAxios } from '../hooks/useAxios.js';
 import Spinner from './Spinner.jsx';
 import { login, setLocation } from "../store/authslice.js"
@@ -31,7 +31,7 @@ function AuthLayout({ children }) {
         ; (async () => {
             try {
                 const response = await axios.get(`http://ip-api.com/json`);
-                if (response.data.countryCode !== 'IN') {
+                if(response.data.countryCode === 'IN') {
                     dispatch(setLocation({ isIndia: true }))
                 } else {
                     const response = await axios.get('http://www.floatrates.com/daily/aed.json');

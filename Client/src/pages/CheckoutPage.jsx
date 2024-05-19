@@ -28,6 +28,7 @@ function CheckoutPage() {
                 setCart(response.data.data);
 
                 let sum = 0;
+
                 for (let item of response.data.data) {
                     if (!isIndia) {
                         sum += Math.floor((item.quantity * item.product[0].price) / dirham_to_rupees)
@@ -61,8 +62,13 @@ function CheckoutPage() {
 
     const getPlaces = async (input) => {
         try {
-            // const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk');
-            const response = await fetch('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk', { method: "GET", mode: 'cors', headers: { 'Content-Type': 'application/json', } }).then(response => response.json())
+            // const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o');
+            const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o')
+            // const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=700017&key=AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk')
+            //AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o
+            //https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&key=
+            //new----
+            //AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk
             console.log(response)
         } catch (err) {
             console.log(err);
@@ -84,24 +90,25 @@ function CheckoutPage() {
 
     }
 
-    const handleCheckout = async () => {
+    const handleCheckout = async (shippingDetails) => {
+
+        const { firstName, lastName, email, number, country, city, state, address, nearBy } = shippingDetails;
 
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
-        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees });
-        // console.log(session)
+        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy } });
         const results = await stripe.redirectToCheckout({
-            sessionId: session.data.data.id,
+            sessionId: session.data.data.id
         });
 
-        if(results.error) console.log(results.error);
+        if(results.error) console.log("Error in Checkout page", results.error);
     }
 
     return (
         <Container className='w-full flex items-start justify-center divide-x-2'>
             {!loader ?
                 <>
-                    <form onSubmit={isIndia ? handleSubmit(handlePayment) : handleSubmit(handleCheckout)} className='w-[50%] py-10 min-h-[85vh] max-h-[90vh] flex flex-col items-start justify-start gap-4 overflow-y-scroll'>
+                    <form onSubmit={handleSubmit(handleCheckout)} className='w-[50%] py-10 min-h-[85vh] max-h-[90vh] flex flex-col items-start justify-start gap-4 overflow-y-scroll'>
                         <h1 className='text-xl font-bold'>Contact</h1>
                         <Input register={register} name='email' placeholder='Email' className='w-[80%] bg-white' />
                         <h1 className='text-xl font-bold'>Delivery</h1>
@@ -120,7 +127,7 @@ function CheckoutPage() {
                             <Input register={register} name='lastName' placeholder='Last Name' className='w-[100%] bg-white' />
                         </div>
                         <Input register={register} name='address' placeholder='Address' className='w-[80%] bg-white' />
-                        <Input register={register} name='apartment/suite' placeholder='Apartment, Suite, etc.' className='w-[80%] bg-white' />
+                        <Input register={register} name='nearBy' placeholder='Apartment, Suite, etc.' className='w-[80%] bg-white' />
                         <div className='w-[80%] flex items-center justify-between gap-2'>
                             <Input register={register} name='city' placeholder='City' className='w-full bg-white' />
                             <Input register={register} name='state' placeholder='State' className='w-full bg-white' />
@@ -134,8 +141,8 @@ function CheckoutPage() {
                             <span>Free</span>
                         </div>
                         <div>
-                            <h1>Payment</h1>
-                            <p>All transactions are secure and encrypted.</p>
+                            <h1 className='text-xl font-bold text-black'>Payment</h1>
+                            <p className='text-stone-600 text-sm'>All transactions are secure and encrypted.</p>
                         </div>
                         <div className='w-[80%]'>
                             <div className='flex items-center justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black'>
@@ -164,7 +171,7 @@ function CheckoutPage() {
                                     <img src={item.product[0].image.url} className='w-full h-[70%] object-cover' alt="Product" />
                                 </div>
                                 <div className='w-[60%] h-full px-4 py-3 flex flex-col items-start justify-between'>
-                                    <div className='font-bold text-stone-600 line-clamp-2'>{item.product[0].title}</div>
+                                    <div className='font-bold text-stone-800 line-clamp-2'>{item.product[0].title}</div>
                                     <div className='text-sm font-bold text-stone-400'>{item.color || 'Black'}/{item.size || 52}</div>
                                 </div>
                                 <div className='flex items-center justify-between mt-4 w-[20%] flex-col'>

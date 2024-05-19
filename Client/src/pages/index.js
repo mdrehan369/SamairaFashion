@@ -17,6 +17,7 @@ import Shipping from "./policies/Shipping";
 import Refund from "./policies/Refund";
 import Terms from "./policies/Terms";
 import CheckoutPage from "./CheckoutPage";
+import Success from "./Success";
 
 export {
     Home,
@@ -37,5 +38,6 @@ export {
     Terms,
     Refund,
     Shipping,
-    CheckoutPage
+    CheckoutPage,
+    Success
 }

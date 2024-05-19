@@ -2,6 +2,7 @@ import express from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
     addToCartController,
+    deleteAllCartItemsController,
     getAllCartItems,
     getCurrentUserController,
     loginController,
@@ -22,5 +23,6 @@ router.route("/user").get(verifyJWT, getCurrentUserController);
 router.route("/cart").post(verifyJWT, addToCartController);
 router.route("/cart").get(verifyJWT, getAllCartItems);
 router.route("/cart").put(verifyJWT, updateCartController);
+router.route("/cart").delete(verifyJWT, deleteAllCartItemsController);
 
 export default router;

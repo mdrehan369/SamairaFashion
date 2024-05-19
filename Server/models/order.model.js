@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import bcryptjs from 'bcryptjs'
 
 const orderSchema = new mongoose.Schema({
 
@@ -9,11 +10,13 @@ const orderSchema = new mongoose.Schema({
         index: true
     },
 
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: true
-    },
+    cart: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CartItem",
+            required: true
+        }
+    ],
 
     isPending: {
         type: Boolean,
@@ -25,27 +28,25 @@ const orderSchema = new mongoose.Schema({
         default: false
     },
 
-    size: {
-        type: Number,
-        default: 0
+    paymentPending: {
+        type: Boolean,
+        default: false
     },
 
-    color: {
-        type: String,
-        trim: true
+    shippingDetails: {
+        firstName: String,
+        lastName: String,
+        country: String,
+        state: String,
+        city: String,
+        address: String,
+        pinCode: Number,
+        nearBy: String,
+        email: String,
+        number: Number
     },
 
-    quantity: {
-        type: Number,
-        default: 1
-    },
-
-    address: {
-        type: String,
-        required: true
-    },
-
-    comment: {
+    sessionId: {
         type: String
     }
 });

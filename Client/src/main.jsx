@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import "./index.css"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { AddProduct, AdminDashboard, Cart, Contact, Home, Orders, ProductPage, Products, Shop, Signin, Signup, Users, UserProductPage, Privacy, Shipping, Refund, Terms, AboutUs, CheckoutPage } from './pages/index.js'
+import { AddProduct, AdminDashboard, Cart, Contact, Home, Orders, ProductPage, Products, Shop, Signin, Signup, Users, UserProductPage, Privacy, Shipping, Refund, Terms, AboutUs, CheckoutPage, Success } from './pages/index.js'
 import AuthLayout from './components/AuthLayout.jsx'
 import { store } from "./store/store.js";
 import { Provider } from "react-redux"
@@ -40,6 +40,10 @@ const router = createBrowserRouter([
             {
                 path: '/checkoutPage',
                 element: <CheckoutPage />
+            },
+            {
+                path: '/success/:orderId',
+                element: <Success />
             }
         ],
     },
