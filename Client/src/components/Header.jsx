@@ -1,33 +1,34 @@
 import React, { useState } from 'react'
 import logo from "../assets/logo.avif"
 import { NavLink } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from './Button';
-// import Spinner from './Spinner';
+import darkLogo from "../assets/darkLogo.png"
+import { toggleTheme as toggleReduxTheme } from '../store/themeslice.js';
 
 function Header() {
 
     const status = useSelector(state => state.auth.status);
-    const [theme, setTheme] = useState(localStorage.getItem("theme"));
     const [dropdown, setDropdown] = useState(false);
+    const theme = useSelector(state => state.theme.theme);
+    const dispatch = useDispatch();
 
     const toggleTheme = () => {
         if (!localStorage.getItem("theme") || localStorage.getItem("theme") === 'dark') {
             localStorage.setItem("theme", "light");
             document.documentElement.classList.remove('dark')
-
         } else {
             localStorage.setItem("theme", "dark");
             document.documentElement.classList.add('dark')
         }
-        setTheme(localStorage.getItem("theme"))
+        dispatch(toggleReduxTheme());
     }
 
-    const activeClasses = ({ isActive }) => `py-2 px-4 rounded-full hover:bg-black relative hover:text-white hover:dark:bg-slate-800 transition ${isActive && 'bg-black dark:bg-slate-800 text-white shadow-lg px-4 py-2'}`
+    const activeClasses = ({ isActive }) => `py-2 px-4 rounded-full hover:bg-black relative hover:text-white hover:dark:bg-[#00224d] transition ${isActive && 'bg-black dark:bg-[#00224d] text-white shadow-lg px-4 py-2'}`
 
     return (
-        <nav className='w-full h-[10vh] sticky top-0 left-0 z-30 bg-transparent flex items-center justify-center backdrop-blur-xl dark:bg-slate-900 dark:text-white'>
-            <img src={logo} className='w-[20%] h-auto ml-10' />
+        <nav className='w-full h-[10vh] sticky top-0 left-0 z-30 bg-transparent flex items-center justify-center backdrop-blur-xl dark:bg-primary-color dark:text-white'>
+            <img src={theme == 'dark' ? darkLogo : logo} className='w-[20%] h-auto ml-10' />
             <div className='w-[50%] h-full'>
                 <ul className='w-full h-full flex items-center justify-center gap-10 font-semibold text-md'>
                     <NavLink to='/' className={activeClasses}>Home</NavLink>
@@ -39,11 +40,11 @@ function Header() {
                     >Shop
                         {
                             dropdown &&
-                            <div className={`absolute top-10 divide-y-2 transition-all overflow-hidden flex flex-col items-center justify-start left-[-4vw] shadow-lg bg-white text-black`} onClick={() => setDropdown(false)}>
-                                <NavLink to={'/shop?category=Straight'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 transition-colors text-sm font-medium'>Straight</NavLink>
-                                <NavLink to={'/shop?category=Umbrella'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 transition-colors text-sm font-medium'>Umbrella</NavLink>
-                                <NavLink to={'/shop?category=Tye Dye'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 transition-colors text-sm font-medium'>Tye Dye</NavLink>
-                                <NavLink to={'/shop?category=Farasha'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 transition-colors text-sm font-medium'>Farasha</NavLink>
+                            <div className={`absolute top-10 divide-y-2 transition-all overflow-hidden flex flex-col items-center justify-start left-[-4vw] shadow-lg bg-white dark:bg-secondary-color dark:text-white text-black dark:divide-slate-950`} onClick={() => setDropdown(false)}>
+                                <NavLink to={'/shop?category=Straight'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Straight</NavLink>
+                                <NavLink to={'/shop?category=Umbrella'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Umbrella</NavLink>
+                                <NavLink to={'/shop?category=Tye Dye'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Tye Dye</NavLink>
+                                <NavLink to={'/shop?category=Farasha'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200  dark:hover:bg-[#132d6a] transition-colors text-sm font-medium'>Farasha</NavLink>
                             </div>
                         }
                     </NavLink>

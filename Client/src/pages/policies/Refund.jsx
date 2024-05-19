@@ -2,7 +2,7 @@ import React from 'react';
 
 const Refund = () => {
     return (
-        <div className="container w-[70%] text-sm mx-auto p-4">
+        <div className="container w-[70%] text-sm mx-auto p-4 bg-transparent dark:text-white">
             <h1 className="text-4xl font-bold mb-4">Return, Exchange, and Refund Policy</h1>
 
             <p className="mb-4">

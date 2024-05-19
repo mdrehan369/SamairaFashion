@@ -6,6 +6,7 @@ import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Input, Button, Container } from "../components/index.js"
 import logo from "../assets/logo.avif"
+import darkLogo from "../assets/darkLogo.png"
 
 function Signin() {
 
@@ -29,7 +30,7 @@ function Signin() {
   return (
     <Container className='flex flex-col items-center justify-center gap-8 relative'>
         <div className={`p-2 bg-red-400 rounded-lg ${error?'visible':'invisible'} absolute left-[50%] translate-x-[-50%] top-10`}>{error}</div>
-        <img src={logo} className='w-[20vw]'/>
+        <img src={localStorage.getItem("theme") === 'dark' ? darkLogo : logo} className='w-[20vw]'/>
         <form onSubmit={handleSubmit(submit)} className='flex flex-col items-center justify-center gap-4'>
             <Input type="text" name='email' register={register} placeholder='Email' required />
             <Input type={showPass?"text":"password"} name='password' register={register} placeholder='Password' required />

@@ -9,7 +9,11 @@ export default {
     extend: {
       animation: {
         'bounce-once': 'bounce 1s ease-in-out infinite 2s'
-      }
+      },
+      colors: {
+        "primary-color": "var(--primary-color)",
+        "secondary-color": "var(--secondary-color)"
+      },
     },
   },
   plugins: [],

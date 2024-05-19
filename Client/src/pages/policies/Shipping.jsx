@@ -4,7 +4,7 @@ const Shipping = () => {
     return (
         <div className="">
             <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center text-sm font-bold">
-                <div className="bg-white w-fit p-6">
+                <div className="bg-white dark:bg-primary-color dark:text-white w-fit p-6">
                     <h2 className="text-5xl font-extrabold text-center mb-4">Shipping Policy</h2>
                     <ul className="w-fit">
                         <li className="mb-2"><span className="font-bold">1. Indian Orders</span> will take approx 20 days to deliver.</li>

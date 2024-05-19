@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from "../assets/logo.avif"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLocation, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faInstagram, faPinterest } from "@fortawesome/free-brands-svg-icons";
 import Button from './Button';
 import { NavLink } from 'react-router-dom';
+import darkLogo from "../assets/darkLogo.png"
 
 const Footer = () => {
 
@@ -12,7 +12,7 @@ const Footer = () => {
         <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full h-[50vh] relative bottom-0 left-0'>
             <div className='w-full h-[90%] mt-10 flex items-start justify-between px-4'>
                 <div className='space-y-1'>
-                    <img src={logo} alt="logo" />
+                    <img src={darkLogo} alt="logo" className='w-[80%] mb-4' />
                     <p><FontAwesomeIcon icon={faLocation} className='text-white mr-2' /><span>29A/H/2 Palm Avenue,Kolkata 700019, West Bengal, India</span></p>
                     <p><FontAwesomeIcon icon={faPhone} className='text-white mr-2' /><span>+97 15216 60581</span></p>
                     <p><FontAwesomeIcon icon={faEnvelope} className='text-white mr-2' /><span>samaira.shop1@gmail.com</span></p>
