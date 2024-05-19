@@ -69,7 +69,7 @@ app.post("/api/order", async (req, res) => {
                 return res.json(response.data)
             })
             .catch(function (error) {
-                console.error(error);
+                console.error("Error", error);
             });
 
     } catch (error) {

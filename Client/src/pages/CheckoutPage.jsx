@@ -101,7 +101,7 @@ function CheckoutPage() {
         <Container className='w-full flex items-start justify-center divide-x-2'>
             {!loader ?
                 <>
-                    <form onSubmit={handleSubmit(submit)} className='w-[50%] py-10 min-h-[85vh] max-h-[90vh] flex flex-col items-start justify-start gap-4 overflow-y-scroll'>
+                    <form onSubmit={isIndia ? handleSubmit(handlePayment) : handleSubmit(handleCheckout)} className='w-[50%] py-10 min-h-[85vh] max-h-[90vh] flex flex-col items-start justify-start gap-4 overflow-y-scroll'>
                         <h1 className='text-xl font-bold'>Contact</h1>
                         <Input register={register} name='email' placeholder='Email' className='w-[80%] bg-white' />
                         <h1 className='text-xl font-bold'>Delivery</h1>
@@ -154,7 +154,7 @@ function CheckoutPage() {
                                 </div>
                             </div>
                         </div>
-                        <Button className='w-[80%]' onClick={handleCheckout}>Pay Now</Button>
+                        <Button type='submit' className='w-[80%]' onClick={handleCheckout}>Pay Now</Button>
                     </form>
                     <div className='flex flex-col items-start justify-start gap-6 w-[30%] min-h-[85vh]'>
                         <div className='flex flex-col items-center justify-start w-full p-10 gap-6 overflow-y-scroll max-h-[80vh]'>
