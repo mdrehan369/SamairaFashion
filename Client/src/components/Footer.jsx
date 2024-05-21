@@ -9,10 +9,10 @@ import darkLogo from "../assets/darkLogo.png"
 const Footer = () => {
 
     return (
-        <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full h-[50vh] relative bottom-0 left-0'>
-            <div className='w-full h-[90%] mt-10 flex items-start justify-between px-4'>
+        <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full md:h-[50vh] h-auto relative bottom-0 left-0'>
+            <div className='w-full h-[90%] mt-10 flex md:flex-row flex-col items-start md:gap-0 gap-10 md:justify-between justify-normal px-4'>
                 <div className='space-y-1'>
-                    <img src={darkLogo} alt="logo" className='w-[80%] mb-4' />
+                    <img src={darkLogo} alt="logo" className='md:w-[80%] w-full mb-4' />
                     <p><FontAwesomeIcon icon={faLocation} className='text-white mr-2' /><span>29A/H/2 Palm Avenue,Kolkata 700019, West Bengal, India</span></p>
                     <p><FontAwesomeIcon icon={faPhone} className='text-white mr-2' /><span>+97 15216 60581</span></p>
                     <p><FontAwesomeIcon icon={faEnvelope} className='text-white mr-2' /><span>samaira.shop1@gmail.com</span></p>
@@ -43,7 +43,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <div className='w-full text-center p-2 font-bold text-white'>Samaira Fashion. All Rights Reserved.</div>
+            <div className='w-full md:mt-0 mt-4 text-center p-2 font-bold text-white'>Samaira Fashion. All Rights Reserved.</div>
         </footer>
     );
 };

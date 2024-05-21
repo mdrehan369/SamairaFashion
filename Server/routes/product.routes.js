@@ -26,6 +26,6 @@ router.route("/product").post(verifyAdmin, upload.single("image"), addProductCon
 router.route("/product/:productId").delete(verifyAdmin, deleteProductController);
 router.route("/category").get(getProductsByCategory);
 router.route("/create-checkout").post(verifyJWT, createCheckoutSessionController);
-router.route("/retrieve/:sessionId").get(verifyJWT, retriveCheckoutSessionController);
+router.route("/retrieve").get(verifyJWT, retriveCheckoutSessionController);
 
 export default router;

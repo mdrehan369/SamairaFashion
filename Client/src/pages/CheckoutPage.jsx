@@ -12,13 +12,11 @@ import { loadStripe } from '@stripe/stripe-js';
 
 function CheckoutPage() {
 
-    const { register, handleSubmit } = useForm()
-    // const [places, setPlaces] = useState([]);
+    const { register, handleSubmit, setError, formState: { errors } } = useForm()
     const [cart, setCart] = useState([]);
     const [loader, setLoader] = useState(true);
-    // const [address, setAddress] = useState("");
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
-    let total = useRef();
+    let [total, setTotal] = useState();
 
     useEffect(() => {
         ; (async () => {
@@ -37,7 +35,7 @@ function CheckoutPage() {
                     }
                 }
 
-                total.current = sum;
+                setTotal(sum)
 
             } catch (err) {
                 console.log(err)
@@ -92,61 +90,156 @@ function CheckoutPage() {
 
     const handleCheckout = async (shippingDetails) => {
 
-        const { firstName, lastName, email, number, country, city, state, address, nearBy } = shippingDetails;
+        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
+        let isError = false;
+
+        Object.keys(shippingDetails).map((key) => {
+            if (!shippingDetails[key] || shippingDetails[key] === '') {
+                setError(key, { type: "required", message: "Please Fill Out This Field" });
+                isError = true;
+            }
+        })
+
+        if(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email) === false) setError("email", { type: "pattern", message: "Please Enter The Correct Email Address" }, { shouldFocus: true }), isError = true;
+
+        if(isNaN(number)) setError("number", { type: 'pattern', message: "Please Enter A Valid Number" }, {shouldFocus: true}), isError = true; 
+
+        if(isNaN(pincode)) setError("pincode", { type: 'pattern', message: "Please Enter A Valid Number" }, {shouldFocus: true}), isError = true; 
+        
+        if (isError) {
+            window.scrollTo(0, 0);
+            return
+        };
 
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
-        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy } });
+        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } });
+        
         const results = await stripe.redirectToCheckout({
             sessionId: session.data.data.id
         });
 
-        if(results.error) console.log("Error in Checkout page", results.error);
+        if (results.error) console.log("Error in Checkout page", results.error);
     }
 
     return (
-        <Container className='w-full flex items-start justify-center divide-x-2'>
+        <Container className='w-full flex md:flex-row flex-col md:items-start items-center justify-center divide-x-2'>
             {!loader ?
                 <>
-                    <form onSubmit={handleSubmit(handleCheckout)} className='w-[50%] py-10 min-h-[85vh] max-h-[90vh] flex flex-col items-start justify-start gap-4 overflow-y-scroll'>
-                        <h1 className='text-xl font-bold'>Contact</h1>
-                        <Input register={register} name='email' placeholder='Email' className='w-[80%] bg-white' />
-                        <h1 className='text-xl font-bold'>Delivery</h1>
-                        <select className='w-[80%] p-3 rounded bg-white border-[1px] border-gray-400 cursor-pointer' {...register('country')}>
-                            <option value="" selected>Select Country</option>
-                            <option value="bahrain">Bahrain</option>
-                            <option value="india">India</option>
-                            <option value="kuwait">Kuwait</option>
-                            <option value="oman">Oman</option>
-                            <option value="qatar">Qatar</option>
-                            <option value="saudi arabia">Saudi Arabia</option>
-                            <option value="united arab emirates">United Arab Emirates</option>
-                        </select>
-                        <div className='w-[80%] flex items-center justify-start gap-2'>
-                            <Input register={register} name='firstName' placeholder='First Name' className='w-[100%] bg-white' />
-                            <Input register={register} name='lastName' placeholder='Last Name' className='w-[100%] bg-white' />
-                        </div>
-                        <Input register={register} name='address' placeholder='Address' className='w-[80%] bg-white' />
-                        <Input register={register} name='nearBy' placeholder='Apartment, Suite, etc.' className='w-[80%] bg-white' />
-                        <div className='w-[80%] flex items-center justify-between gap-2'>
-                            <Input register={register} name='city' placeholder='City' className='w-full bg-white' />
-                            <Input register={register} name='state' placeholder='State' className='w-full bg-white' />
-                            <Input register={register} name='pincode' placeholder='Pincode' className='w-full bg-white' />
-                        </div>
-                        <Input register={register} name='number' placeholder='Phone' className='w-[80%] bg-white' />
+                    <form
+                        onSubmit={handleSubmit(handleCheckout)}
+                        className='md:w-[50%] w-[90%] py-10 min-h-[85vh] md:max-h-[90vh] flex flex-col md:items-start items-center justify-start gap-4 md:overflow-y-scroll'
+                    >
+                        <h1 className='text-xl font-bold self-start'>Contact</h1>
 
-                        <h1 className='font-bold text-black text-xl'>Shipping Method</h1>
-                        <div className='w-[80%] bg-gray-100 border-[1px] border-gray-300 p-4 flex justify-between'>
+                        <Input
+                            register={register}
+                            name='email'
+                            label='Email'
+                            placeholder='ex. John123@example.com'
+                            className='md:w-[80%] w-full bg-white'
+                            errors={errors} />
+
+                        <h1 className='text-xl font-bold self-start'>Delivery</h1>
+
+                        <div className='md:w-[80%] w-full'>
+                            <h1 className='text-stone-800 dark:text-white font-[450] text-sm'>Country</h1>
+                            <select
+                                className='md:w-[100%] p-3 rounded dark:bg-secondary-color dark:border-0 bg-white border-[1px] w-full border-gray-400 cursor-pointer'
+                                {...register('country', { required: true })}>
+                                <option value="india" selected>India</option>
+                                <option value="bahrain">Bahrain</option>
+                                <option value="kuwait">Kuwait</option>
+                                <option value="oman">Oman</option>
+                                <option value="qatar">Qatar</option>
+                                <option value="saudi arabia">Saudi Arabia</option>
+                                <option value="united arab emirates">United Arab Emirates</option>
+                            </select>
+                        </div>
+
+                        <div className='md:w-[80%] w-full flex items-center justify-start gap-2'>
+                            <Input
+                                register={register}
+                                name='firstName'
+                                label='First Name'
+                                placeholder='ex. John'
+                                className='w-[100%] bg-white'
+                                errors={errors} />
+
+                            <Input
+                                register={register}
+                                name='lastName'
+                                label='Last Name'
+                                placeholder='ex. Smith'
+                                className='w-[100%] bg-white'
+                                errors={errors} />
+
+                        </div>
+
+                        <Input
+                            register={register}
+                            name='address'
+                            label='Address'
+                            placeholder='ex. 22/3 Golden View Apartments'
+                            className='md:w-[80%] bg-white w-full'
+                            errors={errors} />
+
+                        <Input
+                            register={register}
+                            name='nearBy'
+                            label='Nearby Places'
+                            placeholder='Apartment, Suite, etc.'
+                            className='md:w-[80%] w-full bg-white'
+                            errors={errors} />
+
+                        <div className='md:w-[80%] w-full flex items-center justify-between gap-2'>
+
+                            <Input
+                                register={register}
+                                name='city'
+                                label='City'
+                                placeholder='ex. Kolkata'
+                                className='w-full bg-white'
+                                errors={errors} />
+
+                            <Input
+                                register={register}
+                                name='state'
+                                label='State'
+                                placeholder='ex. West Bengal'
+                                className='w-full bg-white'
+                                errors={errors} />
+
+                            <Input
+                                register={register}
+                                name='pincode'
+                                label='Pincode'
+                                placeholder='ex. 700017'
+                                className='w-full bg-white'
+                                errors={errors} />
+
+                        </div>
+
+                        <Input
+                            register={register}
+                            name='number'
+                            label='Phone Number'
+                            placeholder='ex. +91 9323140987'
+                            className='md:w-[80%] w-full bg-white'
+                            errors={errors} />
+
+                        <h1 className='font-bold text-black text-xl self-start dark:text-white'>Shipping Method</h1>
+                        <div className='md:w-[80%] w-full bg-gray-100 dark:bg-secondary-color border-[1px] border-gray-300 p-4 flex justify-between'>
                             <span>Pan India : Free Delivery Offer</span>
                             <span>Free</span>
                         </div>
-                        <div>
-                            <h1 className='text-xl font-bold text-black'>Payment</h1>
-                            <p className='text-stone-600 text-sm'>All transactions are secure and encrypted.</p>
+                        <div className='w-full'>
+                            <h1 className='text-xl dark:text-white font-bold text-black self-start'>Payment</h1>
+                            <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>
                         </div>
-                        <div className='w-[80%]'>
-                            <div className='flex items-center justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black'>
-                                <div className='size-4 border-4 border-black rounded-full'></div>
+                        <div className='md:w-[80%] w-full'>
+                            <div className='flex items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-y-0'>
+                                <div className='size-4 border-4 border-black dark:border-white rounded-full'></div>
                                 <div>Pay by card with Stripe</div>
                                 <div className='flex items-center justify-end flex-grow'>
                                     <img src={visa} alt="visa" />
@@ -154,16 +247,16 @@ function CheckoutPage() {
                                     <img src={visa2} alt="visa2" />
                                 </div>
                             </div>
-                            <div className='w-full p-3 h-[30vh] bg-gray-100 flex flex-col items-center justify-start'>
-                                <FontAwesomeIcon icon={faCreditCard} className='size-32 text-stone-600' />
-                                <div className='w-[60%] text-center text-black text-md'>
-                                After clicking “Pay now”, you will be redirected to Pay by card with Stripe to complete your purchase securely.
+                            <div className='w-full p-3 h-[30vh] bg-gray-100 dark:bg-secondary-color dark:text-white flex flex-col items-center justify-start'>
+                                <FontAwesomeIcon icon={faCreditCard} className='size-32 text-stone-600 dark:text-white' />
+                                <div className='md:w-[60%] w-full text-center text-black text-md dark:text-white'>
+                                    After clicking “Pay now”, you will be redirected to Pay by card with Stripe to complete your purchase securely.
                                 </div>
                             </div>
                         </div>
-                        <Button type='submit' className='w-[80%]' onClick={handleCheckout}>Pay Now</Button>
+                        <Button type='submit' className='md:w-[80%] w-full'>Pay Now</Button>
                     </form>
-                    <div className='flex flex-col items-start justify-start gap-6 w-[30%] min-h-[85vh]'>
+                    <div className='md:flex hidden flex-col items-start justify-start gap-6 w-[30%] min-h-[85vh]'>
                         <div className='flex flex-col items-center justify-start w-full p-10 gap-6 overflow-y-scroll max-h-[80vh]'>
                             {cart.map((item, index) => <div key={index} className='flex items-start justify-start w-full h-[15vh]'>
                                 <div className='relative w-[20%] h-full p-3'>
@@ -177,10 +270,10 @@ function CheckoutPage() {
                                 <div className='flex items-center justify-between mt-4 w-[20%] flex-col'>
                                     <h2 className='px-0 text-sm text-start font-bold relative text-stone-600'>
                                         <div className='w-full h-[2px] bg-stone-600 absolute top-[50%] left-0'></div>
-                                        {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? item.product[0].comparePrice * item.quantity : Math.floor(item.product[0].comparePrice / dirham_to_rupees)}
+                                        {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? item.product[0].comparePrice * item.quantity : Math.floor(item.product[0].comparePrice / dirham_to_rupees) * item.quantity}
                                     </h2>
                                     <h2 className='px-0 text-lg text-end font-bold text-stone-900'>
-                                        {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? (item.product[0].price * item.quantity).toString()[0] + "," + item.product[0].price.toString().slice(1) : Math.floor(item.product[0].price / dirham_to_rupees)}
+                                        {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? (item.product[0].price * item.quantity).toString()[0] + "," + (item.product[0].price * item.quantity).toString().slice(1) : Math.floor(item.product[0].price / dirham_to_rupees) * item.quantity}
                                     </h2>
                                 </div>
                             </div>)}
@@ -189,9 +282,9 @@ function CheckoutPage() {
                                 <button className='p-3 border-[1px] border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-sm font-medium'>Apply</button>
                             </div>
                             <div className='w-full space-y-2'>
-                                <div className='flex items-center justify-between text-md font-medium text-stone-700'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total.current}</span></div>
+                                <div className='flex items-center justify-between text-md font-medium text-stone-700'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700'><span>Shipping:</span><span>Free</span></div>
-                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total.current}</span></div>
+                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
                             </div>
                         </div>
                         <div>

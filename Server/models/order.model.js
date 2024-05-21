@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import bcryptjs from 'bcryptjs'
 
 const orderSchema = new mongoose.Schema({
 
@@ -12,9 +11,23 @@ const orderSchema = new mongoose.Schema({
 
     cart: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "CartItem",
-            required: true
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                default: 1
+            },
+            size: {
+                type: Number,
+                default: 52
+            },
+            color: {
+                type: String,
+                default: "Default"
+            }
         }
     ],
 
@@ -47,7 +60,8 @@ const orderSchema = new mongoose.Schema({
     },
 
     sessionId: {
-        type: String
+        type: String,
+        default: ""
     }
 });
 

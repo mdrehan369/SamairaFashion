@@ -42,7 +42,7 @@ const router = createBrowserRouter([
                 element: <CheckoutPage />
             },
             {
-                path: '/success/:orderId',
+                path: '/success',
                 element: <Success />
             }
         ],

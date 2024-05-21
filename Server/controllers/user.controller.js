@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 const options = {
     httpOnly: true,
-    secure: true
+    secure: false
 }
 
 const signupController = asyncHandler(async (req, res) => {
@@ -142,6 +142,7 @@ const getAllCartItems = asyncHandler(async (req, res) => {
           }
         }
       ]);
+      
 
     return res
     .status(200)

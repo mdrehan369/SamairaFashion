@@ -6,7 +6,6 @@ import { Container } from '../components';
 
 function Success() {
 
-    const { orderId } = useParams();
     const [loader, setLoader] = useState(true);
     const [error, setError] = useState("");
     const [isPaid, setIsPaid] = useState(false);
@@ -15,16 +14,10 @@ function Success() {
         ; (async () => {
             setLoader(true);
             try {
-                if (!orderId) throw new Error("No OrderId Found");
-
-                const response = await axios.get(`/api/v1/orders/order/${orderId}`);
-                const sessionId = response.data.data.sessionId;
-                const session = await axios.get(`/api/v1/products/retrieve/${sessionId}`);
-
-                if (session.data.data.payment_status === 'paid') setIsPaid(true);
-                await axios.put(`/api/v1/orders/order/${orderId}`);
                 
-                // await axios.delete('/api/v1/users/cart');
+                const session = await axios.get(`/api/v1/products/retrieve`);
+                if (session.data.data.payment_status === 'paid') setIsPaid(true);
+                else setError("No Transaction Done");
 
             } catch (err) {
                 console.log(err)

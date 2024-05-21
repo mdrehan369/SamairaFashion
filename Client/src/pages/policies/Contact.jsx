@@ -13,9 +13,9 @@ function Contact() {
     }
 
     return (
-        <Container className='text-sm h-full flex items-start justify-start'>
-            <div className='flex items-center justify-center w-[60%] h-auto'>
-                <form onSubmit={handleSubmit(submit)} className='flex flex-col mt-20 items-start justify-around h-[90vh] w-[70%]' >
+        <Container className='text-sm h-full flex md:flex-row flex-col-reverse md:mt-0 mt-10 items-start justify-start'>
+            <div className='flex items-center justify-center md:w-[60%] w-full h-auto'>
+                <form onSubmit={handleSubmit(submit)} className='flex flex-col mt-20 items-start justify-around h-[90vh] md:w-[70%] w-[90%]' >
                     <h1 className='text-xl font-extrabold tracking-wide'>CONTACT</h1>
                     <div className='space-y-1'>
                         <p>Have a question or comment? </p>
@@ -24,12 +24,11 @@ function Contact() {
                     <Input register={register} name='name' label='Name' placeholder='ex. John' className='w-full bg-transparent' />
                     <Input register={register} name='number' label='Phone Number' placeholder='ex. 1234567891' className='w-full bg-transparent' />
                     <Input register={register} name='email' label='Email' placeholder='ex. John123@example.com' className='w-full bg-transparent' />
-                    <TextArea register={register} name='comment' label='comment' placeholder='ex. I want to collaborate...' className='w-full bg-transparent h-52' />
-                    {/* <textarea {...register('comment')} la></textarea> */}
+                    <TextArea register={register} name='comment' label='Comment' placeholder='ex. I want to collaborate...' className='w-full bg-transparent h-52' />
                     <Button type='submit' className='py-3 px-6 font-extrabold text-sm rounded-none'>SUBMIT CONTACT</Button>
                 </form>
             </div>
-            <div className='flex flex-col items-center justify-center w-[30%] h-[90vh]'>
+            <div className='flex flex-col items-center justify-center md:w-[30%] w-full md:h-[90vh] h-auto'>
                 <div className='flex flex-col items-start justify-center gap-6'>
                     <h1 className='text-lg font-bold'>Get In Touch!</h1>
                     <div className='space-y-1'>

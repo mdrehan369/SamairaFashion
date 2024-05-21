@@ -14,10 +14,10 @@ const sizes = [52, 54, 56, 58, 60, 62, 'Customize As Per Request'];
 
 function Description({ text }) {
     return (
-        <>
-            <div className='text-lg text-stone-700 dark:text-white tracking-wide ml-10 my-4 self-start w-[50%] font-[450]'>{text}</div>
-            <img src={sizeChart} alt="size chart" className='self-start ml-10' />
-        </>
+        <div className='flex flex-col items-center justify-start'>
+            <div className='text-lg w-full p-4 md:p-0 text-stone-700 dark:text-white tracking-wide md:ml-10 my-4 self-start md:w-[50%] font-[450]'>{text}</div>
+            <img src={sizeChart} alt="size chart" className='md:self-start md:ml-10 w-[90%] md:w-auto' />
+        </div>
     )
 }
 
@@ -42,18 +42,18 @@ function Reviews({ product }) {
     return (
         !loader ?
             reviews.length ?
-                <div className='w-[90%] mx-auto h-auto grid grid-cols-2 gap-6 mt-10'>
-                    {reviews.map((review, index) => <div key={index} className='flex flex-col items-start justify-start gap-4 bg-gray-100 rounded border-gray-400 w-full border-[1px] h-[30vh] overflow-scroll p-4 divide-y-2 hover:bg-gray-200 cursor-pointer transition-all dark:bg-secondary-color'>
+                <div className='w-[90%] mx-auto h-auto grid md:grid-cols-2 grid-cols-1 gap-6 mt-10'>
+                    {reviews.map((review, index) => <div key={index} className='flex flex-col items-start justify-start gap-4 bg-gray-100 rounded border-gray-400 w-full border-[1px] md:h-[30vh] h-auto overflow-scroll p-4 divide-y-2 hover:bg-gray-200 cursor-pointer transition-all dark:bg-secondary-color'>
                         <div className='flex items-start justify-between w-full'>
                             <div className='flex items-center justify-center gap-4'>
-                                <FontAwesomeIcon icon={faUser} className='text-2xl rounded-full text-gray-600 border-[1px] border-gray-300 p-3' />
+                                <FontAwesomeIcon icon={faUser} className='md:text-2xl text-xl rounded-full text-gray-600 border-[1px] border-gray-300 p-3' />
                                 <div className='flex flex-col items-start justify-start gap-0'>
-                                    <span className='text-xl font-medium dark:text-white text-stone-900'>{review.userObj[0].firstName + " " + review.userObj[0].lastName}</span>
+                                    <span className='md:text-xl text-lg font-medium dark:text-white text-stone-900'>{review.userObj[0].firstName + " " + review.userObj[0].lastName}</span>
                                     <span className='text-sm font-normal dark:text-[#e2e2e2] text-gray-600'>{review.userObj[0].email}</span>
                                 </div>
                             </div>
                             <div>
-                                {[1, 2, 3, 4, 5].map((rating, index) => rating <= review.rating ? <FontAwesomeIcon icon={faStar} className='text-xl' /> : <FontAwesomeIcon icon={hollowStar} className='text-xl' />)}
+                                {[1, 2, 3, 4, 5].map((rating, index) => rating <= review.rating ? <FontAwesomeIcon icon={faStar} className='md:text-xl text-sm' /> : <FontAwesomeIcon icon={hollowStar} className='md:text-xl text-sm' />)}
                             </div>
                         </div>
                         <div className='w-full flex items-start justify-normal'>
@@ -104,8 +104,8 @@ function Write({ setPage, product }) {
 
     return (
 
-        <form onSubmit={handleSubmit(submit)} className='flex items-start justify-center gap-6 mt-4 dark:text-white'>
-            <div className='w-fit h-full flex flex-col items-start justify-start self-start'>
+        <form onSubmit={handleSubmit(submit)} className='flex md:flex-row flex-col md:items-start items-center justify-center gap-6 mt-4 dark:text-white'>
+            <div className='w-fit h-full flex flex-col items-start justify-start md:self-start'>
                 <h1 className='text-md font-medium dark:text-white text-stone-700'>Rating: {rating}</h1>
                 <div className='flex items-center dark:text-white justify-center text-2xl gap-2'>
                     {
@@ -115,12 +115,12 @@ function Write({ setPage, product }) {
                     }
                 </div>
             </div>
-            <div className='w-[30%] h-[100%] dark:text-white flex flex-col items-center justify-start gap-4'>
-                <Input label='Title' register={register} name='title' placeholder='ex. Brilliant Product...' />
-                <label htmlFor="image" className='flex flex-col self-start ml-10 items-start justify-center gap-2'><span className='text-stone-700 dark:text-white font-medium'>Upload A Picture(Optional)</span><FontAwesomeIcon icon={faArrowUpFromBracket} className='text-gray-600 bg-gray-100 dark:bg-secondary-color border-dashed opacity-70 border-gray-600 cursor-pointer size-28 border-2 p-3' /></label>
+            <div className='md:w-[30%] w-[90%] h-[100%] dark:text-white flex flex-col items-center justify-start gap-4'>
+                <Input label='Title' register={register} name='title' className='w-[100%]' placeholder='ex. Brilliant Product...' />
+                <label htmlFor="image" className='flex flex-col self-start md:ml-10 items-start justify-center gap-2'><span className='text-stone-700 dark:text-white font-medium'>Upload A Picture(Optional)</span><FontAwesomeIcon icon={faArrowUpFromBracket} className='text-gray-600 bg-gray-100 dark:bg-secondary-color border-dashed opacity-70 border-gray-600 cursor-pointer size-28 border-2 p-3' /></label>
                 <input type="file" name="image" hidden id='image' onChange={(e) => setImage(e.target.files[0])} />
             </div>
-            <div className='w-[40%] h-[100%] dark:text-white flex flex-col items-start justify-start gap-4'>
+            <div className='md:w-[40%] w-[90%] h-[100%] dark:text-white flex flex-col items-start justify-start gap-4'>
                 <TextArea label='Description' register={register} name='description' placeholder='ex. A very impressive product and service. The best website to buy Abayas!...' className='w-full h-48' />
 
                 <div className='flex items-center justify-between w-full'>
@@ -155,19 +155,19 @@ function RelatedProducts({ category }) {
         <>
             <h1 className='font-extrabold tracking-wide text-2xl text-stone-900 relative'><div className='w-full h-[2px] bg-black absolute bottom-0'></div>Related Products</h1>
             <div className='w-[100vw] overflow-x-clip relative'>
-                <button className='absolute top-[40%] left-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl size-16 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' disabled={!counter.current} onClick={() => {
+                <button className='absolute top-[40%] left-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
                     if (counter.current > 0) {
                         counter.current -= 1;
+                        document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
                     }
-                    document.getElementById('scroll').style.transform = `translateX(${100 * counter.current}vw)`;
                 }}><FontAwesomeIcon className='size-6' icon={faChevronLeft} /></button>
-                <button className='absolute top-[40%] right-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl size-16 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' disabled={counter.current === 2} onClick={() => {
-                    if (counter.current < 2) {
+                <button className='absolute top-[40%] right-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
+                    if ((window.screen.width > 500 && counter.current < 2) || (window.screen.width < 500 && counter.current < 4)) {
                         counter.current += 1;
+                        document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
                     }
-                    document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
                 }} ><FontAwesomeIcon icon={faChevronRight} className='size-6' /></button>
-                <div className={`flex items-center justify-between mx-0 w-[300vw] gap-10 transition-transform scroll-smooth duration-500 ease-in-out`} id='scroll'>
+                <div className={`flex items-center justify-between px-4 md:w-[300vw] w-[600vw] gap-10 transition-transform scroll-smooth duration-500 ease-in-out`} id='scroll'>
                     {products.map((res, index) => <Card productLoader={loader} res={res} key={index} />)}
                 </div>
 
@@ -183,25 +183,8 @@ function UserProductPage({ key }) {
     const [loader, setLoader] = useState(true);
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
-    const [isIndia, setIsIndia] = useState(false);
     const [page, setPage] = useState("Description");
-    let dirham_to_rupees = 22;
-
-    useEffect(() => {
-        ; (async () => {
-            try {
-                const response = await axios.get(`http://ip-api.com/json`);
-                if (response.data.countryCode === 'IN') {
-                    setIsIndia(true);
-                } else {
-                    const response = await axios.get('http://www.floatrates.com/daily/aed.json');
-                    dirham_to_rupees = Math.floor(response.data.inr.rate);
-                }
-            } catch (err) {
-                console.log(err);
-            }
-        })();
-    }, []);
+    const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
 
     useEffect(() => {
         ; (async () => {
@@ -239,11 +222,11 @@ function UserProductPage({ key }) {
             </div>
             {!loader ?
                 <>
-                    <div className='w-[100%] h-auto flex items-start justify-evenly mt-10 dark:text-white'>
-                        <div className='w-[40%] h-full'>
+                    <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly mt-10 dark:text-white'>
+                        <div className='md:w-[40%] w-full p-4 h-full'>
                             <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                         </div>
-                        <form className='w-[40%] h-[100%] flex flex-col items-start justify-start gap-6'>
+                        <form className='md:w-[40%] p-4 w-full h-[100%] flex flex-col items-start justify-start gap-6'>
                             <h1 className='text-2xl font-bold text-stone-800 tracking-wider dark:text-white'>{product.title}</h1>
                             <h2 className='text-lg text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2>
                             <div>
@@ -257,7 +240,7 @@ function UserProductPage({ key }) {
                             </div>
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
-                                <div className='flex items-center justify-start gap-4 mt-2'>
+                                <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
                                     {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black dark:border-white' : 'border-gray-500'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
                                         {size}
                                     </div>)}
@@ -280,9 +263,9 @@ function UserProductPage({ key }) {
                     </div>
                     <div className='w-full mt-10 flex flex-col items-center justify-start gap-0'>
                         <div className='flex items-center justify-center gap-0'>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Description')}>Description</h1>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Reviews')}>Reviews</h1>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold text-xl tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Write')}>Write A Review</h1>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Description')}>Description</h1>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Reviews')}>Reviews</h1>
+                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Write')}>Write A Review</h1>
                         </div>
                         <div className='w-full h-auto min-h-[50vh]'>
                             {page === 'Description' && <Description text={product.description} />}

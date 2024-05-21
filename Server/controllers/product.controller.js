@@ -179,57 +179,77 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
     const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
     if (!cart) throw new ApiError("No Cart Given");
 
-    const stripeObj = new stripe('sk_test_51PGhn5JZgatvWpsFlm5HShtaCorWwyvHuLgR4XqMbHskZPtLfrFVoVsLVIvBSIuWcp3VGGP2OZommjs6qfgpAd6S00HiiERHKg')
+    const stripeObj = new stripe(process.env.STRIPE_SECRET_KEY)
 
     const items = cart.map((item) => {
 
         return {
-        price_data: {
-            currency: isIndia ? 'inr' : 'aed',
-            product_data: {
-                name: item.product[0].title,
+            price_data: {
+                currency: isIndia ? 'inr' : 'aed',
+                product_data: {
+                    name: item.product[0].title,
+                },
+                unit_amount: isIndia ? item.product[0].price * 100 : Math.floor((item.product[0].price * 100) / dirham_to_rupees)
             },
-            unit_amount: isIndia ? item.product[0].price * 100 : Math.floor((item.product[0].price * 100) / dirham_to_rupees)
-        },
-        quantity: item.quantity
-    }
-});
-
-    const cartIds = cart.map((item) => item._id);
-
-    const response = await orderModel.create({
-        cart: cartIds,
-        user: req.user._id,
-        sessionId: "none",
-        shippingDetails
+            quantity: item.quantity
+        }
     });
 
     const session = await stripeObj.checkout.sessions.create({
         line_items: items,
         payment_method_types: ['card'],
         mode: 'payment',
-        success_url: `http://localhost:5173/success/${response._id}`
+        success_url: `http://localhost:5173/success`,
+        cancel_url: 'http://localhost:5173/',
+        customer_email: shippingDetails.email
     });
 
-    await orderModel.findByIdAndUpdate(response._id, { sessionId: session.id });
 
     return res
         .status(200)
+        .cookie("sessionId", session.id, { httpOnly: false, secure: false })
+        .cookie("shippingDetails", JSON.stringify(shippingDetails))
+        .cookie("cart", JSON.stringify(cart))
         .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
 const retriveCheckoutSessionController = asyncHandler(async (req, res) => {
 
-    const { sessionId } = req.params;
-    if(!sessionId) throw new ApiError(400, "No Session ID Found");
+    const sessionId = req.cookies.sessionId;
+    const shippingDetails = JSON.parse(req.cookies.shippingDetails);
+    const cart = JSON.parse(req.cookies.cart);
 
-    const stripeObj = new stripe('sk_test_51PGhn5JZgatvWpsFlm5HShtaCorWwyvHuLgR4XqMbHskZPtLfrFVoVsLVIvBSIuWcp3VGGP2OZommjs6qfgpAd6S00HiiERHKg');
+    if (!sessionId) throw new ApiError(400, "No Session ID Found");
+
+    const stripeObj = new stripe(process.env.STRIPE_SECRET_KEY);
 
     const session = await stripeObj.checkout.sessions.retrieve(sessionId);
 
+    const cartItems = cart.map((item) => (
+        {
+            product: item.product[0]._id,
+            quantity: item.quantity,
+            color: item.color,
+            size: item.size
+        }
+    ));
+    
+    await orderModel.create({
+        cart: cartItems,
+        user: req.user._id,
+        sessionId: "none",
+        shippingDetails,
+        sessionId
+    });
+
+    await cartItemModel.deleteMany({ user: req.user._id })
+
     return res
-    .status(200)
-    .json(new ApiResponse(200, session, "Session Retrieve Successfully"));
+        .status(200)
+        .clearCookie("sessionId")
+        .clearCookie("shippingDetails")
+        .clearCookie("cart")
+        .json(new ApiResponse(200, session, "Session Retrieve Successfully"));
 
 })
 

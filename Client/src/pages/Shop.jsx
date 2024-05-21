@@ -24,7 +24,7 @@ function Shop() {
             try {
                 const response = await axios.get(`/api/v1/products/category?category=${search.slice(10)}&limit=${limit}&page=${page}&attribute=${sort.attribute}&order=${sort.order}`);
                 setProducts(response.data.data);
-                if (response.data.data.length !== limit) {
+                if (response.data.data.length < limit) {
                     setMaxPages(page);
                 }
             } catch (err) {
@@ -39,10 +39,10 @@ function Shop() {
     return (
         !loader ?
             <Container className='flex flex-col items-center justify-start gap-6'>
-                <div className='self-end mr-20 my-10 flex gap-6'>
-                    <div>
-                        <label htmlFor="sort" className='text-stone-700 font-bold text-xs mr-3'>SORT BY</label>
-                        <select name='sort' className='text-gray-600 bg-transparent border-[1px] text-sm font-medium border-gray-400 rounded-none px-5 py-3'>
+                <div className='self-end md:mr-20 my-10 flex items-center justify-start gap-6 md:w-auto w-full'>
+                    <div className='w-fit ml-4'>
+                        <label htmlFor="sort" className='text-stone-700 dark:text-white font-bold text-xs mr-3'>SORT BY</label>
+                        <select name='sort' className='text-gray-600 dark:text-gray-400 bg-transparent border-[1px] text-sm font-medium border-gray-400 rounded-none px-5 py-3'>
                             <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'price', 'order': 1 })} value='Price, Low To High'>Price, Low To High</option>
                             <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'price', 'order': -1 })} value='Price, High To Low'>Price, High To Low</option>
                             <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'createdAt', 'order': 1 })} value='Date, Old To New'>Date, Old To New</option>
@@ -51,9 +51,9 @@ function Shop() {
                             <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'title', 'order': -1 })} value='Alphabetically, Z-A'>Alphabetically, Z-A</option>
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="items" className='font-semibold text-xs mr-3 text-stone-700'>ITEMS PER PAGE</label>
-                        <select id='items' className=' text-gray-600 bg-transparent font-medium text-sm border-[1px] border-gray-400 rounded-none px-5 py-3' onChange={(e) => { setLimit(e.target.value) }} value={limit}>
+                    <div className='w-fit'>
+                        <label htmlFor="items" className='font-semibold md:w-auto w-fit text-xs mr-3 dark:text-white text-stone-700'>ITEMS PER PAGE</label>
+                        <select id='items' className=' text-gray-600 dark:text-gray-400 bg-transparent font-medium text-sm border-[1px] border-gray-400 rounded-none px-5 py-3' onChange={(e) => { setLimit(e.target.value) }} value={limit}>
                             <option value="6">6</option>
                             <option value="9">9</option>
                             <option value="12">12</option>
@@ -62,14 +62,14 @@ function Shop() {
                         </select>
                     </div>
                 </div>
-                <div className='w-[95%] h-auto flex flex-wrap items-center justify-center gap-4'>
+                <div className='w-[95%] h-auto md:flex grid grid-cols-2 flex-wrap flex-row items-center justify-center gap-4'>
                     {products.map((res, index) => <Card res={res} key={index} productLoader={productLoader} />)}
                 </div>
                 <div className='w-[85%] flex items-center justify-between'>
-                    <Button className={`w-[10%] py-3 bg-transparent ${page === 1 && 'invisible'} border-[1px] border-black text-black font-extrabold text-lg shadow-none hover:bg-black hover:text-white transition-colors duration-300 rounded-none`} onClick={() => { setPages(page - 1); window.scrollTo(0, 0); }} disabled={page === 1}>
+                    <Button className={`md:w-[10%] w-auto py-3 bg-transparent ${page === 1 && 'invisible'} border-[1px] border-black text-black font-extrabold text-lg shadow-none hover:bg-black hover:text-white transition-colors duration-300 rounded-none`} onClick={() => { setPages(page - 1); window.scrollTo(0, 0); }} disabled={page === 1}>
                         Back
                     </Button>
-                    <Button className={`w-[10%] py-3 bg-transparent border-[1px] ${page === maxPages && 'invisible'} border-black text-black font-extrabold text-lg shadow-none hover:bg-black hover:text-white transition-colors duration-300 rounded-none`} onClick={() => { setPages(page + 1); window.scrollTo(0, 0); }} disabled={page === maxPages}>
+                    <Button className={`md:w-[10%] w-auto py-3 bg-transparent border-[1px] ${page === maxPages && 'invisible'} border-black text-black font-extrabold text-lg shadow-none hover:bg-black hover:text-white transition-colors duration-300 rounded-none`} onClick={() => { setPages(page + 1); window.scrollTo(0, 0); }} disabled={page === maxPages}>
                         Next
                     </Button>
                 </div>

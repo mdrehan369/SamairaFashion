@@ -2,7 +2,6 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { ApiError } from "../utils/ApiError.js"
 import { asyncHandler } from "../utils/asynchandler.js"
 import { orderModel } from "../models/order.model.js"
-import { productModel } from "../models/product.model.js"
 import { userModel } from "../models/user.model.js"
 
 const addOrderController = asyncHandler(async (req, res) => {
@@ -74,18 +73,6 @@ const getAllOrdersController = asyncHandler(async (req, res) => {
 
 });
 
-const updateOrderController = asyncHandler(async (req, res) => {
-
-    const { orderId } = req.params;
-
-    await orderModel.findByIdAndUpdate(orderId, { paymentPending: true });
-
-    return res
-        .status(200)
-        .json(new ApiResponse(200, {}, "Order Updated Successfully"));
-
-})
-
 const cancelOrderController = asyncHandler(async (req, res) => {
 
     const { orderId } = req.params;
@@ -111,7 +98,6 @@ export {
     cancelOrderController,
     getAllOrdersController,
     getOrderController,
-    updateOrderController
 }
 
 
