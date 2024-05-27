@@ -8,6 +8,7 @@ import Users from "./admin/Users";
 import Orders from "./admin/Orders";
 import Products from "./admin/Products";
 import AddProduct from "./admin/AddProduct";
+import Overview from "./admin/Overview";
 import ProductPage from "./ProductPage";
 import UserProductPage from "./UserProductPage";
 import AboutUs from "./policies/AboutUs";
@@ -43,5 +44,6 @@ export {
     CheckoutPage,
     Success,
     OrderDetails,
-    SearchPage
+    SearchPage,
+    Overview
 }

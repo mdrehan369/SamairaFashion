@@ -55,6 +55,11 @@ const orderSchema = new mongoose.Schema({
         default: false
     },
 
+    paymentMethod: {
+        type: String,
+        default: "Online"
+    },
+
     shippingDetails: {
         firstName: String,
         lastName: String,

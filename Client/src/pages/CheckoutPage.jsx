@@ -11,6 +11,7 @@ import visa2 from "../assets/visa2.svg";
 import { loadStripe } from '@stripe/stripe-js';
 import sha256 from 'sha256';
 import { Buffer } from "buffer"
+import { useNavigate } from 'react-router-dom';
 
 function CheckoutPage() {
 
@@ -18,7 +19,9 @@ function CheckoutPage() {
     const [cart, setCart] = useState([]);
     const [loader, setLoader] = useState(true);
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
-    let [total, setTotal] = useState();
+    const [total, setTotal] = useState();
+    const [isCOD, setIsCOD] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         ; (async () => {
@@ -46,24 +49,6 @@ function CheckoutPage() {
             }
         })();
     }, []);
-
-    const submit = async (data) => {
-        console.log(data);
-    }
-
-    function loadScript(src) {
-        return new Promise((resolve) => {
-            const script = document.createElement('script')
-            script.src = src
-            script.onload = () => {
-                resolve(true)
-            }
-            script.onerror = () => {
-                resolve(false)
-            }
-            document.body.appendChild(script)
-        })
-    }
 
     const getPlaces = async (input) => {
         try {
@@ -125,6 +110,13 @@ function CheckoutPage() {
         if (!validateData(shippingDetails)) return;
 
         const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
+
+        if(isCOD) {
+
+            await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } });
+
+            return navigate('/success?cod=cod')
+        }
 
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
@@ -253,8 +245,8 @@ function CheckoutPage() {
                             <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>
                         </div>
                         <div className='md:w-[80%] w-full'>
-                            <div className='flex items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-y-0'>
-                                <div className='size-4 border-4 border-black dark:border-white rounded-full'></div>
+                            <div onClick={() => setIsCOD(false)} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-y-0'>
+                                <div className={`${isCOD ? 'border-2' : 'border-4'} size-4 border-black dark:border-white rounded-full`}></div>
                                 <div>Pay by card with Stripe</div>
                                 <div className='flex items-center justify-end flex-grow'>
                                     <img src={visa} alt="visa" />
@@ -268,6 +260,10 @@ function CheckoutPage() {
                                     After clicking “Pay now”, you will be redirected to Pay by card with Stripe to complete your purchase securely.
                                 </div>
                             </div>
+                        </div>
+                        <div onClick={() => setIsCOD(true)} className='bg-gray-100 cursor-pointer w-[80%] p-3 flex items-center gap-2'>
+                        <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                            Cash On Delivery (COD)
                         </div>
                         <Button type='submit' className='md:w-[80%] w-full'>Pay Now</Button>
                     </form>

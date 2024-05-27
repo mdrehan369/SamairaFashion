@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asynchandler.js"
 import { orderModel } from "../models/order.model.js"
 import { userModel } from "../models/user.model.js"
 import mongoose from "mongoose"
+import { cartItemModel } from "../models/cartItem.model.js"
 
 const addOrderController = asyncHandler(async (req, res) => {
 
@@ -11,12 +12,23 @@ const addOrderController = asyncHandler(async (req, res) => {
 
     if ([cart, shippingDetails, sessionId].some((value) => value === '')) throw new ApiError(400, "Some Fields Are Missing");
 
+    const cartItems = cart.map((item) => (
+        {
+            product: item.product[0]._id,
+            quantity: item.quantity,
+            color: item.color,
+            size: item.size
+        }
+    ));
+    
     const newOrder = await orderModel.create({
-        cart,
+        cart: cartItems,
         user: req.user._id,
-        sessionId,
-        shippingDetails
+        shippingDetails,
+        paymentMethod: 'COD'
     });
+
+    await cartItemModel.deleteMany({ user: req.user._id })
 
     return res
         .status(200)
@@ -59,14 +71,49 @@ const getAllOrdersController = asyncHandler(async (req, res) => {
 
     let { userId } = req.query;
 
+    let orders = null;
+
     if (!userId) {
-        userId = req.user._id;
+        orders = await orderModel.aggregate([
+            {
+                '$lookup': {
+                    'from': 'products',
+                    'localField': 'cart.product',
+                    'foreignField': '_id',
+                    'as': 'products',
+                    'pipeline': [
+                        {
+                            '$project': {
+                                'description': 0,
+                                'itemsSold': 0,
+                                'history': 0,
+                                'createdAt': 0,
+                                'updatedAt': 0
+                            }
+                        }
+                    ]
+                }
+            }, {
+                '$project': {
+                    'sessionId': 0,
+                    'phonepeMerchantTransactionId': 0
+                }
+            }, {
+                '$sort': {
+                    'createdAt': -1
+                }
+            }
+        ])
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, orders, "Orders Fetched Successfully"));
     } else {
         const user = await userModel.findById(userId);
         if (!user) throw new ApiError(401, "No User Found");
     }
 
-    const orders = await orderModel.aggregate([
+    orders = await orderModel.aggregate([
         {
             '$match': {
                 'user': new mongoose.Types.ObjectId(userId)
@@ -126,12 +173,69 @@ const cancelOrderController = asyncHandler(async (req, res) => {
 
 });
 
+const getCountsController = asyncHandler(async (req, res) => {
+
+    const counts = await orderModel.aggregate([
+        {
+            '$project': {
+                '_id': 0,
+                'pending': {
+                    '$cond': [
+                        {
+                            '$eq': [
+                                '$isPending', true
+                            ]
+                        }, 1, 0
+                    ]
+                },
+                'cancelled': {
+                    '$cond': [
+                        {
+                            '$eq': [
+                                '$isCancelled', true
+                            ]
+                        }, 1, 0
+                    ]
+                },
+                'delivered': {
+                    '$cond': [
+                        {
+                            '$eq': [
+                                '$isPending', false
+                            ]
+                        }, 1, 0
+                    ]
+                }
+            }
+        }, {
+            '$group': {
+                '_id': null,
+                'pendingCount': {
+                    '$sum': '$pending'
+                },
+                'cancelledCount': {
+                    '$sum': '$cancelled'
+                },
+                'deliveredCount': {
+                    '$sum': '$delivered'
+                }
+            }
+        }
+    ])
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { counts }, "Fetched Successfully"));
+
+})
+
 export {
     addOrderController,
     markDeliveredController,
     cancelOrderController,
     getAllOrdersController,
     getOrderController,
+    getCountsController
 }
 
 
