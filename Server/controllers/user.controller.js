@@ -6,7 +6,7 @@ import { cartItemModel } from "../models/cartItem.model.js"
 import mongoose from "mongoose";
 
 const options = {
-    httpOnly: true,
+    httpOnly: false,
     secure: false
 }
 
