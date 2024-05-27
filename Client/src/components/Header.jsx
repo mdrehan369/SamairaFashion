@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import Button from './Button';
 import darkLogo from "../assets/darkLogo.png"
 import { toggleTheme as toggleReduxTheme } from '../store/themeslice.js';
+import { logout } from "../store/authslice.js"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBox, faShoppingCart, faSignOut } from '@fortawesome/free-solid-svg-icons';
+import axios from "axios";
 
 function Header() {
 
@@ -27,10 +29,22 @@ function Header() {
         dispatch(toggleReduxTheme());
     }
 
+    const handleLogout = async () => {
+        try {
+            await axios.get('/api/v1/users/logout');
+            dispatch(logout());
+            window.location.href = '/';
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     const activeClasses = ({ isActive }) => `py-2 px-4 rounded-full hover:bg-black relative hover:text-white hover:dark:bg-[#00224d] transition ${isActive && 'bg-black dark:bg-[#00224d] text-white shadow-lg px-4 py-2'}`
+// bg-black dark:bg-[#00224d] text-white shadow-lg px-4 py-2
+
 
     return (
-        <nav className='w-full md:h-[10vh] h-[8vh] sticky top-0 left-0 z-30 bg-transparent flex items-center md:justify-center justify-center md:gap-0 gap-4 backdrop-blur-xl dark:bg-primary-color dark:text-white'>
+        <nav className='w-full md:h-[10vh] h-[8vh] animate-animate-appear sticky top-0 left-0 z-20 bg-transparent flex items-center md:justify-center justify-center md:gap-0 gap-4 backdrop-blur-xl dark:bg-primary-color dark:text-white'>
             <div className='md:hidden' onClick={() => setSidebar((prev) => !prev)}><FontAwesomeIcon icon={faBars} className='size-6 absolute top-6 left-4' /></div>
             <img src={theme == 'dark' ? darkLogo : logo} className='md:w-[20%] w-[60%] h-auto md:ml-10' />
             <NavLink to={status ? `/cart` : '/signin'} className='md:hidden'><FontAwesomeIcon icon={faShoppingCart} className='size-6 absolute top-6 right-4' /></NavLink>
@@ -52,7 +66,11 @@ function Header() {
                                         <NavLink to={'/signin'} className='w-full py-4 px-6 text-sm'>Sign In</NavLink>
                                         <NavLink to={'/signup'} className='w-full py-4 px-6 text-sm'>Sign Up</NavLink>
                                     </>
-                                    : <NavLink className='w-full py-4 px-6 text-sm'>Log Out</NavLink>
+                                    :
+                                    <>
+                                        <NavLink to='/orders' className='w-full py-4 px-6 text-sm'>My Orders</NavLink>
+                                        <NavLink to='#' onClick={handleLogout} className='w-full py-4 px-6 text-sm'>Log Out</NavLink>
+                                    </>
                             }
                             <NavLink to={'#'} onClick={toggleTheme} className='w-full py-4 px-6 min-w-fit text-sm'>Toggle Theme</NavLink>
                         </>
@@ -82,15 +100,21 @@ function Header() {
                     <NavLink to='/policies/contact' className={activeClasses}>Contact Us</NavLink>
                 </ul>
             </div>
+
+            {/* // className={({ isActive }) => isActive && `bg-black text-white pt-3 pb-2 px-4 rounded-full` */}
             <div className='w-[30%] h-full hidden md:block'>
                 <ul className='w-full h-full flex items-center justify-center gap-8 font-semibold text-xl'>
-                    <li><i className="fi fi-rr-search"></i></li>
-                    {status && <NavLink to='/cart' className={({ isActive }) => isActive && `bg-black text-white py-2 px-3 rounded-full`}><i className="fi fi-rr-shopping-cart"></i></NavLink>}
+                    <NavLink to='/search'><i className="fi fi-rr-search"></i></NavLink>
+                    {status && <NavLink to='/cart'><i className="fi fi-rr-shopping-cart"></i></NavLink>}
                     {
-                        !status &&
+                        !status ?
                         <>
                             <NavLink to='/signin'><Button className='transition py-2 px-3'>Sign In</Button></NavLink>
                             <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink>
+                        </>
+                        : <>
+                            <NavLink to='/orders'><FontAwesomeIcon icon={faBox} className='bg-transparent'/></NavLink>
+                            <NavLink onClick={handleLogout} to='#'><FontAwesomeIcon icon={faSignOut} className=''/></NavLink>
                         </>
                     }
                     <li onClick={toggleTheme}><i className={`fi fi-rr-${theme === 'dark' ? 'sun' : 'moon-stars'}`}></i></li>

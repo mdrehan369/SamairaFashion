@@ -104,7 +104,7 @@ const getSearchProductsController = asyncHandler(async (req, res) => {
 
     const { search } = req.query;
 
-    if (!search) throw new ApiError(400, "No Search Query");
+    // if (!search) throw new ApiError(400, "No Search Query");
 
     const products = await productModel.aggregate([
         {
@@ -208,13 +208,14 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .cookie("sessionId", session.id, { httpOnly: false, secure: false })
-        .cookie("shippingDetails", JSON.stringify(shippingDetails))
-        .cookie("cart", JSON.stringify(cart))
+        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: false, secure: false })
+        .cookie("cart", JSON.stringify(cart), { httpOnly: false, secure: false })
         .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
 const retriveCheckoutSessionController = asyncHandler(async (req, res) => {
 
+    console.log(req.cookies);
     const sessionId = req.cookies.sessionId;
     const shippingDetails = JSON.parse(req.cookies.shippingDetails);
     const cart = JSON.parse(req.cookies.cart);
@@ -237,7 +238,6 @@ const retriveCheckoutSessionController = asyncHandler(async (req, res) => {
     await orderModel.create({
         cart: cartItems,
         user: req.user._id,
-        sessionId: "none",
         shippingDetails,
         sessionId
     });

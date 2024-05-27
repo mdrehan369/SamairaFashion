@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from "axios"
 import { useForm } from "react-hook-form"
-import { Button, Card, Container, Input, Spinner, TextArea } from "../components/index.js"
+import { Button, Card, Container, Input, LightSpinner, Spinner, TextArea } from "../components/index.js"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faChevronLeft, faChevronRight, faCheck } from '@fortawesome/free-solid-svg-icons';
 import sizeChart from "../assets/sizeChart.webp"
@@ -149,7 +149,7 @@ function RelatedProducts({ category }) {
                 setLoader(false);
             }
         })()
-    }, [])
+    }, []);
 
     return (
         <>
@@ -183,10 +183,13 @@ function UserProductPage({ key }) {
     const [loader, setLoader] = useState(true);
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
+    const [cartLoader, setCartLoader] = useState(false);
     const [page, setPage] = useState("Description");
+    const [message, setMessage] = useState("Item Added To Cart!");
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
 
     useEffect(() => {
+
         ; (async () => {
             try {
                 setLoader(true)
@@ -196,6 +199,7 @@ function UserProductPage({ key }) {
                 console.log(err)
             } finally {
                 setLoader(false);
+                window.scrollTo(0, 0);
             }
 
         })();
@@ -203,6 +207,7 @@ function UserProductPage({ key }) {
 
     const handleAddToCart = async (e) => {
         try {
+            setCartLoader(true)
             const data = {
                 productId: productId,
                 quantity: quantity,
@@ -210,31 +215,43 @@ function UserProductPage({ key }) {
                 color: 'default'
             }
             await axios.post('/api/v1/users/cart', data);
+            document.getElementById('info').classList.replace('opacity-0', 'opacity-100');
+            document.getElementById('info').classList.add('translate-y-3');
+            setTimeout(() => {
+                document.getElementById('info').classList.replace('opacity-100', 'opacity-0');
+                document.getElementById('info').classList.remove('translate-y-3');
+            }, 4000);
+
         } catch (err) {
             console.log(err)
+        } finally {
+            setCartLoader(false);
         }
     }
 
     return (
-        <Container className='flex flex-col justify-start items-center gap-10 min-h-[100vh] relative'>
-            <div className='absolute top-20 font-bold bg-green-400 invisible rounded-md py-3 px-6'>
-                <FontAwesomeIcon icon={faCheck} className='mr-2' />Item Added To Cart
-            </div>
-            {!loader ?
-                <>
-                    <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly mt-10 dark:text-white'>
+        !loader ?
+            <Container className='flex flex-col justify-start items-center gap-10 relative'>
+                <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
+                    <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
                         <div className='md:w-[40%] w-full p-4 h-full'>
                             <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                         </div>
-                        <form className='md:w-[40%] p-4 w-full h-[100%] flex flex-col items-start justify-start gap-6'>
+
+                        <div id='info' className='absolute top-0 z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
+                            <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
+                        </div>
+
+                        <form className='md:w-[40%] p-4 w-full relative h-[100%] flex flex-col items-start justify-start gap-6'>
                             <h1 className='text-2xl font-bold text-stone-800 tracking-wider dark:text-white'>{product.title}</h1>
                             <h2 className='text-lg text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2>
+
                             <div>
                                 <h1 className='text-md relative font-bold dark:text-gray-400 text-gray-500 w-fit'>
                                     <div className=' absolute bg-gray-500 top-[50%] left-0 h-[2px] w-full'></div>
-                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />:'Dhs.'}{isIndia ? product.comparePrice : Math.floor(product.comparePrice/dirham_to_rupees)}</h1>
+                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' /> : 'Dhs.'}{isIndia ? product.comparePrice : Math.floor(product.comparePrice / dirham_to_rupees)}</h1>
                                 <h1 className='text-2xl font-bold dark:text-white text-stone-800 mt-2'>
-                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' />: 'Dhs.' }{isIndia ? product.price : Math.floor(product.price/dirham_to_rupees)}
+                                    {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' /> : 'Dhs.'}{isIndia ? product.price : Math.floor(product.price / dirham_to_rupees)}
                                     <span className="bg-pink-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{((product.comparePrice - product.price) / product.comparePrice).toFixed(2) * 100}%</span>
                                 </h1>
                             </div>
@@ -253,10 +270,10 @@ function UserProductPage({ key }) {
                                     <div className='text-stone-600 dark:text-white'>{quantity}</div>
                                     <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
                                 </div>
-                                <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price/dirham_to_rupees) * quantity}</span></span>
+                                <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
-                                <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)}>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></Button>
+                                <Button type='button' className='w-[70%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)}>{cartLoader ? <LightSpinner /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
                                 <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
                             </div>
                         </form>
@@ -274,9 +291,9 @@ function UserProductPage({ key }) {
                         </div>
                     </div>
                     <RelatedProducts category={product.category} />
-                </>
-                : <Spinner className='h-[90vh] flex w-full items-center justify-center' />}
-        </Container>
+                </div>
+            </Container>
+            : <Spinner className='h-[100vh]' />
     )
 }
 

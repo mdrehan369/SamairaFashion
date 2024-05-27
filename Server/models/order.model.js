@@ -9,6 +9,15 @@ const orderSchema = new mongoose.Schema({
         index: true
     },
 
+    date: {
+        type: String,
+        default: new Date().toISOString()
+    },
+
+    deliveryDate: {
+        type: String,
+    },
+
     cart: [
         {
             product: {
@@ -62,8 +71,14 @@ const orderSchema = new mongoose.Schema({
     sessionId: {
         type: String,
         default: ""
+    },
+
+    phonepeMerchantTransactionId: {
+        type: String,
+        default: ""
     }
-});
+    
+}, {timestamps: true});
 
 export const orderModel = new mongoose.model("Order", orderSchema);
 

@@ -3,7 +3,7 @@ import React from 'react';
 const AboutUs = () => {
     return (
         <div className="text-sm font-[400]">
-            <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 animate-animate-appear">
                 <div className="bg-white dark:bg-primary-color dark:text-white rounded-lg p-8">
                     <h2 className="text-2xl font-bold uppercase mb-6">ABOUT US</h2>
                     <p className="mb-4">

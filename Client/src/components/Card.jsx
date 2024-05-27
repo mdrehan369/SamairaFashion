@@ -10,7 +10,6 @@ function Card({ res, productLoader }) {
 
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
 
-
     return (
         <NavLink to={`/product/${res?._id}`} className='flex flex-col items-center justify-center rounded-sm cursor-pointer md:w-[22vw] w-full md:h-[70vh] h-[35vh] hover:bg-gray-200 hover:border-gray-400 hover:dark:bg-secondary-color border-transparent border-[0px] dark:border-0 transition-all md:p-4 p-1 gap-0 overflow-hidden hover:shadow-lg relative'
 

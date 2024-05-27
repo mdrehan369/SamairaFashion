@@ -104,7 +104,7 @@ const addToCartController = asyncHandler(async(req, res) => {
             user: req.user._id,
             product: productId,
             quantity,
-            size: size || 0,
+            size: size,
             color: color || 'default'
         });
     

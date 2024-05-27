@@ -32,6 +32,7 @@ function Shop() {
             } finally {
                 setLoader(false);
                 setProductLoader(false);
+                window.scrollTo(0, 0);
             }
         })();
     }, [limit, page, sort, search]);

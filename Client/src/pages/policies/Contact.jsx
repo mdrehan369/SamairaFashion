@@ -13,7 +13,7 @@ function Contact() {
     }
 
     return (
-        <Container className='text-sm h-full flex md:flex-row flex-col-reverse md:mt-0 mt-10 items-start justify-start'>
+        <Container className='text-sm h-full flex md:flex-row flex-col-reverse md:mt-0 mt-10 items-start justify-start animate-animate-appear'>
             <div className='flex items-center justify-center md:w-[60%] w-full h-auto'>
                 <form onSubmit={handleSubmit(submit)} className='flex flex-col mt-20 items-start justify-around h-[90vh] md:w-[70%] w-[90%]' >
                     <h1 className='text-xl font-extrabold tracking-wide'>CONTACT</h1>

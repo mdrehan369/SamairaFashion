@@ -16,10 +16,24 @@ function Products() {
     const [search, setSearch] = useState("");
     const [category, setCatgory] = useState('All');
 
+    // useEffect(() => {
+    //     ; (async () => {
+    //         try {
+    //             const res = await axios.get("/api/v1/products");
+    //             setResponse(res.data.data);
+    //         } catch (err) {
+    //             console.log(err)
+    //         } finally {
+    //             setLoader(false);
+    //         }
+    //     })()
+    // }, []);
+
     useEffect(() => {
+        setLoader(true);
         ; (async () => {
             try {
-                const res = await axios.get("/api/v1/products");
+                const res = await axios.get(`/api/v1/products/search?search=${search}`);
                 setResponse(res.data.data);
             } catch (err) {
                 console.log(err)
@@ -27,22 +41,6 @@ function Products() {
                 setLoader(false);
             }
         })()
-    }, []);
-
-    useEffect(() => {
-        if (search) {
-            setLoader(true);
-            ; (async () => {
-                try {
-                    const res = await axios.get(`/api/v1/products/search?search=${search}`);
-                    setResponse(res.data.data);
-                } catch (err) {
-                    console.log(err)
-                } finally {
-                    setLoader(false);
-                }
-            })()
-        }
     }, [search])
 
     return (

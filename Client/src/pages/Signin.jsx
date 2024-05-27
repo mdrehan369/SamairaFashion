@@ -31,7 +31,7 @@ function Signin() {
     <Container className='flex flex-col items-center justify-center gap-8 relative'>
         <div className={`p-2 bg-red-400 rounded-lg ${error?'visible':'invisible'} absolute left-[50%] translate-x-[-50%] top-10`}>{error}</div>
         <img src={localStorage.getItem("theme") === 'dark' ? darkLogo : logo} className='md:w-[20vw] w-[80vw]'/>
-        <form onSubmit={handleSubmit(submit)} className='flex flex-col items-center justify-center gap-4 md:w-auto w-[80%]'>
+        <form onSubmit={handleSubmit(submit)} className='flex flex-col items-center justify-center gap-4 md:w-[25%] w-[80%]'>
             <Input type="text" name='email' register={register} placeholder='Email' required className='w-full' />
             <Input type={showPass?"text":"password"} name='password' register={register} placeholder='Password' className='w-full' required />
             <div className='ml-3 self-start space-x-2'>

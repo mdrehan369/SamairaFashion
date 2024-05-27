@@ -18,6 +18,8 @@ import Refund from "./policies/Refund";
 import Terms from "./policies/Terms";
 import CheckoutPage from "./CheckoutPage";
 import Success from "./Success";
+import OrderDetails from "./orders";
+import SearchPage from "./SearchPage";
 
 export {
     Home,
@@ -39,5 +41,7 @@ export {
     Refund,
     Shipping,
     CheckoutPage,
-    Success
+    Success,
+    OrderDetails,
+    SearchPage
 }

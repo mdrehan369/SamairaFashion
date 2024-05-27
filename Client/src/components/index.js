@@ -8,6 +8,7 @@ import Input from "./Input"
 import TextArea from "./TextArea"
 import SearchBar from "./SearchBar";
 import Card from "./Card";
+import LightSpinner from "./LightSpinner"
 
 export {
     Carousel,
@@ -19,5 +20,6 @@ export {
     Input,
     TextArea,
     SearchBar,
-    Card
+    Card,
+    LightSpinner
 }

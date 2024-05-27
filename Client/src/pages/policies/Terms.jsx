@@ -3,7 +3,7 @@ import { Container } from '../../components'
 
 function Terms() {
   return (
-    <Container className='w-[70%] mx-auto text-sm'>
+    <Container className='w-[70%] mx-auto text-sm animate-animate-appear'>
       <div className='font-bold text-xl mt-6 mb-3'>OVERVIEW</div>
 This website is operated by samaira.shop. Throughout the site, the terms “we”, “us” and “our” refer to My Store. My Store offers this website, including all information, tools and Services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here.
 

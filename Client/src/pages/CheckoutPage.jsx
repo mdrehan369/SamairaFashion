@@ -9,6 +9,8 @@ import visa from "../assets/visa.svg";
 import mastercard from "../assets/mastercard.svg";
 import visa2 from "../assets/visa2.svg";
 import { loadStripe } from '@stripe/stripe-js';
+import sha256 from 'sha256';
+import { Buffer } from "buffer"
 
 function CheckoutPage() {
 
@@ -49,13 +51,18 @@ function CheckoutPage() {
         console.log(data);
     }
 
-
-    const data = {
-        name: 'MD Rehan',
-        amount: 1,
-        number: '6290197361',
-        MUID: "MUID" + Date.now(),
-        transactionId: 'T' + Date.now(),
+    function loadScript(src) {
+        return new Promise((resolve) => {
+            const script = document.createElement('script')
+            script.src = src
+            script.onload = () => {
+                resolve(true)
+            }
+            script.onerror = () => {
+                resolve(false)
+            }
+            document.body.appendChild(script)
+        })
     }
 
     const getPlaces = async (input) => {
@@ -73,26 +80,24 @@ function CheckoutPage() {
         }
     }
 
-    const handlePayment = async (e) => {
+    const handlePhonepePayment = async (shippingDetails) => {
 
-        let res = await axios.post('/api/order', { ...data }).then(res => {
+        if (!validateData(shippingDetails)) return;
 
-            console.log(res)
+        let res = await axios.get(`/api/v1/payments/phonepe/pay?amount=${total}`).then(res => {
             if (res.data && res.data.data.instrumentResponse.redirectInfo.url) {
                 window.location.href = res.data.data.instrumentResponse.redirectInfo.url;
             }
+            window.location.href = res.data;
         })
             .catch(error => {
                 console.error(error);
             });
-
     }
 
-    const handleCheckout = async (shippingDetails) => {
+    const validateData = (shippingDetails) => {
 
-        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
         let isError = false;
-
         Object.keys(shippingDetails).map((key) => {
             if (!shippingDetails[key] || shippingDetails[key] === '') {
                 setError(key, { type: "required", message: "Please Fill Out This Field" });
@@ -100,21 +105,31 @@ function CheckoutPage() {
             }
         })
 
-        if(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email) === false) setError("email", { type: "pattern", message: "Please Enter The Correct Email Address" }, { shouldFocus: true }), isError = true;
+        if (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(shippingDetails.email) === false) setError("email", { type: "pattern", message: "Please Enter The Correct Email Address" }, { shouldFocus: true }), isError = true;
 
-        if(isNaN(number)) setError("number", { type: 'pattern', message: "Please Enter A Valid Number" }, {shouldFocus: true}), isError = true; 
+        if (isNaN(shippingDetails.number)) setError("number", { type: 'pattern', message: "Please Enter A Valid Number" }, { shouldFocus: true }), isError = true;
 
-        if(isNaN(pincode)) setError("pincode", { type: 'pattern', message: "Please Enter A Valid Number" }, {shouldFocus: true}), isError = true; 
-        
+        if (isNaN(shippingDetails.pincode)) setError("pincode", { type: 'pattern', message: "Please Enter A Valid Number" }, { shouldFocus: true }), isError = true;
+
         if (isError) {
             window.scrollTo(0, 0);
-            return
-        };
+            return false
+        } else {
+            return true;
+        }
+
+    }
+
+    const handleCheckout = async (shippingDetails) => {
+
+        if (!validateData(shippingDetails)) return;
+
+        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
 
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
         const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } });
-        
+
         const results = await stripe.redirectToCheckout({
             sessionId: session.data.data.id
         });
@@ -260,30 +275,30 @@ function CheckoutPage() {
                         <div className='flex flex-col items-center justify-start w-full p-10 gap-6 overflow-y-scroll max-h-[80vh]'>
                             {cart.map((item, index) => <div key={index} className='flex items-start justify-start w-full h-[15vh]'>
                                 <div className='relative w-[20%] h-full p-3'>
-                                    <div className='absolute rounded-full bg-gray-200 top-[-4px] size-6 text-center right-[-4px]'>{item.quantity}</div>
+                                    <div className='absolute rounded-full bg-gray-200 dark:text-black top-[-4px] size-6 text-center right-[-4px]'>{item.quantity}</div>
                                     <img src={item.product[0].image.url} className='w-full h-[70%] object-cover' alt="Product" />
                                 </div>
                                 <div className='w-[60%] h-full px-4 py-3 flex flex-col items-start justify-between'>
-                                    <div className='font-bold text-stone-800 line-clamp-2'>{item.product[0].title}</div>
-                                    <div className='text-sm font-bold text-stone-400'>{item.color || 'Black'}/{item.size || 52}</div>
+                                    <div className='font-bold text-sm text-stone-800 line-clamp-2 dark:text-white'>{item.product[0].title}</div>
+                                    <div className='text-sm font-bold text-stone-400 dark:text-stone-300'>{item.color || 'Black'}/{item.size || 52}</div>
                                 </div>
                                 <div className='flex items-center justify-between mt-4 w-[20%] flex-col'>
-                                    <h2 className='px-0 text-sm text-start font-bold relative text-stone-600'>
-                                        <div className='w-full h-[2px] bg-stone-600 absolute top-[50%] left-0'></div>
+                                    <h2 className='px-0 text-sm text-start font-bold relative text-stone-600 dark:text-stone-300'>
+                                        <div className='w-full h-[2px] bg-stone-600 dark:bg-stone-300 absolute top-[50%] left-0'></div>
                                         {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? item.product[0].comparePrice * item.quantity : Math.floor(item.product[0].comparePrice / dirham_to_rupees) * item.quantity}
                                     </h2>
-                                    <h2 className='px-0 text-lg text-end font-bold text-stone-900'>
+                                    <h2 className='px-0 text-lg text-end font-bold text-stone-900 dark:text-white'>
                                         {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? (item.product[0].price * item.quantity).toString()[0] + "," + (item.product[0].price * item.quantity).toString().slice(1) : Math.floor(item.product[0].price / dirham_to_rupees) * item.quantity}
                                     </h2>
                                 </div>
                             </div>)}
                             <div className='flex items-center justify-between w-full'>
-                                <input type="text" className='w-[80%] h-[7vh] p-3 rounded-sm border-[1px] border-gray-300 focus:border-black focus:ring-0 outline-none' placeholder='Discount Code' />
-                                <button className='p-3 border-[1px] border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-sm font-medium'>Apply</button>
+                                <input type="text" className='w-[80%] h-[7vh] p-3 rounded-sm border-[1px] border-gray-300 focus:border-black focus:ring-0 outline-none dark:bg-secondary-color dark:text-white' placeholder='Discount Code' />
+                                <button className='p-3 border-[1px] border-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-blue-950 dark:text-white dark:border-0 text-gray-500 rounded-sm font-medium'>Apply</button>
                             </div>
                             <div className='w-full space-y-2'>
-                                <div className='flex items-center justify-between text-md font-medium text-stone-700'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
-                                <div className='flex items-center justify-between text-md font-medium text-stone-700'><span>Shipping:</span><span>Free</span></div>
+                                <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
+                                <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>Free</span></div>
                                 <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
                             </div>
                         </div>

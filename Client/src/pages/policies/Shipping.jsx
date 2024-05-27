@@ -3,7 +3,7 @@ import React from 'react';
 const Shipping = () => {
     return (
         <div className="">
-            <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center text-sm font-bold">
+            <div className="w-full animate-animate-appear mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center text-sm font-bold">
                 <div className="bg-white dark:bg-primary-color dark:text-white w-fit p-6">
                     <h2 className="text-5xl font-extrabold text-center mb-4">Shipping Policy</h2>
                     <ul className="w-fit">

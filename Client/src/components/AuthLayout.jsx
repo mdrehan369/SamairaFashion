@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
-import { useAxios } from '../hooks/useAxios.js';
 import Spinner from './Spinner.jsx';
 import { login, setLocation } from "../store/authslice.js"
 import { setTheme } from "../store/themeslice.js"
@@ -46,20 +45,24 @@ function AuthLayout({ children }) {
         })();
     }, []);
 
-    const [loading, error, response] = useAxios('/api/v1/users/user', 'GET', {});
-
     useEffect(() => {
-        if (!error && !loading) {
-            dispatch(login(response.data));
-        }
-    }, [loading]);
+        ;(async () => {
+            try {
+                const response = await axios.get("/api/v1/users/user");
+                dispatch(login(response.data.data))
+            } catch (err) {
+                console.log(err);
+            }
+
+        })();
+    }, [])
 
     return (
-        !loading && !loader ?
+            !loader ?
             <>
                 {children}
             </> :
-            <Spinner />
+            <Spinner className='w-[100vw] h-[100vh]' />
     )
 }
 

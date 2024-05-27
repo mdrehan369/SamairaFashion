@@ -3,7 +3,7 @@ import { Container } from '../../components';
 
 const Privacy = () => {
     return (
-        <Container className="p-4 w-[70%] mx-auto prose text-sm font-[400]">
+        <Container className="p-4 w-[70%] mx-auto prose text-sm font-[400] animate-animate-appear">
             <h1 className="text-5xl font-bold mb-10 w-full text-center">Privacy Policy</h1>
             
             <p>

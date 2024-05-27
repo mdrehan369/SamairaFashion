@@ -7,8 +7,33 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        appear: {
+          "from": {
+            opacity: 0,
+            transform: "translateY(10px)"
+          },
+          "to": {
+            opacity: 1,
+            transform: "translateY(0px)"
+          }
+        },
+
+        loader: {
+          "from": {
+            opacity: 0.3,
+            transform : "translateY(10px)"
+          },
+          "to": {
+            opacity: 1,
+            transform : "translateY(0px)"
+          }
+        }
+      },
       animation: {
-        'bounce-once': 'bounce 1s ease-in-out infinite 2s'
+        'animate-appear': 'appear 0.5s ease-in-out',
+        'bounce-once': 'bounce 1s ease-in-out infinite 2s',
+        'loader-animation': 'loader 1s linear infinite alternate'
       },
       colors: {
         "primary-color": "var(--primary-color)",

@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { asyncHandler } from "../utils/asynchandler.js"
 import { orderModel } from "../models/order.model.js"
 import { userModel } from "../models/user.model.js"
+import mongoose from "mongoose"
 
 const addOrderController = asyncHandler(async (req, res) => {
 
@@ -65,7 +66,40 @@ const getAllOrdersController = asyncHandler(async (req, res) => {
         if (!user) throw new ApiError(401, "No User Found");
     }
 
-    const orders = await orderModel.find({ user: userId });
+    const orders = await orderModel.aggregate([
+        {
+            '$match': {
+                'user': new mongoose.Types.ObjectId(userId)
+            }
+        }, {
+            '$lookup': {
+                'from': 'products',
+                'localField': 'cart.product',
+                'foreignField': '_id',
+                'as': 'products',
+                'pipeline': [
+                    {
+                        '$project': {
+                            'description': 0,
+                            'itemsSold': 0,
+                            'history': 0,
+                            'createdAt': 0,
+                            'updatedAt': 0
+                        }
+                    }
+                ]
+            }
+        }, {
+            '$project': {
+                'sessionId': 0,
+                'phonepeMerchantTransactionId': 0
+            }
+        }, {
+            '$sort': {
+                'createdAt': -1
+            }
+        }
+    ]);
 
     return res
         .status(200)

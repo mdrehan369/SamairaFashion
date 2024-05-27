@@ -54,7 +54,7 @@ function Cart() {
             <Container className='flex md:flex-row flex-col items-center justify-center h-auto md:gap-10 gap-4'>
                 {total ?
                     <>
-                        <div className='flex flex-col items-center justify-start md:h-[80vh] h-auto md:gap-10 gap-4 overflow-y-scroll md:w-auto w-full'>
+                        <div className='flex flex-col items-center justify-start md:h-[80vh] h-auto md:gap-10 gap-4 overflow-y-scroll md:w-auto w-full animate-animate-appear'>
                             <h1 className='self-start font-bold md:text-2xl text-xl md:ml-0 ml-3'>My Cart</h1>
                             {cart.map((item, index) =>
                                 <div key={index} className='flex cursor-pointer items-center justify-start md:w-[60vw] w-[95%] md:h-[30vh] h-auto bg-[#f1f1f1] dark:bg-secondary-color divide-x-2 divide-gray-300 dark:divide-slate-800'>
@@ -70,7 +70,7 @@ function Cart() {
                                                 <p className='md:text-xl text-sm font-bold'>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{isIndia ? item.product[0].price : Math.floor(item.product[0].price / dirham_to_rupees)}</p>
                                             </div>
                                             <div>
-                                                <h2 className='text-sm font-medium text-stone-700 dark:text-white'>Size: <span className='text-black dark:text-white'>{item.product[0].size || 52}</span></h2>
+                                                <h2 className='text-sm font-medium text-stone-700 dark:text-white'>Size: <span className='text-black dark:text-white'>{item.size || 52}</span></h2>
                                             </div>
                                             <div>
                                                 <h2 className='text-sm font-medium text-stone-700 dark:text-white'>Color: <span className='text-black dark:text-white'>{item.product[0].color || 'Black'}</span></h2>
