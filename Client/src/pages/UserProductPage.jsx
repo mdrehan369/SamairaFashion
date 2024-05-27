@@ -29,7 +29,9 @@ function Reviews({ product }) {
     useEffect(() => {
         ; (async () => {
             try {
-                const response = await axios.get(`/api/v1/reviews/review/${product}`);
+                const response = await axios.get(`/api/v1/reviews/review/${product}`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setReviews(response.data.data);
             } catch (err) {
                 console.log(err);
@@ -98,7 +100,9 @@ function Write({ setPage, product }) {
         formData.append('title', data.title);
         formData.append('description', data.description);
 
-        await axios.post("/api/v1/reviews", formData);
+        await axios.post("/api/v1/reviews", formData, {
+            baseURL: import.meta.env.VITE_BACKEND_URL
+        });
         setPage("Reviews");
     }
 
@@ -141,7 +145,9 @@ function RelatedProducts({ category }) {
     useEffect(() => {
         ; (async () => {
             try {
-                const response = await axios.get(`/api/v1/products/category?category=${category}&limit=12`);
+                const response = await axios.get(`/api/v1/products/category?category=${category}&limit=12`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setProducts(response.data.data);
             } catch (err) {
                 console.log(err);
@@ -193,7 +199,9 @@ function UserProductPage({ key }) {
         ; (async () => {
             try {
                 setLoader(true)
-                const response = await axios.get(`/api/v1/products/product/${productId}`);
+                const response = await axios.get(`/api/v1/products/product/${productId}`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setProduct(response.data.data[0]);
             } catch (err) {
                 console.log(err)
@@ -214,7 +222,9 @@ function UserProductPage({ key }) {
                 size: productSize,
                 color: 'default'
             }
-            await axios.post('/api/v1/users/cart', data);
+            await axios.post('/api/v1/users/cart', data, {
+                baseURL: import.meta.env.VITE_BACKEND_URL
+            });
             document.getElementById('info').classList.replace('opacity-0', 'opacity-100');
             document.getElementById('info').classList.add('translate-y-3');
             setTimeout(() => {

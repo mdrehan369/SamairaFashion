@@ -16,9 +16,13 @@ function Users() {
                 try {
                     let response;
                     if (search) {
-                        response = await axios.get(`/api/v1/users/search?search=${search}`);
+                        response = await axios.get(`/api/v1/users/search?search=${search}`, {
+                            baseURL: import.meta.env.VITE_BACKEND_URL
+                        });
                     } else {
-                        response = await axios.get("/api/v1/users");
+                        response = await axios.get("/api/v1/users", {
+                            baseURL: import.meta.env.VITE_BACKEND_URL
+                        });
                     }
                     setUsers(response.data.data);
                 } catch (err) {

@@ -17,7 +17,9 @@ function Success() {
             ; (async () => {
                 setLoader(true);
                 try {
-                    const session = await axios.get(`/api/v1/products/retrieve`);
+                    const session = await axios.get(`/api/v1/products/retrieve`, {
+                        baseURL: import.meta.env.VITE_BACKEND_URL
+                    });
                     if (session.data.data.payment_status === 'paid') setIsPaid(true);
                 } catch (err) {
                     console.log(err)

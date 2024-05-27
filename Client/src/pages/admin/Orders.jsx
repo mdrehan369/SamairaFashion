@@ -9,7 +9,9 @@ function Orders() {
 
   const handleData = async () => {
     try {
-      const response = await axios.get(`/api/v1/orders`);
+      const response = await axios.get(`/api/v1/orders`, {
+        baseURL: import.meta.env.VITE_BACKEND_URL
+    });
       setOrders(response.data.data);
     } catch (err) {
       console.log(err);

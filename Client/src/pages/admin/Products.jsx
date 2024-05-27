@@ -33,7 +33,9 @@ function Products() {
         setLoader(true);
         ; (async () => {
             try {
-                const res = await axios.get(`/api/v1/products/search?search=${search}`);
+                const res = await axios.get(`/api/v1/products/search?search=${search}`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setResponse(res.data.data);
             } catch (err) {
                 console.log(err)

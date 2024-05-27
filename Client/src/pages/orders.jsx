@@ -56,7 +56,9 @@ const OrderDetails = () => {
 
     const handleData = async () => {
         try {
-            const response = await axios.get(`/api/v1/orders`);
+            const response = await axios.get(`/api/v1/orders`, {
+                baseURL: import.meta.env.VITE_BACKEND_URL
+            });
             let myOrders = {};
             for (let i = 0; i < response.data.data.length; i++) {
                 myOrders[response.data.data[i]._id.slice(0, 10)] = response.data.data[i];
@@ -78,7 +80,9 @@ const OrderDetails = () => {
     const handleCancelOrder = async (orderId) => {
         setLoader(true);
         try {
-            await axios.get(`/api/v1/orders/cancel/${orderId}`);
+            await axios.get(`/api/v1/orders/cancel/${orderId}`, {
+                baseURL: import.meta.env.VITE_BACKEND_URL
+            });
             setOpenModal(false);
             handleData()
         } catch (err) {

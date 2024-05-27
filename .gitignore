@@ -1,3 +1,4 @@
 node_modules
 .env
 extract.py
+/Client/dist

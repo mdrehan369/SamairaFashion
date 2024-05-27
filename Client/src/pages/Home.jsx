@@ -31,7 +31,9 @@ function Home() {
         setButtonLoader(true)
             ; (async () => {
                 try {
-                    const res = await axios.get(`/api/v1/products?page=${page}`);
+                    const res = await axios.get(`/api/v1/products?page=${page}`, {
+                        baseURL: import.meta.env.VITE_BACKEND_URL
+                    });
                     setResponse((prev) => prev.concat(res.data.data));
                 } catch (err) {
                     console.log(err)

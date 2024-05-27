@@ -20,7 +20,9 @@ function AddProduct() {
 			formData.delete("image");
 			formData.append("image", imagePath);
 
-			await axios.post("/api/v1/products/product", formData);
+			await axios.post("/api/v1/products/product", formData, {
+				baseURL: import.meta.env.VITE_BACKEND_URL
+			});
 			navigate("/admin/products")
 		} catch (e) {
 			console.log(e);

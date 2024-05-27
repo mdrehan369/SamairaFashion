@@ -17,7 +17,10 @@ function ProductPage() {
         ; (async () => {
             try {
                 setLoader(true)
-                const response = await axios.get(`/api/v1/products/product/${productId}`);
+                window.scrollTo(0, 0);
+                const response = await axios.get(`/api/v1/products/product/${productId}`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setProduct(response.data.data);
             } catch (err) {
                 console.log(err)

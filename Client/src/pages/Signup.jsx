@@ -17,7 +17,9 @@ function Signup() {
 
     const submit = async (data) => {
         try {
-            const response = await axios.post('/api/v1/users/signup', data);
+            const response = await axios.post('/api/v1/users/signup', data, {
+                baseURL: import.meta.env.VITE_BACKEND_URL
+            });
             dispatch(login(response.data.data));
             navigate("/");
         } catch (e) {

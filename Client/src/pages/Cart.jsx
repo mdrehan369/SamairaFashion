@@ -18,7 +18,9 @@ function Cart() {
     useEffect(() => {
         ; (async () => {
             try {
-                const response = await axios.get(`/api/v1/users/cart`);
+                const response = await axios.get(`/api/v1/users/cart`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
                 setCart(response.data.data);
 
                 let sum = 0;
@@ -41,7 +43,9 @@ function Cart() {
 
     const handleQuantity = async (cartItem, qnty) => {
         try {
-            await axios.put(`/api/v1/users/cart?cartItemId=${cartItem._id}&quantity=${qnty}`);
+            await axios.put(`/api/v1/users/cart?cartItemId=${cartItem._id}&quantity=${qnty}`, {
+                baseURL: import.meta.env.VITE_BACKEND_URL
+            });
         } catch (err) {
             console.log(err);
         } finally {
