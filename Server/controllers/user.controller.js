@@ -6,10 +6,9 @@ import { cartItemModel } from "../models/cartItem.model.js"
 import mongoose from "mongoose";
 
 const options = {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: 'samairafashion.netlify.app'
 }
 
 const signupController = asyncHandler(async (req, res) => {
