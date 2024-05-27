@@ -8,7 +8,8 @@ import mongoose from "mongoose";
 const options = {
     httpOnly: false,
     secure: true,
-    sameSite: "none"
+    sameSite: "none",
+    domain: 'samairafashion.netlify.app'
 }
 
 const signupController = asyncHandler(async (req, res) => {
