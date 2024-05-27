@@ -74,7 +74,7 @@ const logoutController = asyncHandler(async(req, res) => {
     .clearCookie("accessToken", options)
     .json(new ApiResponse(200, {}, "User logged Out"))
 
-})
+});
 
 const getCurrentUserController = asyncHandler(async(req, res) => {
 
@@ -88,6 +88,7 @@ const getCurrentUserController = asyncHandler(async(req, res) => {
 
 });
 
+<<<<<<< HEAD
 const addToCartController = asyncHandler(async(req, res) => {
 
     const { productId, quantity, size, color } = req.body;
@@ -164,6 +165,59 @@ const updateCartController = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(new ApiResponse(200, {}, "Updated Successfully"))
+=======
+const getAllUsersController = asyncHandler(async(req, res) => {
+
+    const users = await userModel.find({});
+
+    res
+    .status(200)
+    .json(new ApiResponse(200, users, "All users fetched successfully"));
+
+});
+
+const searchUserController = asyncHandler(async(req, res) => {
+
+    const { search } = req.query;
+
+    if(!search) throw new ApiError(400, "No Search Query");
+
+    const products = await userModel.aggregate([
+        {
+          '$match': {
+            '$or': [
+              {
+                'firstName': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'lastName': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'number': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }, {
+                'email': {
+                  '$regex': new RegExp(search), 
+                  '$options': 'i'
+                }
+              }
+            ]
+          }
+        }
+      ]);
+
+    res
+    .status(200)
+    .json(new ApiResponse(200, products, "products fetched"));
+
+
+>>>>>>> admin
 })
 
 export {
@@ -171,8 +225,13 @@ export {
     loginController,
     logoutController,
     getCurrentUserController,
+<<<<<<< HEAD
     addToCartController,
     getAllCartItems,
     updateCartController,
     deleteAllCartItemsController
+=======
+    getAllUsersController,
+    searchUserController
+>>>>>>> admin
 }

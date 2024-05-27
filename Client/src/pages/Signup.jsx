@@ -43,6 +43,19 @@ function Signup() {
                         <input type="checkbox" className='cursor-pointer' id="showpass" onClick={() => setShowPass((prev) => !prev)} />
                         <label htmlFor="showpass" className='cursor-pointer'>Show Password</label>
                     </div>
+<<<<<<< HEAD
+=======
+                    <Input type="text" name="number" register={register} placeholder='number' required />
+                </div>
+                <div className='flex flex-col items-center justify-start h-[90%]'>
+                    <Input type="text" name="address" register={register} placeholder='address' required />
+                    <Input type='text' name="city" register={register} placeholder='City' required />
+                    <Input type='text' name="state" register={register} placeholder='State' required />
+                    <Input type='number' name="pincode" register={register} placeholder='Pincode' required />
+                    <Button type='submit'>
+                        Sign Up
+                    </Button>
+>>>>>>> admin
                 </div>
                 {/* <div className='flex flex-col items-center justify-start gap-2 h-[90%]'> */}
                 {/* <Input type="text" name="address" register={register} placeholder='address' className='w-full' required />

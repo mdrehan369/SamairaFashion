@@ -44,7 +44,7 @@ function Products() {
     }, [search])
 
     return (
-        <Container className='overflow-y-scroll h-full'>
+        <Container className='overflow-y-scroll h-full mt-10'>
             <div className='w-full flex items-center justify-center gap-10'>
                 <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
                 <select className='w-[10%] p-4 rounded-lg text-lg font-medium' value={category} onChange={(e) => setCatgory(e.target.value)}>
