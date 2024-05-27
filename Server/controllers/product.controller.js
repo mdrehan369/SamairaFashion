@@ -207,9 +207,9 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .cookie("sessionId", session.id, { httpOnly: false, secure: false })
-        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: false, secure: false })
-        .cookie("cart", JSON.stringify(cart), { httpOnly: false, secure: false })
+        .cookie("sessionId", session.id, { httpOnly: false, secure: true, sameSite: "none" })
+        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: false, secure: true, sameSite: "none" })
+        .cookie("cart", JSON.stringify(cart), { httpOnly: false, secure: true, sameSite: "none" })
         .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
