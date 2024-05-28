@@ -19,7 +19,8 @@ function Cart() {
         ; (async () => {
             try {
                 const response = await axios.get(`/api/v1/users/cart`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL
+                    baseURL: import.meta.env.VITE_BACKEND_URL,
+                    withCredentials: true
                 });
                 setCart(response.data.data);
 
@@ -44,7 +45,7 @@ function Cart() {
     const handleQuantity = async (cartItem, qnty) => {
         try {
             await axios.put(`/api/v1/users/cart?cartItemId=${cartItem._id}&quantity=${qnty}`, {
-                baseURL: import.meta.env.VITE_BACKEND_URL
+                baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
             });
         } catch (err) {
             console.log(err);

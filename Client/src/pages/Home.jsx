@@ -32,7 +32,7 @@ function Home() {
             ; (async () => {
                 try {
                     const res = await axios.get(`/api/v1/products?page=${page}`, {
-                        baseURL: import.meta.env.VITE_BACKEND_URL
+                        baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
                     });
                     setResponse((prev) => prev.concat(res.data.data));
                 } catch (err) {

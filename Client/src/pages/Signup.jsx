@@ -18,7 +18,7 @@ function Signup() {
     const submit = async (data) => {
         try {
             const response = await axios.post('/api/v1/users/signup', data, {
-                baseURL: import.meta.env.VITE_BACKEND_URL
+                baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
             });
             dispatch(login(response.data.data));
             navigate("/");

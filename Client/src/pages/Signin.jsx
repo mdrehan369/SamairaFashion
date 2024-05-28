@@ -19,7 +19,8 @@ function Signin() {
     const submit = async (data) => {
         try {
             const response = await axios.post('/api/v1/users/signin', data, {
-                baseURL: import.meta.env.VITE_BACKEND_URL
+                baseURL: import.meta.env.VITE_BACKEND_URL,
+                withCredentials: true,
             });
             dispatch(login(response.data.data));
             if (data.email === 'admin') {

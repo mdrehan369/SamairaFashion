@@ -21,7 +21,7 @@ function AddProduct() {
 			formData.append("image", imagePath);
 
 			await axios.post("/api/v1/products/product", formData, {
-				baseURL: import.meta.env.VITE_BACKEND_URL
+				baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
 			});
 			navigate("/admin/products")
 		} catch (e) {

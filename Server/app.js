@@ -12,20 +12,21 @@ import sha256 from "sha256";
 
 const app = express();
 
-// app.use(cors({
-//     origin: 'http://localhost:5173',
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['Content-Type', 'Authorization']
-// }))
-
 app.use(cors({
-    origin: '*',
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }))
 
+// app.use(cors({
+//     origin: '*',
+//     credentials: true
+// }))
+
 app.use(cookieParser());
 app.use(express.json({limit: '16kb'}));
-
+app.use(express.urlencoded({extended: true}))
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);

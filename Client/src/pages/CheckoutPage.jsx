@@ -28,7 +28,7 @@ function CheckoutPage() {
             setLoader(true);
             try {
                 const response = await axios.get(`/api/v1/users/cart`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL
+                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
                 });
                 setCart(response.data.data);
 
@@ -72,7 +72,7 @@ function CheckoutPage() {
         if (!validateData(shippingDetails)) return;
 
         let res = await axios.get(`/api/v1/payments/phonepe/pay?amount=${total}`, {
-            baseURL: import.meta.env.VITE_BACKEND_URL
+            baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
         }).then(res => {
             if (res.data && res.data.data.instrumentResponse.redirectInfo.url) {
                 window.location.href = res.data.data.instrumentResponse.redirectInfo.url;
@@ -118,7 +118,7 @@ function CheckoutPage() {
         if(isCOD) {
 
             await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } }, {
-                baseURL: import.meta.env.VITE_BACKEND_URL
+                baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
             });
 
             return navigate('/success?cod=cod')
@@ -127,7 +127,7 @@ function CheckoutPage() {
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
         const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } }, {
-            baseURL: import.meta.env.VITE_BACKEND_URL
+            baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
         });
 
         const results = await stripe.redirectToCheckout({

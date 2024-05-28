@@ -42,8 +42,9 @@ const signupController = asyncHandler(async (req, res) => {
 const loginController = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
+    console.log(req.body)
 
-    if([email, password].some((field) => field.trim() === '')) {
+    if([email, password].some((field) => field === '')) {
         return res.status(400).json(new ApiResponse(400, {}, "Some fields are missing"));
     }
 

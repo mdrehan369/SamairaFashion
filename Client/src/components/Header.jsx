@@ -32,7 +32,8 @@ function Header() {
     const handleLogout = async () => {
         try {
             await axios.get('/api/v1/users/logout', {
-                baseURL: import.meta.env.VITE_BACKEND_URL
+                baseURL: import.meta.env.VITE_BACKEND_URL,
+                withCredentials: true
             });
             dispatch(logout());
             window.location.href = '/';

@@ -58,7 +58,8 @@ function AuthLayout({ children }) {
         ;(async () => {
             try {
                 const response = await axios.get("/api/v1/users/user", {
-                    baseURL: import.meta.env.VITE_BACKEND_URL
+                    baseURL: import.meta.env.VITE_BACKEND_URL,
+                    withCredentials: true
                 });
                 dispatch(login(response.data.data))
             } catch (err) {
