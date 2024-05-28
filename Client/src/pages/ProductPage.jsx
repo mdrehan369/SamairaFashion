@@ -19,7 +19,7 @@ function ProductPage() {
                 setLoader(true)
                 window.scrollTo(0, 0);
                 const response = await axios.get(`/api/v1/products/product/${productId}`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setProduct(response.data.data);
             } catch (err) {

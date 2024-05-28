@@ -45,7 +45,7 @@ function Cart() {
     const handleQuantity = async (cartItem, qnty) => {
         try {
             await axios.put(`/api/v1/users/cart?cartItemId=${cartItem._id}&quantity=${qnty}`, {
-                baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
             });
         } catch (err) {
             console.log(err);

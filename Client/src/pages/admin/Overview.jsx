@@ -19,7 +19,7 @@ function Overview() {
             setLoader(true);
             try {
                 const response = await axios.get(`/api/v1/orders/count`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setCounts(response.data.data.counts[0])
             } catch (err) {

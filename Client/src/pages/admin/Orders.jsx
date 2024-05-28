@@ -11,7 +11,7 @@ function Orders() {
     try {
       const response = await axios.get(`/api/v1/orders`, {
         baseURL: import.meta.env.VITE_BACKEND_URL,
-        WithCredentials: true
+        withCredentials: true
     });
       setOrders(response.data.data);
     } catch (err) {

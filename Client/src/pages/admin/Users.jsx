@@ -17,11 +17,11 @@ function Users() {
                     let response;
                     if (search) {
                         response = await axios.get(`/api/v1/users/search?search=${search}`, {
-                            baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                            baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                         });
                     } else {
                         response = await axios.get("/api/v1/users", {
-                            baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                            baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                         });
                     }
                     setUsers(response.data.data);

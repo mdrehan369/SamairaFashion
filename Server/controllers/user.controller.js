@@ -7,8 +7,7 @@ import mongoose from "mongoose";
 
 const options = {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    path: "/"
 }
 
 const signupController = asyncHandler(async (req, res) => {

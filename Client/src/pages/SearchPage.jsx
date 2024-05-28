@@ -12,8 +12,8 @@ function SearchPage() {
         ; (async () => {
             setProductLoader(true);
             try {
-                const response = await axios.get(`/api/v1//products/search?search=${search}`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                const response = await axios.get(`/api/v1/products/search?search=${search}`, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setProducts(response.data.data);
             } catch (err) {

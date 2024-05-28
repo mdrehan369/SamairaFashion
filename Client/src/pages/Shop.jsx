@@ -23,7 +23,7 @@ function Shop() {
             setProductLoader(true);
             try {
                 const response = await axios.get(`/api/v1/products/category?category=${search.slice(10)}&limit=${limit}&page=${page}&attribute=${sort.attribute}&order=${sort.order}`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setProducts(response.data.data);
                 if (response.data.data.length < limit) {

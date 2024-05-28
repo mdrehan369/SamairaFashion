@@ -101,7 +101,7 @@ function Write({ setPage, product }) {
         formData.append('description', data.description);
 
         await axios.post("/api/v1/reviews", formData, {
-            baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+            baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
         });
         setPage("Reviews");
     }
@@ -146,7 +146,7 @@ function RelatedProducts({ category }) {
         ; (async () => {
             try {
                 const response = await axios.get(`/api/v1/products/category?category=${category}&limit=12`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setProducts(response.data.data);
             } catch (err) {
@@ -200,7 +200,7 @@ function UserProductPage({ key }) {
             try {
                 setLoader(true)
                 const response = await axios.get(`/api/v1/products/product/${productId}`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, WithCredentials: true
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
                 setProduct(response.data.data[0]);
             } catch (err) {
@@ -224,7 +224,7 @@ function UserProductPage({ key }) {
             }
             await axios.post('/api/v1/users/cart', data, {
                 baseURL: import.meta.env.VITE_BACKEND_URL,
-                WithCredentials: true
+                withCredentials: true
             });
             document.getElementById('info').classList.replace('opacity-0', 'opacity-100');
             document.getElementById('info').classList.add('translate-y-3');
