@@ -28,7 +28,7 @@ function SearchPage() {
     return (
         <Container className='flex flex-col items-center justify-start gap-10 animate-animate-appear'>
             <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
-            <div className='grid grid-cols-4 gap-6'>
+            <div className='grid md:grid-cols-4 grid-cols-2 md:m-0 m-4 gap-6'>
                 {
                     products.map((product, index) => <Card key={index} res={product} productLoader={productLoader} />)
                 }

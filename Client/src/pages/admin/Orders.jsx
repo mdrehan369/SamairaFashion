@@ -12,7 +12,7 @@ function Orders() {
       const response = await axios.get(`/api/v1/orders`, {
         baseURL: import.meta.env.VITE_BACKEND_URL,
         withCredentials: true
-    });
+      });
       setOrders(response.data.data);
     } catch (err) {
       console.log(err);
@@ -42,11 +42,11 @@ function Orders() {
             <span className='w-[25%] text-start'>{order.shippingDetails.country}</span>
             {
               order.isPending ?
-               <span className='px-2 py-1 font-bold text-xs rounded-sm bg-yellow-400'>Pending</span>
-               : order.isCancelled ?
-               <span className='px-2 py-1 font-bold text-xs rounded-sm bg-red-500'>Cancelled</span>
-               : <span className='px-2 py-1 font-bold text-xs rounded-sm bg-green-500'>Delivered</span> 
-              }
+                <span className='px-2 py-1 font-bold text-xs rounded-sm bg-yellow-400'>Pending</span>
+                : order.isCancelled ?
+                  <span className='px-2 py-1 font-bold text-xs rounded-sm bg-red-500'>Cancelled</span>
+                  : <span className='px-2 py-1 font-bold text-xs rounded-sm bg-green-500'>Delivered</span>
+            }
           </div>)}
         </div>
       </Container>

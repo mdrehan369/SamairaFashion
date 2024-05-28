@@ -6,7 +6,7 @@ import Button from './Button';
 import { Hourglass } from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 
-function Card({ res, productLoader }) {
+function Card({ res, productLoader, ...props }) {
 
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
 
@@ -16,7 +16,8 @@ function Card({ res, productLoader }) {
             onMouseEnter={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.remove('invisible'); e.currentTarget.lastElementChild.classList.add('translatee-y-[-4em]'); e.currentTarget.lastElementChild.classList.add('animate-bounce-once') }}
 
             onMouseLeave={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.replace('translate-y-[-4em]', 'noe'); e.currentTarget.lastElementChild.classList.remove('animate-bounce-once') }}
-
+            onClick={() => window.scrollTo(0, 0)}
+            {...props}
         >
             {
                 !productLoader ?
@@ -29,10 +30,10 @@ function Card({ res, productLoader }) {
                         <div className='flex items-center justify-between w-full mt-4'>
                             <h2 className='px-0 md:text-sm text-xs text-start font-bold dark:text-gray-500 relative text-stone-600'>
                                 <div className='w-full md:h-[2px] h-[1px] bg-stone-600 dark:bg-gray-500 absolute top-[50%] left-0'></div>
-                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.comparePrice : Math.floor(res?.comparePrice/dirham_to_rupees)}
+                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.comparePrice : Math.floor(res?.comparePrice / dirham_to_rupees)}
                             </h2>
                             <h2 className='px-0 md:text-lg text-sm text-end font-bold dark:text-white text-stone-900'>
-                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.price.toString()[0] + "," + res?.price.toString().slice(1) : Math.floor(res?.price/dirham_to_rupees)}
+                                {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /> : 'Dhs.'}{isIndia ? res?.price.toString()[0] + "," + res?.price.toString().slice(1) : Math.floor(res?.price / dirham_to_rupees)}
                             </h2>
                         </div>
                         <Button className='text-sm w-[90%] mt-4 py-3 transition-transform duration-300 border-2 border-black rounded-sm font-bold invisible md:block hidden'>ADD TO CART</Button>

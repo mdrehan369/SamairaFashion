@@ -193,27 +193,35 @@ function UserProductPage({ key }) {
     const [page, setPage] = useState("Description");
     const [message, setMessage] = useState("Item Added To Cart!");
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
+    const status = useSelector(state => state.auth.status);
+    const navigate = useNavigate();
 
     useEffect(() => {
-
-        ; (async () => {
-            try {
-                setLoader(true)
-                const response = await axios.get(`/api/v1/products/product/${productId}`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-                });
-                setProduct(response.data.data[0]);
-            } catch (err) {
-                console.log(err)
-            } finally {
-                setLoader(false);
-                window.scrollTo(0, 0);
-            }
-
-        })();
+        // window.scrollTo(0, 0)
+        setLoader(true)
+        // setTimeout(() => {
+            ; (async () => {
+                try {
+                    
+                    const response = await axios.get(`/api/v1/products/product/${productId}`, {
+                        baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+                    });
+                    setProduct(response.data.data[0]);
+                } catch (err) {
+                    console.log(err)
+                } finally {
+                    setLoader(false);
+                    window.scrollTo(0, 0);
+                }
+                
+            })();
+        // }, 3000);
     }, [productId]);
 
     const handleAddToCart = async (e) => {
+        if(!status) {
+            navigate('/signin')
+        }
         try {
             setCartLoader(true)
             const data = {
@@ -241,8 +249,8 @@ function UserProductPage({ key }) {
     }
 
     return (
-        !loader ?
-            <Container className='flex flex-col justify-start items-center gap-10 relative'>
+        <Container className='flex flex-col justify-start items-center gap-10 relative min-h-[1900px]'>
+                {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
                         <div className='md:w-[40%] w-full p-4 h-full'>
@@ -303,8 +311,8 @@ function UserProductPage({ key }) {
                     </div>
                     <RelatedProducts category={product.category} />
                 </div>
+                : <Spinner className='h-[100vh]' />}
             </Container>
-            : <Spinner className='h-[100vh]' />
     )
 }
 

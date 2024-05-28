@@ -12,8 +12,8 @@ const options = {
 
 const signupController = asyncHandler(async (req, res) => {
 
-    const { firstName, lastName, email, address, number, password } = req.body;
-    if([firstName, lastName, email, address, number, password].some((field) => field.trim() === '')) {
+    const { firstName, lastName, email, number, password } = req.body;
+    if([firstName, lastName, email, number, password].some((field) => field.trim() === '')) {
         throw new ApiError(400, "Some fields are missing");
     }
 
@@ -25,7 +25,7 @@ const signupController = asyncHandler(async (req, res) => {
         return res.status(400).json(new ApiResponse(400, {}, "User already exists"));
     }
 
-    const user = await userModel.create({firstName, lastName, email, address, number, password});
+    const user = await userModel.create({firstName, lastName, email, number, password});
     const newUser = await user.save();
 
     newUser.password = "";
@@ -41,7 +41,6 @@ const signupController = asyncHandler(async (req, res) => {
 const loginController = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
-    console.log(req.body)
 
     if([email, password].some((field) => field === '')) {
         return res.status(400).json(new ApiResponse(400, {}, "Some fields are missing"));

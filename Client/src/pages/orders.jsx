@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Spinner } from "../components/index.js";
+import { Container, LightSpinner, Spinner } from "../components/index.js";
 import axios from "axios";
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -50,6 +50,7 @@ const OrderDetails = () => {
 
     const [orders, setOrders] = useState([]);
     const [loader, setLoader] = useState(true);
+    const [spinLoader, setSpinLoader] = useState(false);
     const [currOrder, setCurrOrder] = useState({});
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
     const [openModal, setOpenModal] = useState(false);
@@ -78,13 +79,15 @@ const OrderDetails = () => {
         handleData();
     }, []);
 
-    const handleCancelOrder = async (orderId) => {
-        setLoader(true);
+    const handleCancelOrder = async () => {
+        // setLoader(true);
+        setSpinLoader(true)
         try {
-            await axios.get(`/api/v1/orders/cancel/${orderId}`, {
+            await axios.get(`/api/v1/orders/cancel/${currOrder._id}`, {
                 baseURL: import.meta.env.VITE_BACKEND_URL,
                 withCredentials: true
             });
+            setSpinLoader(false);
             setOpenModal(false);
             handleData()
         } catch (err) {
@@ -98,18 +101,26 @@ const OrderDetails = () => {
                 {currOrder ?
                     <>
                         {
-                            openModal &&
-                            <div className='fixed w-[100vw] h-[90vh] bg-black bg-opacity-50 z-50 flex items-center justify-center'>
-                                <div className='w-[30%] h-[25%] bg-white p-4 flex flex-col items-center justify-center shadow-lg rounded-md gap-10 dark:bg-secondary-color'>
-                                    <div className='uppercase text-sm font-medium'>Are You Sure You Want To Cancel This Order?</div>
-                                    <div className='space-x-6'>
-                                        <button className='px-4 rounded-md py-2 bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 text-sm font-bold' onClick={() => handleCancelOrder(currOrder._id)}>Yes</button>
-                                        <button className='px-4 rounded-md py-2 bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-sm font-bold' onClick={() => setOpenModal(false)}>No</button>
-                                    </div>
+                            <div className={`fixed w-[100vw] h-[100vh] ${!openModal ? 'bg-opacity-0 backdrop-blur-0 -z-30' : 'bg-opacity-50 backdrop-blur-md z-50'} flex items-center justify-center transition-all bg-black duration-900`}>
+                                <div className={`${openModal ? 'md:w-[30%] w-[90%] h-[30%]' : 'w-0 h-0'} overflow-hidden bg-[#f1f1f1] rounded-lg shadow-md transition-all dark:bg-secondary-color duration-300 flex flex-col items-center justify-center gap-6 z-30`}>
+                                    {
+                                        openModal &&
+                                        <>
+                                            <div className='uppercase text-sm font-bold text-center dark:text-white'>Are You Sure You Want To Cancel This Order ?</div>
+                                            <div className='flex items-center justify-center gap-6 w-full'>
+                                                <button className='w-24 h-10 bg-red-400 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-600 text-sm font-bold' onClick={() => handleCancelOrder()} disabled={spinLoader}>{
+                                                    spinLoader ?
+                                                        <LightSpinner color={'fill-red-500'} />
+                                                        : 'Yes'
+                                                }</button>
+                                                <button className='w-24 h-10 bg-green-400 rounded-md hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-600 text-sm font-bold' onClick={() => setOpenModal(false)} disabled={spinLoader}>No</button>
+                                            </div>
+                                        </>
+                                    }
                                 </div>
                             </div>
                         }
-                        <div className='bg-gray-100 dark:bg-secondary-color flex flex-col items-center justify-start pt-4 w-[20%] h-[100vh] gap-2'>
+                        <div className='bg-gray-100 dark:bg-secondary-color md:flex flex-col items-center justify-start pt-4 w-[20%] h-[100vh] gap-2 hidden'>
                             {
                                 Object.keys(orders).map((order, index) => <div
                                     key={index}
@@ -119,7 +130,7 @@ const OrderDetails = () => {
                                 </div>)
                             }
                         </div>
-                        <div className='min-h-[90vh] w-[75%] flex flex-col items-start pt-10 justify-start divide-y-2 dark:divide-gray-400 overflow-y-scroll'>
+                        <div className='min-h-[90vh] md:w-[75%] w-full flex flex-col items-start pt-10 justify-start divide-y-2 md:m-0 m-6 dark:divide-gray-400 overflow-y-scroll'>
                             <div className='mb-4 flex items-start justify-between w-[80%]'>
                                 <div>
                                     <h1 className="text-2xl font-bold mb-2"><span className='mr-4'>Order ID:</span> <span className='tracking-wider text-gray-600 dark:text-gray-400'>#{currOrder._id.slice(0, 10)}</span>
@@ -144,24 +155,24 @@ const OrderDetails = () => {
                                     <button className='self-end bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 px-6 hover:bg-red-500 transition-colors py-2 rounded text-sm font-bold' onClick={() => setOpenModal(true)}>Cancel</button>
                                 }
                             </div>
-                            <div className='w-[80%] flex flex-col items-start justify-start gap-4 py-4'>
+                            <div className='w-[100%] md:w-[80%] flex flex-col items-start justify-start gap-4 py-4'>
                                 {
                                     currOrder.cart.map((item, index) => <div
                                         key={index}
-                                        className='flex items-start justify-between gap-4 h-[15vh] w-full p-2'
+                                        className='flex md:flex-row flex-col items-start justify-between gap-4 h-[15vh] w-full p-2'
                                     >
                                         <div className='flex w-auto gap-4 h-full'>
                                             <div className='w-[8vw] h-full p-0 flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded'>
                                                 <img src={currOrder.products[index].image.url} className='w-auto rounded h-auto max-h-[70%] max-w-[90%]' alt="Product" />
                                             </div>
                                             <div className='flex flex-col h-full items-start justify-evenly'>
-                                                <span className='font-bold mt-4'>{currOrder.products[index].title}</span>
+                                                <span className='font-bold mt-4 md:text-md text-sm'>{currOrder.products[index].title}</span>
                                                 <pre className='text-gray-600 dark:text-gray-400 text-xs'>
                                                     Color: <span className='text-sm font-bold'>{item.color}</span> | Size: <span className='text-sm font-bold'>{item.size}</span> | Quantity: <span className='text-sm font-bold'>{item.quantity}</span>
                                                 </pre>
                                             </div>
                                         </div>
-                                        <div className='flex flex-col items-center h-full justify-center'>
+                                        <div className='flex flex-col items-center h-full justify-center self-end'>
                                             <div className='relative text-gray-500 dark:text-gray-400 w-fit'>
                                                 {
                                                     isIndia ?
@@ -183,7 +194,7 @@ const OrderDetails = () => {
                                     </div>)
                                 }
                             </div>
-                            <div className='w-[80%] flex items-start justify-between px-20 pt-6'>
+                            <div className='md:w-[80%] w-full flex items-start justify-between md:px-20 pt-6'>
                                 <div className='flex flex-col items-start justify-start gap-2'>
                                     <span className='font-bold'>Payment</span>
                                     <span className='text-sm font-medium text-gray-500 dark:text-gray-400'>{currOrder.paymentPending ? 'Pending\nCash On Delivery' : 'Paid'}</span>
