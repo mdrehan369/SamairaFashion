@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Carousel, Container, Spinner } from '../components/index.js'
+import { Button, Card, Carousel, Container, LightSpinner, Spinner } from '../components/index.js'
 import straight from "../assets/straight.webp"
 import tyedye from "../assets/tyedye.jpg"
 import farasha from "../assets/farasha.webp"
@@ -27,7 +27,6 @@ function Home() {
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        // setLoader(true);
         setButtonLoader(true)
             ; (async () => {
                 try {
@@ -100,7 +99,7 @@ function Home() {
                         : <Spinner />}
                     <Button onClick={() => setPage((prev) => prev + 1)} disabled={buttonLoader} className='mb-10'>{
                         buttonLoader ?
-                            <Spinner />
+                            <LightSpinner color='fill-gray-600' />
                             : 'Show More'
                     }</Button>
                 </div>

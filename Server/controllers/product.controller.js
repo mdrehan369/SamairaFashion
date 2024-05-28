@@ -199,17 +199,17 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
         line_items: items,
         payment_method_types: ['card'],
         mode: 'payment',
-        success_url: `http://localhost:5173/success`,
-        cancel_url: 'http://localhost:5173/',
+        success_url: `${process.env.CLIENT_URL}/success`,
+        cancel_url: `${process.env.CLIENT_URL}/`,
         customer_email: shippingDetails.email
     });
 
 
     return res
         .status(200)
-        .cookie("sessionId", session.id, { httpOnly: true, secure: false })
-        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: true, secure: false })
-        .cookie("cart", JSON.stringify(cart), { httpOnly: true, secure: false })
+        .cookie("sessionId", session.id, { httpOnly: true })
+        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: true })
+        .cookie("cart", JSON.stringify(cart), { httpOnly: true })
         .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
