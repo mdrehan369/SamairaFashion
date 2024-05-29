@@ -10,7 +10,6 @@ import mastercard from "../assets/mastercard.svg";
 import visa2 from "../assets/visa2.svg";
 import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
-import { usePlacesFetch } from '../hooks/usePlacesFetch.js';
 
 function CheckoutPage() {
 
