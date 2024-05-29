@@ -37,7 +37,7 @@ function Success() {
         !loader ?
             isPaid ?
                 <Container className='flex flex-col items-center md:justify-center justify-start'>
-                    <div className='flex flex-col items-center justify-center w-[40%] shadow-none border-gray-200 border-0 h-[40%] gap-4 p-6'>
+                    <div className='flex flex-col items-center justify-center md:w-[40%] w-[100%] shadow-none border-gray-200 border-0 h-[40%] gap-4 p-6'>
                         <img src={tick} className='w-[40%]' alt="Tick" />
                         <h1 className='md:text-4xl text-2xl text-center font-bold dark:text-stone-200 text-stone-700'>Order Placed Successfully!</h1>
                         <p className='text-center dark:text-stone-300 text-stone-500'>Thanks for ordering from Samaira Fashion. <br /> We will deliver your product within the given time.</p>

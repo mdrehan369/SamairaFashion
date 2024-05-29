@@ -266,7 +266,7 @@ function CheckoutPage() {
                             <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
                             Cash On Delivery (COD)
                         </div>
-                        <div className='w-full space-y-2'>
+                        <div className='w-full md:hidden block space-y-2'>
                             <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
                             <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{
                                 deliveryCharge ?
