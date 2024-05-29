@@ -62,7 +62,7 @@ function Signup() {
                 <Button disabled={loader} className='p-0 w-52 h-16 uppercase text-sm font-bold' type='submit'>
                     {
                         loader ?
-                        <LightSpinner />
+                        <LightSpinner color='fill-gray-500' />
                         : 'Sign Up'
                     }
                 </Button>

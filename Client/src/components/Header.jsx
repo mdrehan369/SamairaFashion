@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from "../assets/logo.avif"
 import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -56,6 +56,8 @@ function Header() {
             setLoader(false);
         }
     }
+
+    // useEffect()
 
     const activeClasses = ({ isActive }) => `py-2 px-4 rounded-full hover:bg-black relative hover:text-white hover:dark:bg-[#00224d] transition ${isActive && 'bg-black dark:bg-[#00224d] text-white shadow-lg px-4 py-2'}`
     // bg-black dark:bg-[#00224d] text-white shadow-lg px-4 py-2PiMoon
@@ -144,8 +146,10 @@ function Header() {
                 {/* // className={({ isActive }) => isActive && `bg-black text-white pt-3 pb-2 px-4 rounded-full` */}
                 <div className='w-[30%] h-full hidden md:block'>
                     <ul className='w-full h-full flex items-center justify-center gap-4 font-semibold text-xl'>
-                        <NavLink to='/search' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full`}><IoIosSearch size='25' /></NavLink>
-                        {status && <NavLink to='/cart' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full`}><IoCartOutline size='25' /></NavLink>}
+                        <NavLink to='/search' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Search'] after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:dark:bg-blue-950 after:rounded-sm after:px-1 after:py-0.5 after:left-0`}>
+                            <IoIosSearch size='25' />
+                        </NavLink>
+                        {status && <NavLink to='/cart' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Cart'] after:absolute after:text-xs relative after:font-normal after:dark:bg-blue-950 after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-2`}><IoCartOutline size='25' /></NavLink>}
                         {
                             !status ?
                                 <>
@@ -153,15 +157,16 @@ function Header() {
                                     <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink>
                                 </>
                                 : <>
-                                    <NavLink to='/orders' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full`}><BsTruck size='25' /></NavLink>
-                                    <NavLink onClick={() => setOpenModal(true)} to='#' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full`}><IoExitOutline size='25' /></NavLink>
+                                    <NavLink to='/orders' className={({ isActive }) => `hover:bg-gray-300 hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Orders'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><BsTruck size='25' /></NavLink>
+
+                                    <NavLink onClick={() => setOpenModal(true)} to='#' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Logout'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><IoExitOutline size='25' /></NavLink>
                                 </>
                         }
                         {
                             theme === 'light' ?
-                                <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300`} ><PiMoon size='25' /></NavLink>
+                                <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300 after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Theme'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`} ><PiMoon size='25' /></NavLink>
                                 :
-                                <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300`} ><LuSun size='25' /></NavLink>
+                                <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-gray-300 hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300 after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:dark:bg-blue-950 after:transition-opacity after:w-fit after:h-fit after:content-['Theme'] after:absolute after:text-xs relative after:font-light after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`} ><LuSun size='25' /></NavLink>
                         }
                     </ul>
                 </div>

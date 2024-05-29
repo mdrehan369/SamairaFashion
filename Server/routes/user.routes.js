@@ -4,7 +4,9 @@ import { verifyAdmin } from "../middlewares/admin.middleware.js";
 import {
     addToCartController,
     deleteAllCartItemsController,
+    deleteCartItemController,
     getAllCartItems,
+    getCartLengthController,
     getCurrentUserController,
     loginController,
     logoutController,
@@ -25,5 +27,7 @@ router.route("/cart").post(verifyJWT, addToCartController);
 router.route("/cart").get(verifyJWT, getAllCartItems);
 router.route("/cart").put(verifyJWT, updateCartController);
 router.route("/cart").delete(verifyJWT, deleteAllCartItemsController);
+router.route("/cart/:id").delete(verifyJWT, deleteCartItemController);
+router.route("/cartLength").get(verifyJWT, getCartLengthController);
 
 export default router;

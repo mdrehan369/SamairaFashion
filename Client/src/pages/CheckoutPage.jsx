@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Input, Button, Spinner } from "../components/index.js"
 import { useForm } from "react-hook-form"
 import axios from 'axios';
@@ -9,9 +9,8 @@ import visa from "../assets/visa.svg";
 import mastercard from "../assets/mastercard.svg";
 import visa2 from "../assets/visa2.svg";
 import { loadStripe } from '@stripe/stripe-js';
-import sha256 from 'sha256';
-import { Buffer } from "buffer"
 import { useNavigate } from 'react-router-dom';
+import { usePlacesFetch } from '../hooks/usePlacesFetch.js';
 
 function CheckoutPage() {
 
@@ -21,7 +20,10 @@ function CheckoutPage() {
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
     const [total, setTotal] = useState();
     const [isCOD, setIsCOD] = useState(false);
+    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    // const [isUAE, setIsDeliveryCharge] = useState(false);
     const navigate = useNavigate();
+    // const [loader2, response] = usePlacesFetch(25314);
 
     useEffect(() => {
         ; (async () => {
@@ -101,9 +103,9 @@ function CheckoutPage() {
 
         const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
 
-        if(isCOD) {
+        if (isCOD) {
 
-            await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } }, {
+            await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
                 baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
             });
 
@@ -112,7 +114,7 @@ function CheckoutPage() {
 
         const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
 
-        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } }, {
+        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
             baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
         });
 
@@ -148,13 +150,19 @@ function CheckoutPage() {
                             <select
                                 className='md:w-[100%] p-3 rounded dark:bg-secondary-color dark:border-0 bg-white border-[1px] w-full border-gray-400 cursor-pointer'
                                 {...register('country', { required: true })}>
-                                <option value="india" selected>India</option>
-                                <option value="bahrain">Bahrain</option>
-                                <option value="kuwait">Kuwait</option>
-                                <option value="oman">Oman</option>
-                                <option value="qatar">Qatar</option>
-                                <option value="saudi arabia">Saudi Arabia</option>
-                                <option value="united arab emirates">United Arab Emirates</option>
+                                <option value="India" selected onClick={() => setDeliveryCharge(0)}>India</option>
+                                <option value="Bahrain" onClick={() => setDeliveryCharge(20)}>Bahrain</option>
+                                <option value="Kuwait" onClick={() => setDeliveryCharge(20)}>Kuwait</option>
+                                <option value="Oman" onClick={() => setDeliveryCharge(20)}>Oman</option>
+                                <option value="Qatar" onClick={() => setDeliveryCharge(20)}>Qatar</option>
+                                <option value="Saudi Arabia" onClick={() => setDeliveryCharge(20)}>Saudi Arabia</option>
+                                <option value="United Arab Emirates, Dubai" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Dubai</option>
+                                <option value="United Arab Emirates, Sharjah" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Sharjah</option>
+                                <option value="United Arab Emirates, Ajman" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Ajman</option>
+                                <option value="United Arab Emirates, Abu Dhabi" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Abu Dhabi</option>
+                                <option value="United Arab Emirates, Umm Al Quwain" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Umm Al Quwain</option>
+                                <option value="United Arab Emirates, Ras Al Khaimah" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Ras Al Khaimah</option>
+                                <option value="United Arab Emirates, Fujairah" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Fujairah</option>
                             </select>
                         </div>
 
@@ -239,7 +247,7 @@ function CheckoutPage() {
                             <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>
                         </div>
                         <div className='md:w-[80%] w-full'>
-                            <div onClick={() => setIsCOD(false)} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-y-0'>
+                            <div onClick={() => setIsCOD(false)} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-0'>
                                 <div className={`${isCOD ? 'border-2' : 'border-4'} size-4 border-black dark:border-white rounded-full`}></div>
                                 <div>Pay by card with Stripe</div>
                                 <div className='flex items-center justify-end flex-grow'>
@@ -255,11 +263,25 @@ function CheckoutPage() {
                                 </div>
                             </div>
                         </div>
-                        <div onClick={() => setIsCOD(true)} className='bg-gray-100 cursor-pointer w-[80%] p-3 flex items-center gap-2'>
-                        <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                        <div onClick={() => setIsCOD(true)} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                            <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
                             Cash On Delivery (COD)
                         </div>
-                        <Button type='submit' className='md:w-[80%] w-full'>Pay Now</Button>
+                        <div className='w-full space-y-2'>
+                            <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
+                            <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{
+                                deliveryCharge ?
+                                    isIndia ? <><FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /><span>{dirham_to_rupees * deliveryCharge}</span></>
+                                        : 'Dhs. 20'
+                                    : 'Free'
+                            }</span></div>
+                            <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge)}</span></div>
+                        </div>
+                        <Button type='submit' className='md:w-[80%] w-full'>
+                            {
+                                isCOD ? 'Place Order' : 'Pay Now'
+                            }
+                        </Button>
                     </form>
                     <div className='md:flex hidden flex-col items-start justify-start gap-6 w-[30%] min-h-[85vh]'>
                         <div className='flex flex-col items-center justify-start w-full p-10 gap-6 overflow-y-scroll max-h-[80vh]'>
@@ -288,8 +310,13 @@ function CheckoutPage() {
                             </div>
                             <div className='w-full space-y-2'>
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
-                                <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>Free</span></div>
-                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
+                                <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{
+                                    deliveryCharge ?
+                                        isIndia ? <><FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /><span>{dirham_to_rupees * deliveryCharge}</span></>
+                                            : 'Dhs. 20'
+                                        : 'Free'
+                                }</span></div>
+                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge)}</span></div>
                             </div>
                         </div>
                         <div>

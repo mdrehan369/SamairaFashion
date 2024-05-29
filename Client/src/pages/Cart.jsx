@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIndianRupeeSign, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { RiDeleteBinLine } from "react-icons/ri";
 
 function Cart() {
 
@@ -54,6 +55,18 @@ function Cart() {
         }
     }
 
+    const handleDeleteItem = async (id) => {
+        try {
+            await axios.delete(`/api/v1/users/cart/${id}`, {
+                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+            });
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setReload(!reload);
+        }
+    }
+
     return (
         !loader ?
             <Container className='flex md:flex-row flex-col items-center justify-center h-auto md:gap-10 gap-4'>
@@ -86,7 +99,13 @@ function Cart() {
                                                 <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => handleQuantity(item, item.quantity + 1)} /></div>
                                             </div>
                                         </div>
-                                        <span className='text-xs mt-4 text-stone-700 dark:text-white font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold text-stone-700 dark:text-white'>{isIndia ? item.product[0].price * item.quantity : Math.floor(item.product[0].price / dirham_to_rupees) * item.quantity}</span></span>
+                                        <div className='text-xs flex items-center justify-between w-full mt-4 relative text-stone-700 dark:text-white font-medium'>
+                                            <div>
+                                            Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}
+                                            <span className='font-bold text-stone-700 dark:text-white'>{isIndia ? item.product[0].price * item.quantity : Math.floor(item.product[0].price / dirham_to_rupees) * item.quantity}</span>
+                                            </div>
+                                            <RiDeleteBinLine className='hover:bg-gray-300 rounded-sm text-red-500 p-2 size-10 transition-colors' onClick={() => handleDeleteItem(item._id)} />
+                                        </div>
                                     </div>
                                 </div>)}
                         </div>

@@ -197,9 +197,7 @@ function UserProductPage({ key }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // window.scrollTo(0, 0)
         setLoader(true)
-        // setTimeout(() => {
             ; (async () => {
                 try {
                     
@@ -215,7 +213,6 @@ function UserProductPage({ key }) {
                 }
                 
             })();
-        // }, 3000);
     }, [productId]);
 
     const handleAddToCart = async (e) => {
@@ -257,7 +254,7 @@ function UserProductPage({ key }) {
                             <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                         </div>
 
-                        <div id='info' className='absolute top-0 z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
+                        <div id='info' className='fixed md:top-14 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
                             <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
                         </div>
 
@@ -292,7 +289,7 @@ function UserProductPage({ key }) {
                                 <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
-                                <Button type='button' className='w-[70%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)}>{cartLoader ? <LightSpinner /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
+                                <Button type='button' className='w-[70%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)} disabled={cartLoader}>{cartLoader ? <LightSpinner color='fill-gray-500' /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
                                 <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
                             </div>
                         </form>

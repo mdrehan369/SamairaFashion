@@ -181,7 +181,7 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
 
 const createCheckoutSessionController = asyncHandler(async (req, res) => {
 
-    const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+    const { cart, isIndia, dirham_to_rupees, shippingDetails, deliveryCharge } = req.body;
     if (!cart) throw new ApiError("No Cart Given");
 
     const stripeObj = new stripe(process.env.STRIPE_SECRET_KEY)
@@ -199,6 +199,19 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
             quantity: item.quantity
         }
     });
+
+    if(deliveryCharge) {
+        items.push({
+            price_data: {
+                currency: isIndia ? 'inr' : 'aed',
+                product_data: {
+                    name: 'Delivery Charge',
+                },
+                unit_amount: isIndia ? deliveryCharge * 100 : Math.floor((deliveryCharge.price * 100) / dirham_to_rupees)
+            },
+            quantity: 1
+        })
+    }
 
     const session = await stripeObj.checkout.sessions.create({
         line_items: items,
