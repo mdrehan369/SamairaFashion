@@ -6,9 +6,6 @@ import orderRouter from "./routes/order.routes.js";
 import paymentRouter from "./routes/payment.routes.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import crypto from "crypto"
-import axios from "axios";
-import sha256 from "sha256";
 
 const app = express();
 

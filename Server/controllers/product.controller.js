@@ -5,9 +5,16 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadToCloudinary, deleteImage } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 import stripe from "stripe";
-import axios from "axios";
 import { cartItemModel } from "../models/cartItem.model.js";
 import { orderModel } from "../models/order.model.js";
+
+const options = {
+    httpOnly: true,
+    path: "/",
+    sameSite: 'none',
+    secure: true,
+    expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
+}
 
 const addProductController = asyncHandler(async (req, res) => {
 
@@ -104,8 +111,6 @@ const getSearchProductsController = asyncHandler(async (req, res) => {
 
     const { search } = req.query;
 
-    // if (!search) throw new ApiError(400, "No Search Query");
-
     const products = await productModel.aggregate([
         {
             '$match': {
@@ -199,7 +204,7 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
         line_items: items,
         payment_method_types: ['card'],
         mode: 'payment',
-        success_url: `${process.env.CLIENT_URL}/success`,
+        success_url: `${process.env.CLIENT_URL}/#/success`,
         cancel_url: `${process.env.CLIENT_URL}/`,
         customer_email: shippingDetails.email
     });
@@ -207,9 +212,9 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .cookie("sessionId", session.id, { httpOnly: true })
-        .cookie("shippingDetails", JSON.stringify(shippingDetails), { httpOnly: true })
-        .cookie("cart", JSON.stringify(cart), { httpOnly: true })
+        .cookie("sessionId", session.id, options)
+        .cookie("shippingDetails", JSON.stringify(shippingDetails), options)
+        .cookie("cart", JSON.stringify(cart), options)
         .json(new ApiResponse(200, session, "Session Created Successfully"));
 })
 
