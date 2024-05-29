@@ -2,13 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import "./index.css"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { RouterProvider, createHashRouter } from "react-router-dom"
 import { AddProduct, AdminDashboard, Cart, Contact, Home, Orders, ProductPage, Products, Shop, Signin, Signup, Users, UserProductPage, Privacy, Shipping, Refund, Terms, AboutUs, CheckoutPage, Success, OrderDetails, SearchPage, Overview } from './pages/index.js'
 import AuthLayout from './components/AuthLayout.jsx'
 import { store } from "./store/store.js";
 import { Provider } from "react-redux"
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: '/',
         element: <AuthLayout><App /></AuthLayout>,

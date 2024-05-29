@@ -30,7 +30,6 @@ function CheckoutPage() {
                 const response = await axios.get(`/api/v1/users/cart`, {
                     baseURL: import.meta.env.VITE_BACKEND_URL,
                     withCredentials: true,
-                    // headers: {'Content-Type': 'application/json'}
                 });
                 setCart(response.data.data);
 
@@ -53,21 +52,6 @@ function CheckoutPage() {
             }
         })();
     }, []);
-
-    const getPlaces = async (input) => {
-        try {
-            // const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o');
-            const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=kar&key=AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o')
-            // const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=700017&key=AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk')
-            //AIzaSyCpWSpiBip2Tz-fb9_LbSDiJlRKsuGtC1o
-            //https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&key=
-            //new----
-            //AIzaSyAIJxqZEoeFfulcYyCnltXeEFxbovtV-Vk
-            console.log(response)
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
     const handlePhonepePayment = async (shippingDetails) => {
 
