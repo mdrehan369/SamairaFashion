@@ -7,7 +7,10 @@ import mongoose from "mongoose";
 
 const options = {
     httpOnly: true,
-    path: "/"
+    path: "/",
+    sameSite: 'none',
+    secure: true,
+    expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
 }
 
 const signupController = asyncHandler(async (req, res) => {
