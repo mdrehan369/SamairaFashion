@@ -25,6 +25,7 @@ function Success() {
                     console.log(err)
                 } finally {
                     setLoader(false);
+                    localStorage.clear("shippingDetails");
                 }
             })();
         } else {

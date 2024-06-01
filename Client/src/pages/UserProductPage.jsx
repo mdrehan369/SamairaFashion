@@ -189,6 +189,7 @@ function UserProductPage({ key }) {
     const [loader, setLoader] = useState(true);
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
+    const [color, setColor] = useState('default');
     const [cartLoader, setCartLoader] = useState(false);
     const [page, setPage] = useState("Description");
     const [message, setMessage] = useState("Item Added To Cart!");
@@ -200,7 +201,7 @@ function UserProductPage({ key }) {
         setLoader(true)
             ; (async () => {
                 try {
-                    
+
                     const response = await axios.get(`/api/v1/products/product/${productId}`, {
                         baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                     });
@@ -211,12 +212,31 @@ function UserProductPage({ key }) {
                     setLoader(false);
                     window.scrollTo(0, 0);
                 }
-                
+
             })();
     }, [productId]);
 
+    const handleBuyNow = () => {
+
+        if (!status) {
+            return navigate('/signin')
+        }
+
+        const data = {
+            productId: productId,
+            product: [{ ...product }],
+            quantity: quantity,
+            size: productSize,
+            color: color
+        }
+
+        localStorage.setItem("product", JSON.stringify(data));
+
+        navigate('/checkoutPage');
+    }
+
     const handleAddToCart = async (e) => {
-        if(!status) {
+        if (!status) {
             navigate('/signin')
         }
         try {
@@ -225,7 +245,7 @@ function UserProductPage({ key }) {
                 productId: productId,
                 quantity: quantity,
                 size: productSize,
-                color: 'default'
+                color: color
             }
             await axios.post('/api/v1/users/cart', data, {
                 baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -247,7 +267,7 @@ function UserProductPage({ key }) {
 
     return (
         <Container className='flex flex-col justify-start items-center gap-10 relative min-h-[1900px]'>
-                {!loader ?
+            {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
                         <div className='md:w-[40%] w-full p-4 h-full'>
@@ -289,8 +309,8 @@ function UserProductPage({ key }) {
                                 <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
+                                <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={handleBuyNow}>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
                                 <Button type='button' className='w-[70%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)} disabled={cartLoader}>{cartLoader ? <LightSpinner color='fill-gray-500' /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
-                                <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]'>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
                             </div>
                         </form>
                     </div>
@@ -309,7 +329,7 @@ function UserProductPage({ key }) {
                     <RelatedProducts category={product.category} />
                 </div>
                 : <Spinner className='h-[100vh]' />}
-            </Container>
+        </Container>
     )
 }
 

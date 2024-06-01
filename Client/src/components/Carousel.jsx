@@ -7,7 +7,7 @@ import pic1ph from "../assets/pic1ph.webp"
 // import pic4 from "../assets/pic4.jpg"
 import { Button } from "./index"
 
-function Carousel() {
+function Carousel({...props}) {
 
     useEffect(() => {
         const slider = document.getElementById('slider');
@@ -29,7 +29,7 @@ function Carousel() {
     return (
         <>
 
-            <div className='w-[100vw] h-[90vh] relative overflow-hidden m-auto'>
+            <div {...props} className='w-[100vw] h-[90vh] cursor-pointer relative overflow-hidden m-auto'>
                 <div className='w-full h-full absolute top-0 left-0 transition duration-300 scroll-smooth ' id='slider'>
                     <img src={window.screen.width > 500 ? pic2 : pic2ph} className='absolute left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
                     <img src={window.screen.width > 500 ? pic1 : pic1ph} className='absolute left-[100%] top-0 w-full md:h-full md:object-cover h-[90%]' />

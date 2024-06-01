@@ -18,13 +18,6 @@ function Signup() {
 
     const submit = async (data) => {
 
-        // const formData = new FormData();
-
-        // for (let key of Object.keys(data)) {
-        //     // console.log(key)
-        //     formData.append(key, data[`${key}`]);
-        // }
-
         try {
             setLoader(true);
             const response = await axios.post('/api/v1/users/signup', data, {

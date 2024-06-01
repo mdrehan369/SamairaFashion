@@ -32,10 +32,12 @@ function convertISOToDateString(isoString) {
     return dateString;
 }
 
-const addDays = (date, days = 6) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + days);
-    return convertISOToDateString(newDate.toISOString());
+const addDays = (date, days) => {
+    const newDate1 = new Date(date);
+    const newDate2 = new Date(date);
+    newDate1.setDate(newDate1.getDate() + days[0]);
+    newDate2.setDate(newDate2.getDate() + days[1]);
+    return `${convertISOToDateString(newDate1.toISOString()).slice(0, 13)} to ${convertISOToDateString(newDate2.toISOString()).slice(0, 13)}`;
 }
 
 const Batch = ({ text, color, darkColor }) => {
@@ -142,11 +144,11 @@ const OrderDetails = () => {
                                                     : <Batch text='Delivered' color='bg-green-400' darkColor='bg-green-600' />
                                         }
                                     </h1>
-                                    <p className="text-gray-600 dark:text-gray-400">Order date: {convertISOToDateString(currOrder.date).slice(0, 12)}</p>
+                                    <p className="text-gray-600 dark:text-gray-400">Order date: {convertISOToDateString(currOrder.date).slice(0, 13)}</p>
                                     {
                                         !currOrder.isCancelled &&
                                         (currOrder.isPending ?
-                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder.date || new Date()).slice(0, 12)}</p>
+                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder.date || new Date(), currOrder.shippingDetails.country.includes("United Arab Emirates") ? [3, 5] : [10, 15])}</p>
                                             : <p className="text-green-500 mt-2">Delivered On: {convertISOToDateString(currOrder.deliveredDate).slice(0, 12)}</p>)
                                     }
                                 </div>

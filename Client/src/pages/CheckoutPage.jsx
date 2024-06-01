@@ -4,47 +4,62 @@ import { useForm } from "react-hook-form"
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCreditCard, faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import visa from "../assets/visa.svg";
 import mastercard from "../assets/mastercard.svg";
 import visa2 from "../assets/visa2.svg";
 import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
+import { setShippingDetails } from "../store/authslice.js"
 
 function CheckoutPage() {
 
-    const { register, handleSubmit, setError, formState: { errors } } = useForm()
+    const user = useSelector(state => state.auth.user);
+    const { register, handleSubmit, setError, formState: { errors } } = useForm({
+        defaultValues: user?.shippingDetails || null
+    })
     const [cart, setCart] = useState([]);
     const [loader, setLoader] = useState(true);
+    const data = JSON.parse(localStorage.getItem("product"));
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
     const [total, setTotal] = useState();
     const [isCOD, setIsCOD] = useState(false);
+    const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
+    const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails?.country === 'India' || true);
     const [deliveryCharge, setDeliveryCharge] = useState(0);
-    // const [isUAE, setIsDeliveryCharge] = useState(false);
     const navigate = useNavigate();
-    // const [loader2, response] = usePlacesFetch(25314);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         ; (async () => {
             setLoader(true);
             try {
-                const response = await axios.get(`/api/v1/users/cart`, {
-                    baseURL: import.meta.env.VITE_BACKEND_URL,
-                    withCredentials: true,
-                });
-                setCart(response.data.data);
+                if (data === null) {
+                    const response = await axios.get(`/api/v1/users/cart`, {
+                        baseURL: import.meta.env.VITE_BACKEND_URL,
+                        withCredentials: true,
+                    });
+                    setCart(response.data.data);
 
-                let sum = 0;
+                    let sum = 0;
 
-                for (let item of response.data.data) {
-                    if (!isIndia) {
-                        sum += Math.floor((item.quantity * item.product[0].price) / dirham_to_rupees)
+                    for (let item of response.data.data) {
+                        if (!isIndia) {
+                            sum += Math.floor((item.quantity * item.product[0].price) / dirham_to_rupees)
+                        } else {
+                            sum += item.quantity * item.product[0].price
+                        }
+                    }
+                    setTotal(sum)
+                }
+                else {
+                    setCart([{ ...data }]);
+                    if(isIndia) {
+                        setTotal(data.quantity * data.product[0].price);
                     } else {
-                        sum += item.quantity * item.product[0].price
+                        setTotal(data.quantity * data.product[0].price/dirham_to_rupees);
                     }
                 }
-
-                setTotal(sum)
 
             } catch (err) {
                 console.log(err)
@@ -52,6 +67,10 @@ function CheckoutPage() {
                 setLoader(false);
             }
         })();
+
+        return () => {
+            localStorage.clear("product");
+        }
     }, []);
 
     const handlePhonepePayment = async (shippingDetails) => {
@@ -108,10 +127,12 @@ function CheckoutPage() {
                 baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
             });
 
+            dispatch(setShippingDetails(shippingDetails));
+
             return navigate('/success?cod=cod')
         }
 
-        const stripe = await loadStripe('pk_test_51PGhn5JZgatvWpsF1qMJO575K89xhvyj6hN0SFmXoByUP3xNjDgHuKfyWMj5HrJffHP4bHDFOUzjolQ5nNr6owsI00WfufIEGT');
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
         const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
             baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
@@ -148,6 +169,10 @@ function CheckoutPage() {
                             <h1 className='text-stone-800 dark:text-white font-[450] text-sm'>Country</h1>
                             <select
                                 className='md:w-[100%] p-3 rounded dark:bg-secondary-color dark:border-0 bg-white border-[1px] w-full border-gray-400 cursor-pointer'
+                                onInput={(e) => {
+                                    e.currentTarget.value === 'India' ? setIsIndianDelivery(true) : setIsIndianDelivery(false);
+                                    e.currentTarget.value.includes('United Arab Emirates') ? setIsCODAvailable(true) : setIsCODAvailable(false);
+                                }}
                                 {...register('country', { required: true })}>
                                 <option value="India" selected onClick={() => setDeliveryCharge(0)}>India</option>
                                 <option value="Bahrain" onClick={() => setDeliveryCharge(20)}>Bahrain</option>
@@ -200,33 +225,35 @@ function CheckoutPage() {
                             className='md:w-[80%] w-full bg-white'
                             errors={errors} />
 
-                        <div className='md:w-[80%] w-full flex items-center justify-between gap-2'>
+                        {isIndianDelivery &&
+                            <div className='md:w-[80%] w-full flex items-center justify-between gap-2'>
 
-                            <Input
-                                register={register}
-                                name='city'
-                                label='City'
-                                placeholder='ex. Kolkata'
-                                className='w-full bg-white'
-                                errors={errors} />
+                                <Input
+                                    register={register}
+                                    name='city'
+                                    label='City'
+                                    placeholder='ex. Kolkata'
+                                    className='w-full bg-white'
+                                    errors={errors} />
 
-                            <Input
-                                register={register}
-                                name='state'
-                                label='State'
-                                placeholder='ex. West Bengal'
-                                className='w-full bg-white'
-                                errors={errors} />
+                                <Input
+                                    register={register}
+                                    name='state'
+                                    label='State'
+                                    placeholder='ex. West Bengal'
+                                    className='w-full bg-white'
+                                    errors={errors} />
 
-                            <Input
-                                register={register}
-                                name='pincode'
-                                label='Pincode'
-                                placeholder='ex. 700017'
-                                className='w-full bg-white'
-                                errors={errors} />
+                                <Input
+                                    register={register}
+                                    name='pincode'
+                                    label='Pincode'
+                                    placeholder='ex. 700017'
+                                    className='w-full bg-white'
+                                    errors={errors} />
 
-                        </div>
+                            </div>
+                        }
 
                         <Input
                             register={register}
@@ -262,10 +289,13 @@ function CheckoutPage() {
                                 </div>
                             </div>
                         </div>
-                        <div onClick={() => setIsCOD(true)} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
-                            <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
-                            Cash On Delivery (COD)
-                        </div>
+                        {
+                            isCODAvailable &&
+                            <div onClick={() => setIsCOD(true)} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                                <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                                Cash On Delivery (COD)
+                            </div>
+                        }
                         <div className='w-full md:hidden block space-y-2'>
                             <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
                             <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{

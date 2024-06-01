@@ -6,7 +6,8 @@ const initialState = {
     location: {
         isIndia: true,
         dirham_to_rupees: 22
-    }
+    },
+    shippingDetails: null
 }
 
 const authSlice = createSlice({
@@ -31,10 +32,15 @@ const authSlice = createSlice({
                 dirham_to_rupees: action.payload.dirham_to_rupees || 22
             }
             return state;
+        },
+
+        setShippingDetails: (state, action) => {
+            state.shippingDetails = action.payload;
+            return state;
         }
     }
 });
 
-export const { login, logout, setLocation } = authSlice.actions;
+export const { login, logout, setLocation, setShippingDetails } = authSlice.actions;
 
 export default authSlice.reducer;

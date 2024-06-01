@@ -28,31 +28,31 @@ const userSchema = new mongoose.Schema({
         index: true
     },
 
+    ipAddress: {
+        type: String,
+        required: true,
+        index: true,
+        trim: true
+    },
+
     password: {
         type: String,
         trim: true,
         required: true
     },
 
-    address: {
-        type: String,
-        trim: true
-    },
-
-    city: {
-        type: String,
-        trim: true  
-    },
-
-    pincode: {
-        type: String,
-        trim: true
-    },
-
-    state: {
-        type: String,
-        trim: true
-    },
+    shippingDetails: {
+        email: String,
+        country: String,
+        firstName: String,
+        lastName: String,
+        address: String,
+        nearBy: String,
+        city: String,
+        state: String,
+        pincode: Number,
+        number: Number,
+    }
 
 });
 

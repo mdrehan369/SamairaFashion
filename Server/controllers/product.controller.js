@@ -233,7 +233,6 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
 
 const retriveCheckoutSessionController = asyncHandler(async (req, res) => {
 
-    console.log(req.cookies);
     const sessionId = req.cookies.sessionId;
     const shippingDetails = JSON.parse(req.cookies.shippingDetails);
     const cart = JSON.parse(req.cookies.cart);

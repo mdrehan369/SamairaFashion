@@ -20,7 +20,7 @@ const addOrderController = asyncHandler(async (req, res) => {
             size: item.size
         }
     ));
-    
+
     const newOrder = await orderModel.create({
         cart: cartItems,
         user: req.user._id,
@@ -28,7 +28,9 @@ const addOrderController = asyncHandler(async (req, res) => {
         paymentMethod: 'COD'
     });
 
-    await cartItemModel.deleteMany({ user: req.user._id })
+    await cartItemModel.deleteMany({ user: req.user._id });
+
+    await userModel.findByIdAndUpdate(req.user._id, { shippingDetails });
 
     return res
         .status(200)
@@ -227,6 +229,41 @@ const getCountsController = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, { counts }, "Fetched Successfully"));
 
+});
+
+const getOrdersByDatesController = asyncHandler(async (req, res) => {
+
+    let { to, from } = req.query;
+
+    if (!from) {
+        from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    if (!to) {
+        to = new Date();
+    }
+
+    const orders = await orderModel.aggregate([
+        {
+            '$match': {
+                'createdAt': {
+                    '$gt': from,
+                    '$lt': to
+                }
+            }
+        }
+    ]);
+
+    let dataset = {};
+
+    for (let order of orders) {
+        dataset[order.createdAt] = order;
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, dataset, "Orders Fetched Successfully"));
+
 })
 
 export {
@@ -235,7 +272,8 @@ export {
     cancelOrderController,
     getAllOrdersController,
     getOrderController,
-    getCountsController
+    getCountsController,
+    getOrdersByDatesController
 }
 
 

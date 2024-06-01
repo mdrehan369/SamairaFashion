@@ -2,7 +2,8 @@ import React from 'react'
 import { Container, Input, Button, TextArea } from "../../components/index.js"
 import { useForm } from "react-hook-form"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faLocationPin } from '@fortawesome/free-solid-svg-icons';
+import { faWhatsappSquare } from '@fortawesome/free-brands-svg-icons';
 
 function Contact() {
 
@@ -35,16 +36,15 @@ function Contact() {
                         <p>We'd love to hear from you - please use the form to</p>
                         <p>send us your message or ideas.</p>
                     </div>
-                    <div className='space-y-1'>
-                        <p><FontAwesomeIcon icon={faMessage} className='mr-2' />TEXT: +97 15216 60581</p>
-                        <p><FontAwesomeIcon icon={faEnvelope} className='mr-2' />samaira.shop1@gmail.com</p>
+                    <div className='flex flex-col gap-1'>
+                        <a href='https://wa.me/+971521660581' target='__blank' className='hover:underline'><FontAwesomeIcon icon={faWhatsappSquare} className='mr-2 size-4' />Whatsapp: +97 15216 60581</a>
+                        <a href='mailto:samaira.shop1@gmail.com' target='__blank' className='hover:underline'><FontAwesomeIcon icon={faEnvelope} className='mr-2 size-4' />samaira.shop1@gmail.com</a>
                     </div>
                     <div className='space-y-1'>
-                        <p>29A/H/2 Palm Avenue,Kolkata 700019</p>
-                        <p>.West Bengal, India</p>
+                        <p><FontAwesomeIcon icon={faLocationPin} className='mr-2 size-4' />Deira, Dubai. UAE</p>
                     </div>
                     <div className='w-full h-[2px] bg-gray-200'></div>
-                    <div>Proprietor : Mohammad Bhupen</div>
+                    <div>Proprietor : Samaira Fashion</div>
                 </div>
             </div>
         </Container>

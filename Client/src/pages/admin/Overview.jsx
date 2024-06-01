@@ -5,6 +5,11 @@ import axios from 'axios';
 import { FaTruckFast } from "react-icons/fa6";
 import { TiCancel } from "react-icons/ti";
 
+import { Chart as chartjs, ArcElement, Tooltip, Legend } from "chart.js"
+import { Line } from "react-chartjs-2"
+
+chartjs.register(ArcElement, Tooltip, Legend);
+
 function Overview() {
 
     const [loader, setLoader] = useState(true);
@@ -45,6 +50,19 @@ function Overview() {
                     <TiCancel className='size-32' />
                     <span className='text-sm uppercase'>Orders Cancelled: {counts.cancelledCount}</span>
                 </div>
+
+                <Line
+                    data={{
+                        labels: ['Mon', 'Tue', 'Wed', 'Thurs', 'Fri'],
+                        datasets: [
+                            {
+                                label: 'My Data',
+                                data: [1, 5, 3, 7, 10],
+                                fill: false,
+                            }
+                        ]
+                    }}
+                />
                 {/* <div className={generateClasses('')}></div> */}
             </Container>
             : <Spinner />

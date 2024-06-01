@@ -47,7 +47,7 @@ function Home() {
 
     return (
         <Container className=''>
-            <Carousel />
+            <Carousel onClick={() => window.scrollTo(0, 1225)} />
             <div className='w-full h-full md:my-10 my-4 space-y-10'>
                 <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>
