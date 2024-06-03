@@ -8,8 +8,8 @@ import logo from "../assets/logo.avif"
 import darkLogo from "../assets/darkLogo.png"
 import { useGoogleLogin } from '@react-oauth/google';
 import { login } from '../store/authslice.js';
-import FacebookLogin from "react-facebook-login";
-import { LoginSocialFacebook } from "reactjs-social-login"
+// import FacebookLogin from "react-facebook-login";
+import { LoginSocialFacebook } from "reactjs-social-login";
 
 function Signin() {
 
@@ -104,26 +104,26 @@ function Signin() {
                 icon="fa-facebook"
             />, */}
 
-            <FacebookLogin
+            {/* <FacebookLogin
                 appId="343913835125295"
                 autoLoad={false}
                 fields="name,email,picture"
                 callback={() => responseFacebook}
                 cssClass="my-facebook-button-class"
                 icon="fa-facebook"
-            />,
+            />, */}
 
             {/* <button onClick={() => FB.getLoginStatus()}>
                 Login with fb
             </button> */}
 
-            {/* <LoginSocialFacebook
+            <LoginSocialFacebook
                 appId='1595366361249902'
                 onResolve={(res) => console.log(res)}
                 onReject={(res) => console.log(res)}
             >
                 Login
-            </LoginSocialFacebook> */}
+            </LoginSocialFacebook>
         </Container>
     )
 }
