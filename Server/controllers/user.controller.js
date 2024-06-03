@@ -70,6 +70,34 @@ const loginController = asyncHandler(async (req, res) => {
 
 });
 
+const googleSigninController = asyncHandler(async (req, res) => {
+
+    const { id } = req.params;
+    if(!id) throw new ApiError("No Google Id found");
+
+    const user = await userModel.findOne({ googleId: id });
+
+    if (!user) {
+
+        const newUser = await userModel.create({ googleId: id });
+        const accessToken = newUser.generateAccessToken();
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .json(new ApiResponse(200, newUser, "New User Created Successfully"));
+
+    }
+
+    const accessToken = user.generateAccessToken();
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .json(new ApiResponse(200, user, "Orders Fetched Successfully"));
+
+})
+
 const logoutController = asyncHandler(async (req, res) => {
 
     return res
@@ -200,5 +228,6 @@ export {
     updateCartController,
     deleteAllCartItemsController,
     deleteCartItemController,
-    getCartLengthController
+    getCartLengthController,
+    googleSigninController
 }

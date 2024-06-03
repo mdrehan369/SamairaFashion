@@ -7,6 +7,7 @@ import { AddProduct, AdminDashboard, Cart, Contact, Home, Orders, ProductPage, P
 import AuthLayout from './components/AuthLayout.jsx'
 import { store } from "./store/store.js";
 import { Provider } from "react-redux"
+import { GoogleOAuthProvider } from "@react-oauth/google"
 
 const router = createHashRouter([
     {
@@ -119,8 +120,10 @@ const router = createHashRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
-    <Provider store={store}>
-        <RouterProvider router={router} />
-    </Provider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <Provider store={store}>
+            <RouterProvider router={router} />
+        </Provider>
+    </GoogleOAuthProvider>
 
 )

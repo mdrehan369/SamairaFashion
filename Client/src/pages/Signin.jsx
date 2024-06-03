@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
 import { useDispatch } from 'react-redux';
-import { login } from '../store/authslice.js';
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Input, Button, Container, LightSpinner } from "../components/index.js"
 import logo from "../assets/logo.avif"
 import darkLogo from "../assets/darkLogo.png"
+import { useGoogleLogin } from '@react-oauth/google';
+import { login } from '../store/authslice.js';
+import FacebookLogin from "react-facebook-login";
+import { LoginSocialFacebook } from "reactjs-social-login"
 
 function Signin() {
 
@@ -16,6 +19,38 @@ function Signin() {
     const [showPass, setShowPass] = useState(false);
     const [error, setError] = useState(null);
     const [loader, setLoader] = useState(false);
+
+    const Glogin = useGoogleLogin({
+        onSuccess: (codeResponse) => {
+            axios
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {
+                    headers: {
+                        Authorization: `Bearer ${codeResponse.access_token}`,
+                        Accept: 'application/json'
+                    }
+                })
+                .then(async (res) => {
+                    const response = await axios.get(`/api/v1/users/googleSignin/${res.data.id}`,
+                        {
+                            baseURL: import.meta.env.VITE_BACKEND_URL,
+                            withCredentials: true
+                        }
+                    );
+
+                    dispatch(login(response.data.data));
+                    navigate('/');
+
+                })
+                .catch((err) => console.log(err));
+        },
+
+        onError: (err) => setError(err.error_description)
+
+    });
+
+    const responseFacebook = (response) => {
+        console.log(response);
+    }
 
     const submit = async (data) => {
         try {
@@ -31,7 +66,6 @@ function Signin() {
             }
             navigate("/");
         } catch (e) {
-            // console.log(e);
             setError(e.response.data.message);
         } finally {
             setLoader(false);
@@ -53,11 +87,43 @@ function Signin() {
                 <Button type='submit' disabled={loader} className='p-0 w-52 h-16 uppercase text-sm font-bold'>
                     {
                         loader ?
-                        <LightSpinner />
-                        : 'Log In'
+                            <LightSpinner />
+                            : 'Log In'
                     }
                 </Button>
             </form>
+
+            <button onClick={() => Glogin()}>Google</button>
+
+            {/* <FacebookLogin
+                appId="1595366361249902"
+                autoLoad={true}
+                fields="name,email,picture"
+                callback={responseFacebook}
+                cssClass="my-facebook-button-class"
+                icon="fa-facebook"
+            />, */}
+
+            <FacebookLogin
+                appId="343913835125295"
+                autoLoad={false}
+                fields="name,email,picture"
+                callback={() => responseFacebook}
+                cssClass="my-facebook-button-class"
+                icon="fa-facebook"
+            />,
+
+            {/* <button onClick={() => FB.getLoginStatus()}>
+                Login with fb
+            </button> */}
+
+            {/* <LoginSocialFacebook
+                appId='1595366361249902'
+                onResolve={(res) => console.log(res)}
+                onReject={(res) => console.log(res)}
+            >
+                Login
+            </LoginSocialFacebook> */}
         </Container>
     )
 }

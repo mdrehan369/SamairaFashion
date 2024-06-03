@@ -8,6 +8,7 @@ import {
     getAllCartItems,
     getCartLengthController,
     getCurrentUserController,
+    googleSigninController,
     loginController,
     logoutController,
     signupController,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.route("/signup").post(signupController);
 router.route("/signin").post(loginController);
+router.route('/googleSignin/:id').get(googleSigninController)
 
 //Protected Routes
 
