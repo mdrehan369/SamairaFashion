@@ -17,7 +17,7 @@ function Success() {
             ; (async () => {
                 setLoader(true);
                 try {
-                    const session = await axios.get(`/api/v1/products/retrieve`, {
+                    const session = await axios.get(`/api/v1/payments/retrieve/${localStorage.getItem("tabbyId")}`, {
                         baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                     });
                     if (session.data.data.payment_status === 'paid') setIsPaid(true);

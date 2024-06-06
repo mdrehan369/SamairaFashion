@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { cartItemModel } from "../models/cartItem.model.js"
 import mongoose from "mongoose";
+import nodemailer from "nodemailer"
 
 const options = {
     httpOnly: true,
@@ -41,28 +42,83 @@ const signupController = asyncHandler(async (req, res) => {
 
 });
 
+const sendEmail = async (to, subject, text) => {
+
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: 'mdrehan4650@gmail.com',
+            pass: 'tlrqrwlogevtafip',
+        },
+    });
+    const mailOptions = {
+        from: 'mdrehan4650@gmail.com',
+        to,
+        subject,
+        text
+    };
+    try {
+        const response = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+        return response;
+    } catch (error) {
+        console.log('Error Occured while sending email');
+        return error;
+    }
+
+}
+
+const sendOtpController = asyncHandler(async (req, res) => {
+
+    const { email } = req.params;
+    if (!email) throw new ApiError(400, "No Email");
+
+    const otp = String(Math.random() * 10000).slice(0, 4);
+
+    await sendEmail(email, 'Your One-Time Password (OTP) for Samaira Fashion', `
+    Hi ${email},\n
+    Thank you for using Samaira Fashion. To proceed with your request, please use the following One-Time Password (OTP):\n
+    Your OTP: ${otp}\n
+    This OTP is valid for the next 10 minutes. Please do not share this code with anyone.\n
+    If you did not request this code, please contact our support team immediately.\n
+    Thank you,\n
+    Samaira Fashion\n
+    Contact Us:\n
+    samaira.shop1@gmail.com\n
+    +97 15216 60581\n
+    Deira, Dubai. UAE\n
+    `);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, otp, "OTP sent successfully"));
+
+});
+
 const loginController = asyncHandler(async (req, res) => {
 
-    const { email, password } = req.body;
+    const { email } = req.params;
 
-    if ([email, password].some((field) => field === '')) {
-        return res.status(400).json(new ApiResponse(400, {}, "Some fields are missing"));
-    }
+    if (!email) throw new ApiError(400, "No Email");
 
     const user = await userModel.findOne({ email });
 
     if (!user) {
-        return res.status(400).json(new ApiResponse(400, {}, "User does not exists"));
+
+        const newUser = await userModel.create({ email });
+        const accessToken = newUser.generateAccessToken();
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .json(new ApiResponse(200, newUser, "New User Created Successfully"));
+
     }
 
-    const isPass = await user.verifyPassword(password);
-
-    if (!isPass) {
-        return res.status(400).json(new ApiResponse(400, {}, "Password Incorrect"));
-    }
-
-    user.password = "";
     const accessToken = user.generateAccessToken();
+
     return res
         .status(200)
         .cookie("accessToken", accessToken, options)
@@ -73,7 +129,7 @@ const loginController = asyncHandler(async (req, res) => {
 const googleSigninController = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
-    if(!id) throw new ApiError("No Google Id found");
+    if (!id) throw new ApiError("No Google Id found");
 
     const user = await userModel.findOne({ googleId: id });
 
@@ -229,5 +285,6 @@ export {
     deleteAllCartItemsController,
     deleteCartItemController,
     getCartLengthController,
-    googleSigninController
+    googleSigninController,
+    sendOtpController
 }

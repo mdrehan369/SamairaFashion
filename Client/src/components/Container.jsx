@@ -1,5 +1,6 @@
 import React from 'react'
 import { twMerge } from 'tailwind-merge'
+import bg from "../assets/bg.png";
 
 function Container({
     children, 
@@ -7,10 +8,11 @@ function Container({
     ...props
 }) {
   return (
-    <div className={twMerge(`w-[100vw] h-auto min-h-[90vh] dark:bg-primary-color dark:text-white`, className)} {...props}>
+    <div className={twMerge(`w-[100vw] h-auto relative min-h-[90vh] dark:bg-primary-color dark:text-white`, className)} {...props}>
+      {/* <img src={bg} alt="bg" className='absolute top-' /> */}
         {children}
     </div>
   )
 }
-// dark:bg-[#070F2B]
+
 export default Container

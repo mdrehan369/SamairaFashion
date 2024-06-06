@@ -126,6 +126,81 @@ const phonepeCheckStatusController = asyncHandler(async (req, res) => {
 
 });
 
+const tabbyCheckoutController = asyncHandler(async (req, res) => {
+
+    const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+
+    const REF_ID = Date.now();
+    let amount = 0;
+    const items = cart.map(cartItem => {
+        amount += cartItem.product[0].price * cartItem.quantity;
+        return {
+            title: cartItem.product[0].title,
+            quantity: cartItem.quantity,
+            unit_price: cartItem.product[0].price * 100,
+            category: 'Clothes'
+        }
+    })
+
+    const CHECKOUT_URL = 'https://api.tabby.ai/api/v2/checkout';
+    const payload = {
+        payment: {
+            amount: amount,
+            currency: "AED",
+            buyer: {
+                phone: shippingDetails.number,
+                email: shippingDetails.email,
+                name: `${shippingDetails.firstName} ${shippingDetails.lastName}`
+            },
+            shipping_address: {
+                city: 'N/A',
+                address: shippingDetails.address,
+                zip: 'N/A'
+            },
+            order: {
+                reference_id: REF_ID,
+                items: items
+            },
+            buyer_history: {
+                registered_since: new Date().toISOString(),
+                loyalty_level: 0
+            },
+            order_history: []
+        },
+        lang: "ar",
+        // merchant_code: 
+        merchant_urls: {
+            success: `${process.env.CLIENT_URL}/#/success`,
+            cancel: `${process.env.CLIENT_URL}/#/checkoutPage`,
+            failure: `${process.env.CLIENT_URL}/#/success`,
+        }
+    }
+
+    const response = await axios.post(CHECKOUT_URL, payload);
+
+    if (response.data.status !== 'rejected') {
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { id: response.data.id, url: response.data.configuration.available_products.installments[0].web_url }, "Checkout Initiated"));
+    } else {
+        throw new ApiError(300, "Some Error Occurred While Creating A Checkout Session");
+    }
+
+});
+
+const retrieveTabbyCheckoutController = asyncHandler(async (req, res) => {
+
+    const { id } = req.params;
+
+    const response = await axios.get(`https://api.tabby.ai/api/v2/checkout/${id}`, {
+        headers: {
+            Authorization: `Bearer ${process.env.TABBY_SECRET_KEY}`
+        }
+    });
+
+
+})
+
 export {
     phonepePayController,
     phonepeCheckStatusController,

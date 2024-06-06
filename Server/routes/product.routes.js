@@ -22,8 +22,8 @@ router.route("/search").get(getSearchProductsController);
 
 //Protected Routes
 
-router.route("/product").post(verifyAdmin, upload.single("image"), addProductController);
-router.route("/product/:productId").delete(verifyAdmin, deleteProductController);
+router.route("/product").post(upload.array("images"), addProductController);
+router.route("/product/:productId").delete(deleteProductController);
 router.route("/category").get(getProductsByCategory);
 router.route("/create-checkout").post(verifyJWT, createCheckoutSessionController);
 router.route("/retrieve").get(verifyJWT, retriveCheckoutSessionController);

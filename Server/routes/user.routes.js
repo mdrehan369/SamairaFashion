@@ -11,6 +11,7 @@ import {
     googleSigninController,
     loginController,
     logoutController,
+    sendOtpController,
     signupController,
     updateCartController
 } from "../controllers/user.controller.js";
@@ -18,7 +19,7 @@ import {
 const router = express.Router();
 
 router.route("/signup").post(signupController);
-router.route("/signin").post(loginController);
+router.route("/signin/:email").get(loginController);
 router.route('/googleSignin/:id').get(googleSigninController)
 
 //Protected Routes
@@ -31,5 +32,6 @@ router.route("/cart").put(verifyJWT, updateCartController);
 router.route("/cart").delete(verifyJWT, deleteAllCartItemsController);
 router.route("/cart/:id").delete(verifyJWT, deleteCartItemController);
 router.route("/cartLength").get(verifyJWT, getCartLengthController);
+router.route("/send/:email").get(sendOtpController);
 
 export default router;

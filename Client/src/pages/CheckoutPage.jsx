@@ -115,7 +115,7 @@ function CheckoutPage() {
 
     }
 
-    const handleCheckout = async (shippingDetails) => {
+    const handleTabbyCheckout = async (shippingDetails) => {
 
         if (!validateData(shippingDetails)) return;
 
@@ -132,17 +132,19 @@ function CheckoutPage() {
             return navigate('/success?cod=cod')
         }
 
-        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+        try {
+            
+            const response = await axios.post('/api/v1/payments/tabbyCheckout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+            });
+            
+            localStorage.setItem("tabbyId", response.data.data.id);
+            window.open(response.data.data.url);
 
-        const session = await axios.post('/api/v1/products/create-checkout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
-            baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-        });
+        } catch (error) {
+            console.log(error);
+        }
 
-        const results = await stripe.redirectToCheckout({
-            sessionId: session.data.data.id
-        });
-
-        if (results.error) console.log("Error in Checkout page", results.error);
     }
 
     return (
@@ -150,7 +152,7 @@ function CheckoutPage() {
             {!loader ?
                 <>
                     <form
-                        onSubmit={handleSubmit(handleCheckout)}
+                        onSubmit={handleSubmit(handleTabbyCheckout)}
                         className='md:w-[50%] w-[90%] py-10 min-h-[85vh] md:max-h-[90vh] flex flex-col md:items-start items-center justify-start gap-4 md:overflow-y-scroll'
                     >
                         <h1 className='text-xl font-bold self-start'>Contact</h1>

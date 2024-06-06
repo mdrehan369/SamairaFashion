@@ -13,9 +13,20 @@ const productSchema = new mongoose.Schema({
         trim: true
     },
 
-    image: {
-        url: String,
-        publicId: String
+    images: [
+        {
+            url: String,
+            publicId: String
+        }
+    ],
+
+    color: {
+        type: String
+    },
+
+    onTop: {
+        type: Boolean,
+        default: false
     },
 
     category: {
@@ -23,19 +34,6 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-
-    history: [
-        {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            },
-            time: {
-                type: Date,
-                default: Date.now()
-            }
-        }
-    ],
 
     price: {
         type: Number,
@@ -56,8 +54,8 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Review"
     }
-    
-}, {timestamps: true});
+
+}, { timestamps: true });
 
 export const productModel = new mongoose.model("Product", productSchema);
 

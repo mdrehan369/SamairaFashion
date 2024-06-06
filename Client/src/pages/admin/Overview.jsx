@@ -51,7 +51,7 @@ function Overview() {
                     <span className='text-sm uppercase'>Orders Cancelled: {counts.cancelledCount}</span>
                 </div>
 
-                <Line
+                {/* <Line
                     data={{
                         labels: ['Mon', 'Tue', 'Wed', 'Thurs', 'Fri'],
                         datasets: [
@@ -62,7 +62,7 @@ function Overview() {
                             }
                         ]
                     }}
-                />
+                /> */}
                 {/* <div className={generateClasses('')}></div> */}
             </Container>
             : <Spinner />

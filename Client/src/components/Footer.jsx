@@ -9,7 +9,8 @@ import darkLogo from "../assets/darkLogo.png"
 const Footer = () => {
 
     return (
-        <footer className='bg-black mt-20 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full md:h-[50vh] h-auto relative bottom-0 left-0'>
+        !window.location.hash.includes('signin') &&
+        <footer className='bg-black mt-10 text-gray-300 text-sm flex flex-col items-center justify-start divide-y-2 divide-gray-600 w-full md:h-[50vh] h-auto relative bottom-0 left-0'>
             <div className='w-full h-[90%] mt-10 flex md:flex-row flex-col items-start md:gap-0 gap-10 md:justify-between justify-normal px-4'>
                 <div className='space-y-1'>
                     <img src={darkLogo} alt="logo" className='md:w-[80%] w-full mb-4' />

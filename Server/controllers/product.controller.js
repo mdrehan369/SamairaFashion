@@ -18,21 +18,21 @@ const options = {
 
 const addProductController = asyncHandler(async (req, res) => {
 
-    const { title, description, category, price, comparePrice } = req.body;
+    const { title, description, category, price, comparePrice, onTop } = req.body;
 
     if ([title, description, category, price, comparePrice].some((field) => field?.trim() === '')) {
         throw new ApiError(400, "Some fields are missing");
     }
 
-    const imageLocalPath = req.file?.path;
+    const imagesRecieved = req.files;
+    let images = [];
 
-    if (!imageLocalPath) {
-        throw new ApiError(400, "No Image Given");
+    for (let image of imagesRecieved) {
+        const img = await uploadToCloudinary(image.path);
+        images.push(img);
     }
 
-    const image = await uploadToCloudinary(imageLocalPath);
-
-    const product = await productModel.create({ title, description, category, price, comparePrice, image });
+    const product = await productModel.create({ title, description, category, price, comparePrice, images, onTop });
 
     return res
         .status(200)
@@ -54,7 +54,14 @@ const deleteProductController = asyncHandler(async (req, res) => {
         throw new ApiError(400, "No Product Found");
     }
 
-    await deleteImage(product.image.publicId);
+    if (product.image) {
+        await deleteImage(product.image.publicId);
+    } else {
+        for (let image of product.images) {
+            await deleteImage(image.publicId);
+        }
+    }
+
     await product.deleteOne();
 
     return res
@@ -66,7 +73,20 @@ const deleteProductController = asyncHandler(async (req, res) => {
 const getAllProductsController = asyncHandler(async (req, res) => {
 
     const { page } = req.query;
-    const products = await productModel.find({}).limit(12).skip(page * 12);
+    const products = await productModel.aggregate([
+        {
+            '$sort': {
+                'createdAt': -1
+            }
+        },
+        {
+            '$skip': page * 12
+        },
+        {
+            '$limit': 12
+        }
+    ]);
+    // .limit(12).skip(page * 12);
 
     return res
         .status(200)
@@ -200,7 +220,7 @@ const createCheckoutSessionController = asyncHandler(async (req, res) => {
         }
     });
 
-    if(deliveryCharge) {
+    if (deliveryCharge) {
         items.push({
             price_data: {
                 currency: isIndia ? 'inr' : 'aed',
@@ -251,7 +271,7 @@ const retriveCheckoutSessionController = asyncHandler(async (req, res) => {
             size: item.size
         }
     ));
-    
+
     await orderModel.create({
         cart: cartItems,
         user: req.user._id,

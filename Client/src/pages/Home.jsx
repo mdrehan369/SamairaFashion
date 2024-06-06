@@ -6,6 +6,7 @@ import farasha from "../assets/farasha.webp"
 import umbrella from "../assets/umbrella.webp"
 import { NavLink } from 'react-router-dom'
 import axios from 'axios'
+import policy from "../assets/policy.png"
 
 const hoverEffect = {
     onMouseEnter: (e) => {
@@ -24,8 +25,9 @@ function Home() {
     const [productLoader, setProductLoader] = useState(true);
     const [buttonLoader, setButtonLoader] = useState(true);
     const [response, setResponse] = useState([]);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
 
+    
     useEffect(() => {
         setButtonLoader(true)
             ; (async () => {
@@ -46,13 +48,13 @@ function Home() {
     }, [page]);
 
     return (
-        <Container className=''>
+        <Container className='relative'>
             <Carousel onClick={() => window.scrollTo(0, 1225)} />
             <div className='w-full h-full md:my-10 my-4 space-y-10'>
                 <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>
                         <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] hidden md:block w-[30%] rounded-full'></div>
-                        <h1 className='font-bold text-stone-800 text-center text-[1.35rem] dark:text-[#e4e4e4] md:w-[30%] w-full'>OUR BEST SELLING CATEGORIES</h1>
+                        <h1 className='font-bold text-stone-800 text-center text-[1.35rem] dark:text-[#e4e4e4] md:w-[30%] w-full font-heading'>OUR BEST SELLING CATEGORIES</h1>
                         <div className='h-[3px] bg-stone-800 w-[30%] hidden md:block dark:bg-[#e4e4e4] rounded-full'></div>
                     </div>
                     <div className='w-full h-[50%] md:flex items-start justify-center grid grid-cols-2 px-4 md:px-0 gap-4 cursor-pointer'>
@@ -88,13 +90,13 @@ function Home() {
                 </div>
                 <div className='flex items-center justify-center gap-6 md:mb-10 mb-4'>
                     <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
-                    <h1 className='font-bold text-stone-800 dark:text-[#e4e4e4] text-center text-[1.35rem] decoration-stone-700 md:w-[30%] w-full'>NEW ARRIVALS</h1>
+                    <h1 id='h1' className='font-bold text-stone-800 dark:text-[#e4e4e4] text-center text-[1.35rem] decoration-stone-700 font-heading md:w-[30%] w-full'>NEW ARRIVALS</h1>
                     <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
                 </div>
                 <div className='flex flex-col items-center justify-start'>
                     {!loader ?
-                        <div className='grid md:grid-cols-4 grid-cols-2 w-full overflow-scroll md:gap-6 gap-2 px-4 m-10 bg-transparent'>
-                            {response.map((res, index) => <Card res={res} key={index} productLoader={productLoader} />)}
+                        <div className='grid md:grid-cols-4 grid-cols-2 w-full overflow-scroll md:gap-6 gap-4 px-4 m-10 bg-transparent'>
+                            {response.map((res, index) => <Card className='card' res={res} key={index} productLoader={productLoader} />)}
                         </div>
                         : <Spinner />}
                     <Button onClick={() => setPage((prev) => prev + 1)} disabled={buttonLoader} className='mb-10'>{
@@ -104,6 +106,7 @@ function Home() {
                     }</Button>
                 </div>
             </div>
+            <img src={policy} />
         </Container>
     )
 }
