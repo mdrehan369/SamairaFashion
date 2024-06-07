@@ -126,6 +126,35 @@ const loginController = asyncHandler(async (req, res) => {
 
 });
 
+const loginWithIpController = asyncHandler(async (req, res) => {
+
+    const { ip } = req.params;
+
+    if (!ip) throw new ApiError(400, "No IP");
+
+    const user = await userModel.findOne({ ipAddress: ip });
+
+    if (!user) {
+
+        const newUser = await userModel.create({ ipAddress: ip });
+        const accessToken = newUser.generateAccessToken();
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .json(new ApiResponse(200, newUser, "New User Created Successfully"));
+
+    }
+
+    const accessToken = user.generateAccessToken();
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .json(new ApiResponse(200, user, "Logged In Successfully"));
+
+});
+
 const googleSigninController = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
@@ -286,5 +315,6 @@ export {
     deleteCartItemController,
     getCartLengthController,
     googleSigninController,
-    sendOtpController
+    sendOtpController,
+    loginWithIpController
 }

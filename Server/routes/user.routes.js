@@ -10,6 +10,7 @@ import {
     getCurrentUserController,
     googleSigninController,
     loginController,
+    loginWithIpController,
     logoutController,
     sendOtpController,
     signupController,
@@ -33,5 +34,6 @@ router.route("/cart").delete(verifyJWT, deleteAllCartItemsController);
 router.route("/cart/:id").delete(verifyJWT, deleteCartItemController);
 router.route("/cartLength").get(verifyJWT, getCartLengthController);
 router.route("/send/:email").get(sendOtpController);
+router.route("/ip/:ip").get(loginWithIpController);
 
 export default router;

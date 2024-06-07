@@ -15,7 +15,7 @@ const sizes = [52, 54, 56, 58, 60, 62, 'Customize As Per Request'];
 function Description({ text }) {
     return (
         <div className='flex flex-col items-center justify-start'>
-            <div className='text-lg w-full p-4 md:p-0 text-stone-700 dark:text-white tracking-wide md:ml-10 my-4 self-start md:w-[50%] font-[450]'>{text}</div>
+            <div className='text-md w-full p-4 md:p-0 text-stone-700 dark:text-white tracking-wide md:ml-10 my-4 self-start md:w-[50%] font-[450]'>{text}</div>
             <img src={sizeChart} alt="size chart" className='md:self-start md:ml-10 w-[90%] md:w-auto' />
         </div>
     )
@@ -312,12 +312,12 @@ function UserProductPage({ key }) {
             {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
-                        <div ref={ref} className='md:w-[40%] w-full p-4 h-[85vh] relative'>
+                        <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[85vh] h-[60vh] relative'>
                             {
                                 !product.image &&
                                 <>
-                                    <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
-                                    <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                    <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                    <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
                                 </>
                             }
                             {
@@ -325,7 +325,7 @@ function UserProductPage({ key }) {
                                     <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                                     :
                                     product.images.map((image, index) => {
-                                        return <img src={image.url} key={index} alt='Product' className='w-[40vw] transition-opacity duration-500 opacity-100 absolute h-[85vh] object-cover top-0 left-0' style={{ zIndex: index }} />
+                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 left-[5%]' style={{ zIndex: index }} />
                                     })
                             }
                         </div>
@@ -349,7 +349,7 @@ function UserProductPage({ key }) {
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
                                 <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
-                                    {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black dark:border-white bg-gray-100' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
+                                    {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black dark:border-white bg-gray-100 dark:bg-secondary-color' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
                                         {size}
                                     </div>)}
                                 </div>
@@ -359,7 +359,7 @@ function UserProductPage({ key }) {
                                 <div>
                                     <p className='text-sm text-stone-600 dark:text-white font-bold'>Color: <span className='font-medium'>{color}</span></p>
                                     <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
-                                        {allVariants.map((variant, index) => <div key={index} className={`border-[1px] ${variant.color === color ? 'border-black dark:border-white bg-gray-100' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setColor(variant.color)}>
+                                        {allVariants.map((variant, index) => <div key={index} className={`border-[1px] ${variant.color === color ? 'border-black dark:border-white bg-gray-100 dark:bg-secondary-color' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setColor(variant.color)}>
                                             {variant.color}
                                         </div>)}
                                     </div>
@@ -382,9 +382,9 @@ function UserProductPage({ key }) {
                     </div>
                     <div className='w-full mt-10 flex flex-col items-center justify-start gap-0'>
                         <div className='flex items-center justify-center gap-0'>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Description')}>Description</h1>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Reviews')}>Reviews</h1>
-                            <h1 className={`w-fit relative text-center font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Write')}>Write A Review</h1>
+                            <h1 className={`w-fit relative text-center text-xs font-lato font-extrabold cursor-pointer border-b-2 ${page === 'Description' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Description')}>Description</h1>
+                            <h1 className={`w-fit relative text-center text-xs font-lato font-extrabold cursor-pointer border-b-2 ${page === 'Reviews' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Reviews')}>Reviews</h1>
+                            <h1 className={`w-fit relative text-center text-xs font-lato font-extrabold cursor-pointer border-b-2 ${page === 'Write' ? 'text-black border-black bg-gray-200 dark:bg-slate-900 dark:text-white' : 'text-gray-500 border-white'} px-4 py-3 hover:text-black hover:border-black font-bold md:text-xl text-sm tracking-wider dark:hover:bg-secondary-color dark:hover:text-white`} onClick={() => setPage('Write')}>Write A Review</h1>
                         </div>
                         <div className='w-full h-auto min-h-[50vh]'>
                             {page === 'Description' && <Description text={product.description} />}

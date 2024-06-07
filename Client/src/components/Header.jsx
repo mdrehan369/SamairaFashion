@@ -84,7 +84,7 @@ function Header() {
                     </div>
                 </div>
             }
-            <nav className={`w-full md:h-[10vh] h-[8vh] animate-animate-appear sticky border-b-[1px] top-0 left-0 z-50 flex items-center md:justify-between justify-center md:gap-0 gap-4 shadow-sm bg-white dark:bg-primary-color dark:text-white`}>
+            <nav className={`w-full dark:border-0 md:h-[10vh] h-[8vh] animate-animate-appear sticky border-b-[1px] top-0 left-0 z-50 flex items-center md:justify-between justify-center md:gap-0 gap-4 shadow-sm bg-white dark:bg-primary-color dark:text-white`}>
                 <div className='md:hidden cursor-pointer' onClick={() => setSidebar((prev) => !prev)}><FontAwesomeIcon icon={faBars} className='size-6 absolute top-6 left-4' /></div>
 
 
