@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Input, Button, Spinner } from "../components/index.js"
+import { Container, Input, Button, Spinner, LightSpinner } from "../components/index.js"
 import { useForm } from "react-hook-form"
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCreditCard, faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard, faIndianRupeeSign, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import visa from "../assets/visa.svg";
 import mastercard from "../assets/mastercard.svg";
-import visa2 from "../assets/visa2.svg";
-import { loadStripe } from '@stripe/stripe-js';
+import tabby from "../assets/tabby.webp";
 import { useNavigate } from 'react-router-dom';
 import { setShippingDetails } from "../store/authslice.js"
 
@@ -27,6 +26,9 @@ function CheckoutPage() {
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
     const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails?.country === 'India' || true);
     const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
+    const [buttonLoader, setButtonLoader] = useState(false);
+    const [error, setErr] = useState(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -54,10 +56,10 @@ function CheckoutPage() {
                 }
                 else {
                     setCart([{ ...data }]);
-                    if(isIndia) {
+                    if (isIndia) {
                         setTotal(data.quantity * data.product[0].price);
                     } else {
-                        setTotal(data.quantity * data.product[0].price/dirham_to_rupees);
+                        setTotal(data.quantity * data.product[0].price / dirham_to_rupees);
                     }
                 }
 
@@ -115,6 +117,89 @@ function CheckoutPage() {
 
     }
 
+    const handleZiinaCheckout = async (shippingDetails) => {
+
+        if (!validateData(shippingDetails)) return;
+
+        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
+
+        try {
+
+            const response = await axios.post('/api/v1/payments/ziina/pay', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+            });
+
+            const paymentObj = {
+                type: '',
+                id: '',
+
+            }
+
+            localStorage.setItem("ziinaId", response.data.data.id);
+            window.open(response.data.data.url);
+            // console.log(response);
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const handleCheckout = async (shippingDetails) => {
+
+        if (!validateData(shippingDetails)) return;
+        setButtonLoader(true);
+        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
+
+        try {
+
+            const response = await axios.post(`/api/v1/payments/${checkoutMethod}/pay`, { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+            });
+
+            const paymentObj = {
+                type: checkoutMethod,
+                id: response.data.data.id,
+            }
+
+            localStorage.setItem("paymentObj", JSON.stringify(paymentObj));
+            dispatch(setShippingDetails(shippingDetails));
+
+            window.open(response.data.data.url, '_self');
+
+        } catch (error) {
+            console.log(error);
+            setErr("Sorry! Some Error Occured. Please Recheck Your Details");
+        } finally {
+            setButtonLoader(false);
+        }
+
+    }
+
+    const handleCOD = async (shippingDetails) => {
+
+        if (!validateData(shippingDetails)) return;
+
+        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
+
+        if (isCOD) {
+
+            try {
+                await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+                    baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
+                });
+            } catch (err) {
+                console.log(err);
+                setErr("Sorry! Some Error Occured. Please Try Again Later");
+            }
+
+            dispatch(setShippingDetails(shippingDetails));
+            localStorage.setItem("paymentObj", JSON.stringify({ type: 'COD' }))
+            return navigate('/success')
+        }
+
+    }
+
     const handleTabbyCheckout = async (shippingDetails) => {
 
         if (!validateData(shippingDetails)) return;
@@ -133,11 +218,11 @@ function CheckoutPage() {
         }
 
         try {
-            
-            const response = await axios.post('/api/v1/payments/tabbyCheckout', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+
+            const response = await axios.post('/api/v1/payments/tabby/pay', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
                 baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
             });
-            
+
             localStorage.setItem("tabbyId", response.data.data.id);
             window.open(response.data.data.url);
 
@@ -148,13 +233,20 @@ function CheckoutPage() {
     }
 
     return (
-        <Container className='w-full flex md:flex-row flex-col md:items-start items-center justify-center divide-x-2'>
+        <Container className='w-full flex md:flex-row font-sans flex-col md:items-start items-center justify-center divide-x-2'>
             {!loader ?
                 <>
                     <form
-                        onSubmit={handleSubmit(handleTabbyCheckout)}
-                        className='md:w-[50%] w-[90%] py-10 min-h-[85vh] md:max-h-[90vh] flex flex-col md:items-start items-center justify-start gap-4 md:overflow-y-scroll'
+                        onSubmit={handleSubmit(isCOD ? handleCOD : handleCheckout)}
+                        className='md:w-[50%] w-[90%] py-10 min-h-[85vh] md:max-h-[90vh] flex flex-col md:items-start items-center relative justify-start gap-4 md:overflow-y-scroll'
                     >
+                        {
+                            error &&
+                            <div className='sticky w-[80%] z-20 -top-10 left-0 animate-animate-appear py-2 rounded bg-red-400 dark:bg-red-500 font-medium text-center'>
+                                <FontAwesomeIcon icon={faTriangleExclamation} className='mr-2 text-red-800' />
+                                {error}
+                            </div>
+                        }
                         <h1 className='text-xl font-bold self-start'>Contact</h1>
 
                         <Input
@@ -260,8 +352,8 @@ function CheckoutPage() {
                         <Input
                             register={register}
                             name='number'
-                            label='Phone Number'
-                            placeholder='ex. +91 9323140987'
+                            label='Phone Number(with country code)'
+                            placeholder='ex. +919323140987'
                             className='md:w-[80%] w-full bg-white'
                             errors={errors} />
 
@@ -275,25 +367,31 @@ function CheckoutPage() {
                             <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>
                         </div>
                         <div className='md:w-[80%] w-full'>
-                            <div onClick={() => setIsCOD(false)} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-0'>
-                                <div className={`${isCOD ? 'border-2' : 'border-4'} size-4 border-black dark:border-white rounded-full`}></div>
-                                <div>Pay by card with Stripe</div>
+                            <div onClick={() => { setIsCOD(false); setCheckoutMethod('ziina') }} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-0'>
+                                <div className={`${checkoutMethod === 'ziina' ? 'border-4' : 'border-2'} size-4 border-black dark:border-white rounded-full`}></div>
+                                <div>Pay with Ziina</div>
                                 <div className='flex items-center justify-end flex-grow'>
                                     <img src={visa} alt="visa" />
                                     <img src={mastercard} alt="mastercard" />
-                                    <img src={visa2} alt="visa2" />
                                 </div>
                             </div>
                             <div className='w-full p-3 h-[30vh] bg-gray-100 dark:bg-secondary-color dark:text-white flex flex-col items-center justify-start'>
                                 <FontAwesomeIcon icon={faCreditCard} className='size-32 text-stone-600 dark:text-white' />
                                 <div className='md:w-[60%] w-full text-center text-black text-md dark:text-white'>
-                                    After clicking “Pay now”, you will be redirected to Pay by card with Stripe to complete your purchase securely.
+                                    After clicking “Pay now”, you will be redirected to Pay by card with Ziina to complete your purchase securely.
                                 </div>
                             </div>
                         </div>
+
+                        <div onClick={() => { setIsCOD(false); setCheckoutMethod('tabby') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                            <div className={`${checkoutMethod === 'tabby' ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                            <span>Pay in 4 easy installments with Tabby</span>
+                            <img src={tabby} alt="tabby" className='w-14 mx-0 justify-self-end' />
+                        </div>
+
                         {
                             isCODAvailable &&
-                            <div onClick={() => setIsCOD(true)} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                            <div onClick={() => { setIsCOD(true); setCheckoutMethod('COD') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
                                 <div className={`${isCOD ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
                                 Cash On Delivery (COD)
                             </div>
@@ -308,9 +406,11 @@ function CheckoutPage() {
                             }</span></div>
                             <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge)}</span></div>
                         </div>
-                        <Button type='submit' className='md:w-[80%] w-full'>
+                        <Button type='submit' className='md:w-[80%] w-full' disabled={loader}>
                             {
-                                isCOD ? 'Place Order' : 'Pay Now'
+                                buttonLoader ?
+                                    <LightSpinner color={'fill-gray-500'} /> :
+                                    isCOD ? 'Place Order' : 'Pay Now'
                             }
                         </Button>
                     </form>
@@ -319,7 +419,7 @@ function CheckoutPage() {
                             {cart.map((item, index) => <div key={index} className='flex items-start justify-start w-full h-[15vh]'>
                                 <div className='relative w-[20%] h-full p-3'>
                                     <div className='absolute rounded-full bg-gray-200 dark:text-black top-[-4px] size-6 text-center right-[-4px]'>{item.quantity}</div>
-                                    <img src={item.product[0].image.url} className='w-full h-[70%] object-cover' alt="Product" />
+                                    <img src={item.product[0].image?.url || item.product[0].images[0].url} className='w-full h-[70%] object-cover' alt="Product" />
                                 </div>
                                 <div className='w-[60%] h-full px-4 py-3 flex flex-col items-start justify-between'>
                                     <div className='font-bold text-sm text-stone-800 line-clamp-2 dark:text-white'>{item.product[0].title}</div>

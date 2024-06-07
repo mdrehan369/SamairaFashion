@@ -50,7 +50,7 @@ function Home() {
     return (
         <Container className='relative'>
             <Carousel onClick={() => window.scrollTo(0, 1225)} />
-            <div className='w-full h-full md:my-10 my-4 space-y-10'>
+            <div className='w-full h-full md:my-10 my-4 space-y-10 overflow-hidden'>
                 <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>
                         <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] hidden md:block w-[30%] rounded-full'></div>
@@ -93,9 +93,9 @@ function Home() {
                     <h1 id='h1' className='font-bold text-stone-800 dark:text-[#e4e4e4] text-center text-[1.35rem] decoration-stone-700 font-heading md:w-[30%] w-full'>NEW ARRIVALS</h1>
                     <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
                 </div>
-                <div className='flex flex-col items-center justify-start'>
+                <div className='flex flex-col items-center justify-start overflow-x-hidden'>
                     {!loader ?
-                        <div className='grid md:grid-cols-4 grid-cols-2 w-full overflow-scroll md:gap-6 gap-4 px-4 m-10 bg-transparent'>
+                        <div className='grid md:grid-cols-4 grid-cols-2 w-full overflow-scroll overflow-x-hidden md:gap-6 gap-4 px-4 m-10 bg-transparent'>
                             {response.map((res, index) => <Card className='card' res={res} key={index} productLoader={productLoader} />)}
                         </div>
                         : <Spinner />}

@@ -10,28 +10,43 @@ function Success() {
 
     const [loader, setLoader] = useState(true);
     const [isPaid, setIsPaid] = useState(false);
-    const { search } = useLocation()
 
     useEffect(() => {
-        if (!search.includes('cod')) {
-            ; (async () => {
-                setLoader(true);
-                try {
-                    const session = await axios.get(`/api/v1/payments/retrieve/${localStorage.getItem("tabbyId")}`, {
-                        baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-                    });
-                    if (session.data.data.payment_status === 'paid') setIsPaid(true);
-                } catch (err) {
-                    console.log(err)
-                } finally {
-                    setLoader(false);
-                    localStorage.clear("shippingDetails");
+
+        ;(async () => {
+            
+            setLoader(true);
+            let url = '/api/v1/payments/';
+            const paymentObj = JSON.parse(localStorage.getItem("paymentObj"));
+
+            if(paymentObj.type === 'ziina') {
+                url += `ziina/check/${paymentObj.id}`
+            } else if(paymentObj.type === 'tabby') {
+                url += `tabby/check/${paymentObj.id}`
+            } else {
+                setIsPaid(true);
+                setLoader(false);
+                return;
+            }
+
+            try {
+                const response = await axios.get(url, {
+                    withCredentials: true,
+                    baseURL: import.meta.env.VITE_BACKEND_URL
+                });
+                if(response.data.data.success) {
+                    setIsPaid(true);
+                } else {
+                    setIsPaid(false);
                 }
-            })();
-        } else {
-            setIsPaid(true);
-            setLoader(false);
-        }
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoader(false);
+                localStorage.removeItem("paymentObj")
+            }
+
+        })()
     }, []);
 
     return (

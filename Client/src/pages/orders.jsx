@@ -59,7 +59,7 @@ const OrderDetails = () => {
 
     const handleData = async () => {
         try {
-            const response = await axios.get(`/api/v1/orders`, {
+            const response = await axios.get(`/api/v1/orders?all=user`, {
                 baseURL: import.meta.env.VITE_BACKEND_URL,
                 withCredentials: true
             });
@@ -122,7 +122,7 @@ const OrderDetails = () => {
                                 </div>
                             </div>
                         }
-                        <div className='bg-gray-100 dark:bg-secondary-color md:flex flex-col items-center justify-start pt-4 w-[20%] h-[100vh] gap-2 hidden'>
+                        <div className='bg-gray-100 dark:bg-secondary-color overflow-scroll py-4 md:flex flex-col items-center justify-start pt-4 w-[20%] h-[100vh] gap-2 hidden'>
                             {
                                 Object.keys(orders).map((order, index) => <div
                                     key={index}
@@ -163,19 +163,19 @@ const OrderDetails = () => {
                                         key={index}
                                         className='flex md:flex-row flex-col items-start justify-between gap-4 h-[15vh] w-full p-2'
                                     >
-                                        <div className='flex w-auto gap-4 h-full'>
+                                        <div className='flex w-fit gap-4 h-full'>
                                             <div className='w-[8vw] h-full p-0 flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded'>
-                                                <img src={currOrder.products[index].image.url} className='w-auto rounded h-auto max-h-[70%] max-w-[90%]' alt="Product" />
+                                                <img src={currOrder.products[index].image?.url || currOrder.products[index].images[0].url} className='w-auto rounded h-auto max-h-[70%] max-w-[90%]' alt="Product" />
                                             </div>
-                                            <div className='flex flex-col h-full items-start justify-evenly'>
+                                            <div className='flex flex-col h-full items-start justify-evenly max-w-[70%]'>
                                                 <span className='font-bold mt-4 md:text-md text-sm'>{currOrder.products[index].title}</span>
                                                 <pre className='text-gray-600 dark:text-gray-400 text-xs'>
                                                     Color: <span className='text-sm font-bold'>{item.color}</span> | Size: <span className='text-sm font-bold'>{item.size}</span> | Quantity: <span className='text-sm font-bold'>{item.quantity}</span>
                                                 </pre>
                                             </div>
                                         </div>
-                                        <div className='flex flex-col items-center h-full justify-center self-end'>
-                                            <div className='relative text-gray-500 dark:text-gray-400 w-fit'>
+                                        <div className='flex flex-col items-center h-full justify-center self-end min-w-[20%]'>
+                                            <div className='relative text-gray-500 dark:text-gray-400 w-auto'>
                                                 {
                                                     isIndia ?
                                                         <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />

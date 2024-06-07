@@ -11,7 +11,8 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
-    const [color, setColor] = useState('default');
+    const [color, setColor] = useState(product.color);
+    // const [allVariants, setAllVariants] = useState([]);
     const status = useSelector(state => state.auth.status);
     const navigate = useNavigate();
 
@@ -51,7 +52,7 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
                 <img src={product.image?.url || product.images[0].url} alt='image' className='w-[50%] h-full object-cover rounded-none p-4 bg-gray-200 dark:bg-transparent' />
                 <div className='w-[50%] h-full flex flex-col items-start justify-start gap-4 pt-10'>
                     <div className='space-y-2'>
-                        <h1 className='text-lg tracking-wide font-bold w-full mt-4 px-4'>{product.title}</h1>
+                        <h1 className='text-lg tracking-wide font-bold w-full mt-4 px-4 line-clamp-2'>{product.title}</h1>
                         <p className='px-4 text-gray-600 dark:text-gray-400 line-clamp-2 text-sm font-[450]'>{product.description}</p>
                     </div>
                     <div className='px-4'>
@@ -62,6 +63,17 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
                             </div>)}
                         </div>
                     </div>
+                    {/* {
+                        product.color &&
+                        <div>
+                            <p className='text-sm text-stone-600 dark:text-white font-bold'>Color: <span className='font-medium'>{color}</span></p>
+                            <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
+                                {allVariants.map((variant, index) => <div key={index} className={`border-[1px] ${variant.color === color ? 'border-black dark:border-white bg-gray-100' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setColor(variant.color)}>
+                                    {variant.color}
+                                </div>)}
+                            </div>
+                        </div>
+                    } */}
                     <div className='px-4'>
                         <p className='text-sm font-medium dark:text-white text-stone-800'>Quantity:</p>
                         <div className='flex items-center justify-around border-[1px] text-sm border-gray-500 rounded-none w-26 mt-2 py-2'>
@@ -90,12 +102,12 @@ function Card({ res, productLoader, ...props }) {
     useEffect(() => {
         const observer = new IntersectionObserver((node) => {
             const { isIntersecting, target } = node[0];
-            if(isIntersecting) {
+            if (isIntersecting) {
                 target.classList.add(['animate-animate-appear']);
             } else {
                 target.classList.remove(['animate-animate-appear']);
             }
-        }, {threshold: 0});
+        }, { threshold: 0 });
         observer.observe(ref.current);
     }, [])
 
@@ -110,11 +122,11 @@ function Card({ res, productLoader, ...props }) {
                 <Modal product={res} setOpenModal={setOpenModal} isExiting={isExiting} setIsExiting={setIsExiting} />
             }
 
-            <div ref={ref} className='flex flex-col items-center justify-center rounded-sm cursor-pointer md:w-[22vw] w-full md:h-[70vh] h-[35vh] hover:border-gray-400 hover:dark:bg-secondary-color border-transparent border-[0px] dark:border-0 transition-all md:p-4 p-1 gap-0 overflow-hidden relative'
+            <div ref={ref} className='flex flex-col items-center justify-center rounded-sm cursor-pointer md:w-[22vw] w-full md:h-[72vh] h-[35vh] hover:border-gray-400 hover:dark:bg-secondary-color border-transparent border-[0px] dark:border-0 transition-all md:p-4 p-1 gap-0 overflow-hidden relative'
 
                 onMouseEnter={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.remove('invisible'); e.currentTarget.lastElementChild.classList.add('translatee-y-[-4em]'); e.currentTarget.lastElementChild.classList.add('animate-animate-appear') }}
 
-                onMouseLeave={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.replace('translate-y-[-4em]', ''); e.currentTarget.lastElementChild.classList.remove('animate-animate-appear')}}
+                onMouseLeave={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.replace('translate-y-[-4em]', ''); e.currentTarget.lastElementChild.classList.remove('animate-animate-appear') }}
                 // onClick={() => window.scrollTo(0, 0)}
                 {...props}
             >
@@ -122,12 +134,12 @@ function Card({ res, productLoader, ...props }) {
                     !productLoader ?
                         <>
                             <div onClick={() => navigate(`/product/${res?._id}`)} className='relative'>
-                                <span className="bg-red-600 z-10 text-white text-md font-medium me-2 md:px-2.5 px-1.5 py-0.5 rounded-none dark:bg-blue-900 dark:text-blue-300 absolute md:top-2 top-2 md:right-2 right-2 md:text-xs text-sm">-{((res?.comparePrice - res?.price) / res?.comparePrice).toFixed(2) * 100}% OFF</span>
+                                <span className="bg-red-600 z-10 text-white text-md font-medium me-2 md:px-2.5 px-1.5 py-0.5 rounded-none dark:bg-blue-900 dark:text-blue-300 absolute md:top-2 top-2 md:right-2 right-2 md:text-xs text-sm">-{(((res?.comparePrice - res?.price) / res?.comparePrice) * 100).toString().slice(0, 2)}% OFF</span>
                                 <div className='overflow-hidden'>
                                     <img src={res?.image?.url || res.images[1]?.url || res.images[0].url} className='w-[100%] absolute p-0 transition-all duration-500 opacity-100 ease-in-out h-[50vh] hover:scale-[1.2] brightness-75 object-cover -z-30' />
-                                    <img src={res?.image?.url || res.images[0].url} className='w-[100%] p-0 transition-all duration-1000 ease-in-out opacity-100 h-[50vh] object-cover hover:scale-[1.2] hover:opacity-0' />
+                                    <img src={res?.image?.url || res.images[0].url} className='w-[100%] p-0 transition-all duration-1000 cursor-pointer ease-in-out opacity-100 h-[50vh] object-cover hover:scale-[1.2] hover:opacity-0' />
                                 </div>
-                                <h1 className='md:px-4 px-1 md:text-gray-700 text-black dark:text-white mt-2 text-center w-full md:text-sm text-xs h-10 hover:underline'>{res?.title}</h1>
+                                <h1 className='md:px-4 px-1 md:text-gray-700 text-black dark:text-white mt-2 text-center w-full md:text-sm text-xs h-14 hover:underline line-clamp-3'>{res?.title}</h1>
                                 <div className='flex items-center justify-between w-full mt-4'>
                                     <h2 className='px-0 md:text-sm text-xs text-start font-bold dark:text-gray-500 relative text-stone-600'>
                                         <div className='w-full md:h-[2px] h-[1px] bg-stone-600 dark:bg-gray-500 absolute top-[50%] left-0'></div>

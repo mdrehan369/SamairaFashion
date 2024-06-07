@@ -69,7 +69,7 @@ function Cart() {
 
     return (
         !loader ?
-            <Container className='flex md:flex-row flex-col items-center justify-center h-auto md:gap-10 gap-4'>
+            <Container className='flex md:flex-row flex-col items-center font-sans justify-center h-auto md:gap-10 gap-4'>
                 {total ?
                     <>
                         <div className='flex flex-col items-center justify-start md:h-[80vh] h-auto md:gap-10 gap-4 overflow-y-scroll md:w-auto w-full animate-animate-appear'>
@@ -77,11 +77,11 @@ function Cart() {
                             {cart.map((item, index) =>
                                 <div key={index} className='flex cursor-pointer items-center justify-start md:w-[60vw] w-[95%] md:h-[30vh] h-auto bg-[#f1f1f1] dark:bg-secondary-color divide-x-2 divide-gray-300 dark:divide-slate-800'>
                                     <div className='w-[25%] md:h-full h-[90%] md:p-3 p-1'>
-                                        <img src={item.product[0].image.url} className='w-full h-full object-cover' alt="Product" />
+                                        <img src={item.product[0].image?.url || item.product[0].images[0].url} className='w-full h-full object-cover' alt="Product" />
                                     </div>
                                     <div className='h-full p-3 w-[75%] pr-10 flex flex-col items-start justify-start gap-0'>
-                                        <h1 className='font-bold md:text-xl text-sm tracking-wide hover:underline' onClick={() => navigate(`/product/${item.product[0]._id}`)}>{item.product[0].title}</h1>
-                                        <p className='md:text-[0.92rem] text-xs h-[50%] md:mt-4 mt-2'>{window.screen.width > 500 ? item.product[0].description.slice(0, 250) : ''}</p>
+                                        <h1 className='font-bold md:text-xl text-sm tracking-wide hover:underline' onClick={() => navigate(`/product/${item.product[0]._id}`)}>{item.product[0].title.slice(0, 100)}</h1>
+                                        <p className='md:text-[0.92rem] text-xs tracking-wider h-[50%] md:mt-4 mt-2'>{window.screen.width > 500 ? item.product[0].description.slice(0, 250) : ''}</p>
                                         <div className='flex flex-wrap items-end justify-between w-full'>
                                             <div>
                                                 <p className='md:text-sm text-xs text-gray-400 font-bold w-fit relative'>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{isIndia ? item.product[0].comparePrice : Math.floor(item.product[0].comparePrice / dirham_to_rupees)}<div className='bg-gray-400 absolute top-[50%] left-0 w-full h-[2px]'></div></p>

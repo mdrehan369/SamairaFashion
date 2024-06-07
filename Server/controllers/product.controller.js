@@ -18,7 +18,7 @@ const options = {
 
 const addProductController = asyncHandler(async (req, res) => {
 
-    const { title, description, category, price, comparePrice, onTop } = req.body;
+    const { title, description, category, price, comparePrice, onTop, color } = req.body;
 
     if ([title, description, category, price, comparePrice].some((field) => field?.trim() === '')) {
         throw new ApiError(400, "Some fields are missing");
@@ -32,7 +32,7 @@ const addProductController = asyncHandler(async (req, res) => {
         images.push(img);
     }
 
-    const product = await productModel.create({ title, description, category, price, comparePrice, images, onTop });
+    const product = await productModel.create({ title, description, category, price, comparePrice, images, onTop, color });
 
     return res
         .status(200)
@@ -75,18 +75,19 @@ const getAllProductsController = asyncHandler(async (req, res) => {
     const { page } = req.query;
     const products = await productModel.aggregate([
         {
-            '$sort': {
-                'createdAt': -1
+            '$match': {
+                'onTop': true
             }
         },
         {
             '$skip': page * 12
         },
         {
-            '$limit': 12
+            '$sample': {
+                'size': 12
+            }
         }
     ]);
-    // .limit(12).skip(page * 12);
 
     return res
         .status(200)
@@ -102,10 +103,14 @@ const getProductController = asyncHandler(async (req, res) => {
         throw new ApiError(400, "No Product ID provided");
     }
 
-    const product = await productModel.aggregate([
+    const product = await productModel.findById(productId);
+
+    if(!product) throw new ApiError(404, "No Product Found");
+
+    const products = await productModel.aggregate([
         {
             '$match': {
-                '_id': new mongoose.Types.ObjectId(productId)
+                'title': product.title
             }
         }, {
             '$lookup': {
@@ -117,13 +122,9 @@ const getProductController = asyncHandler(async (req, res) => {
         }
     ]);
 
-    if (!product) {
-        throw new ApiError(400, "Wrong product ID");
-    }
-
     return res
         .status(200)
-        .json(new ApiResponse(200, product, "Product Fetched Successfully"));
+        .json(new ApiResponse(200, products, "Product Fetched Successfully"));
 
 });
 
@@ -138,6 +139,11 @@ const getSearchProductsController = asyncHandler(async (req, res) => {
                     '$regex': new RegExp(search),
                     '$options': 'i'
                 }
+            }
+        },
+        {
+            '$sort': {
+                'onTop': -1
             }
         }
     ]);

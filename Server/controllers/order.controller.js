@@ -71,11 +71,11 @@ const markDeliveredController = asyncHandler(async (req, res) => {
 
 const getAllOrdersController = asyncHandler(async (req, res) => {
 
-    let { userId } = req.query;
+    let { all } = req.query;
 
     let orders = null;
 
-    if (!userId) {
+    if (all !== 'user') {
         orders = await orderModel.aggregate([
             {
                 '$lookup': {
@@ -111,48 +111,46 @@ const getAllOrdersController = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(200, orders, "Orders Fetched Successfully"));
     } else {
-        const user = await userModel.findById(userId);
-        if (!user) throw new ApiError(401, "No User Found");
-    }
 
-    orders = await orderModel.aggregate([
-        {
-            '$match': {
-                'user': new mongoose.Types.ObjectId(userId)
-            }
-        }, {
-            '$lookup': {
-                'from': 'products',
-                'localField': 'cart.product',
-                'foreignField': '_id',
-                'as': 'products',
-                'pipeline': [
-                    {
-                        '$project': {
-                            'description': 0,
-                            'itemsSold': 0,
-                            'history': 0,
-                            'createdAt': 0,
-                            'updatedAt': 0
+        orders = await orderModel.aggregate([
+            {
+                '$match': {
+                    'user': new mongoose.Types.ObjectId(req.user._id)
+                }
+            }, {
+                '$lookup': {
+                    'from': 'products',
+                    'localField': 'cart.product',
+                    'foreignField': '_id',
+                    'as': 'products',
+                    'pipeline': [
+                        {
+                            '$project': {
+                                'description': 0,
+                                'itemsSold': 0,
+                                'history': 0,
+                                'createdAt': 0,
+                                'updatedAt': 0
+                            }
                         }
-                    }
-                ]
+                    ]
+                }
+            }, {
+                '$project': {
+                    'sessionId': 0,
+                    'phonepeMerchantTransactionId': 0
+                }
+            }, {
+                '$sort': {
+                    'createdAt': -1
+                }
             }
-        }, {
-            '$project': {
-                'sessionId': 0,
-                'phonepeMerchantTransactionId': 0
-            }
-        }, {
-            '$sort': {
-                'createdAt': -1
-            }
-        }
-    ]);
+        ]);
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, orders, "Orders Fetched Successfully"));
+        return res
+            .status(200)
+            .json(new ApiResponse(200, orders, "Orders Fetched Successfully"));
+    }
 
 });
 

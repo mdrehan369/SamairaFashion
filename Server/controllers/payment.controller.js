@@ -5,7 +5,6 @@ import sha256 from "sha256"
 import axios from "axios"
 import { cartItemModel } from "../models/cartItem.model.js";
 import { orderModel } from "../models/order.model.js";
-import crypto from "crypto";
 import "dotenv/config.js"
 
 const phonepePayController = (req, res) => {
@@ -126,69 +125,150 @@ const phonepeCheckStatusController = asyncHandler(async (req, res) => {
 
 });
 
-const tabbyCheckoutController = asyncHandler(async (req, res) => {
+const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
 
-    const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+    const cart = await cartItemModel.find({ user: req.user._id });
 
-    const REF_ID = Date.now();
-    let amount = 0;
-    const items = cart.map(cartItem => {
-        amount += cartItem.product[0].price * cartItem.quantity;
-        return {
-            title: cartItem.product[0].title,
-            quantity: cartItem.quantity,
-            unit_price: cartItem.product[0].price * 100,
-            category: 'Clothes'
+    const cartItems = cart.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+        color: item.color,
+        size: item.size
+    }))
+
+    await orderModel.create({
+        cart: cartItems,
+        user: req.user._id,
+        shippingDetails: req.cookies.shippingDetails,
+        Id: req.paymentId,
+        paymentMethod: req.payMethod
+    });
+
+    await cartItemModel.deleteMany({ user: req.user._id })
+
+    return res
+        .status(200)
+        .clearCookie("shippingDetails")
+        .json(new ApiResponse(200, { success: true }, "Success"));
+
+})
+
+const tabbyCheckoutController = async (req, res) => {
+
+    try {
+        const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+
+        const REF_ID = Date.now().toString();
+        let amount = 0;
+        const items = cart.map(cartItem => {
+            amount += cartItem.product[0].price * cartItem.quantity;
+            return {
+                title: cartItem.product[0].title,
+                quantity: cartItem.quantity,
+                unit_price: cartItem.product[0].price * 100,
+                category: 'Clothes'
+            }
+        });
+
+        amount = Math.floor((amount / dirham_to_rupees) * 100);
+        if (shippingDetails.deliveryCharge) {
+            amount += 20;
         }
-    })
 
-    const CHECKOUT_URL = 'https://api.tabby.ai/api/v2/checkout';
-    const payload = {
-        payment: {
-            amount: amount,
-            currency: "AED",
-            buyer: {
-                phone: shippingDetails.number,
-                email: shippingDetails.email,
-                name: `${shippingDetails.firstName} ${shippingDetails.lastName}`
+        const CHECKOUT_URL = 'https://api.tabby.ai/api/v2/checkout';
+        const payload = {
+            payment: {
+                amount: amount,
+                currency: "AED",
+                buyer: {
+                    phone: shippingDetails.number,
+                    email: shippingDetails.email,
+                    name: `${shippingDetails.firstName} ${shippingDetails.lastName}`
+                },
+                shipping_address: {
+                    city: 'N/A',
+                    address: shippingDetails.address,
+                    zip: 'N/A'
+                },
+                order: {
+                    reference_id: REF_ID,
+                    items: items
+                },
+                buyer_history: {
+                    registered_since: new Date().toISOString(),
+                    loyalty_level: 0
+                },
+                order_history: []
             },
-            shipping_address: {
-                city: 'N/A',
-                address: shippingDetails.address,
-                zip: 'N/A'
-            },
-            order: {
-                reference_id: REF_ID,
-                items: items
-            },
-            buyer_history: {
-                registered_since: new Date().toISOString(),
-                loyalty_level: 0
-            },
-            order_history: []
-        },
-        lang: "ar",
-        // merchant_code: 
-        merchant_urls: {
-            success: `${process.env.CLIENT_URL}/#/success`,
-            cancel: `${process.env.CLIENT_URL}/#/checkoutPage`,
-            failure: `${process.env.CLIENT_URL}/#/success`,
+            lang: "ar",
+            merchant_code: process.env.TABBY_MERCHANT_CODE,
+            merchant_urls: {
+                success: `${process.env.CLIENT_URL}/#/success`,
+                cancel: `${process.env.CLIENT_URL}/#/checkoutPage`,
+                failure: `${process.env.CLIENT_URL}/#/success`,
+            }
         }
+
+        const response = await axios.post(CHECKOUT_URL, payload, { headers: { Authorization: `Bearer ${process.env.TABBY_PUBLIC_KEY}` } });
+
+        console.log(response);
+
+        if (response.data.status !== 'rejected') {
+            return res
+                .status(200)
+                .cookie("shippingDetails", shippingDetails)
+                .json(new ApiResponse(200, { id: response.data.id, url: response.data.configuration.available_products.installments[0].web_url }, "Checkout Initiated"));
+        } else {
+            throw new ApiError(300, "Some Error Occurred While Creating A Checkout Session");
+        }
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(400)
+            .json(new ApiError(400, err.message));
     }
 
-    const response = await axios.post(CHECKOUT_URL, payload);
+};
 
-    if (response.data.status !== 'rejected') {
+const ziinaCheckoutController = async (req, res) => {
+
+    try {
+        const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+
+        let amount = 0;
+        cart.map(cartItem => {
+            amount += cartItem.product[0].price * cartItem.quantity;
+        });
+        amount = Math.floor(amount / dirham_to_rupees);
+        if (shippingDetails.deliveryCharge) {
+            amount += 20;
+        }
+
+        const CHECKOUT_URL = 'https://api-v2.ziina.com/api/payment_intent';
+        const payload = {
+            amount: amount * 100,
+            currency_code: 'AED',
+            success_url: `${process.env.CLIENT_URL}/#/success`,
+            cancel_url: process.env.CLIENT_URL,
+            test: true
+        }
+
+        const response = await axios.post(CHECKOUT_URL, payload, { headers: { Authorization: `Bearer ${process.env.ZIINA_API_KEY}` } });
+
+        console.log(response.data);
         return res
             .status(200)
-            .json(new ApiResponse(200, { id: response.data.id, url: response.data.configuration.available_products.installments[0].web_url }, "Checkout Initiated"));
-    } else {
-        throw new ApiError(300, "Some Error Occurred While Creating A Checkout Session");
+            .cookie("shippingDetails", shippingDetails)
+            .json(new ApiResponse(200, { id: response.data.id, url: response.data.redirect_url }, "Checkout Created SuccessFully"));
+    } catch (err) {
+        return res
+            .status(400)
+            .json(new ApiError(400, err.message));
     }
 
-});
+};
 
-const retrieveTabbyCheckoutController = asyncHandler(async (req, res) => {
+const retrieveTabbyCheckoutController = asyncHandler(async (req, res, next) => {
 
     const { id } = req.params;
 
@@ -198,10 +278,51 @@ const retrieveTabbyCheckoutController = asyncHandler(async (req, res) => {
         }
     });
 
+    console.log(response.data)
 
-})
+    if (response.data.status === 'approved') {
+        req.paymentId = id;
+        req.payMethod = 'Tabby';
+        next();
+    } else {
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { success: false }, "Retrieved"));
+    }
+
+
+});
+
+const retrieveZiinaCheckoutController = asyncHandler(async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const response = await axios.get(`https://api-v2.ziina.com/api/payment_intent/${id}`, {
+        headers: {
+            Authorization: `Bearer ${process.env.ZIINA_API_KEY}`
+        }
+    });
+
+    console.log(response.data)
+
+    if (response.data.status === 'completed') {
+        req.paymentId = id;
+        req.payMethod = 'Ziina';
+        next();
+    } else {
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { success: false }, "Retrieved"));
+    }
+
+});
 
 export {
     phonepePayController,
     phonepeCheckStatusController,
+    tabbyCheckoutController,
+    retrieveTabbyCheckoutController,
+    ziinaCheckoutController,
+    retrieveZiinaCheckoutController,
+    clearCartAndPlaceOrderController
 }

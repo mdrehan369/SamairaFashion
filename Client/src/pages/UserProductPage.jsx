@@ -4,7 +4,7 @@ import axios from "axios"
 import { useForm } from "react-hook-form"
 import { Button, Card, Container, Input, LightSpinner, Spinner, TextArea } from "../components/index.js"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faChevronLeft, faChevronRight, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faChevronLeft, faChevronRight, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import sizeChart from "../assets/sizeChart.webp"
 import { faStar as hollowStar } from "@fortawesome/free-regular-svg-icons"
 import { useSelector } from 'react-redux';
@@ -189,13 +189,15 @@ function UserProductPage({ key }) {
     const [loader, setLoader] = useState(true);
     const [productSize, setSize] = useState(52);
     const [quantity, setQuantity] = useState(1);
-    const [color, setColor] = useState('default');
+    const [color, setColor] = useState(null);
     const [cartLoader, setCartLoader] = useState(false);
     const [page, setPage] = useState("Description");
     const [message, setMessage] = useState("Item Added To Cart!");
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
     const status = useSelector(state => state.auth.status);
     const navigate = useNavigate();
+    const [allVariants, setAllVariants] = useState([]);
+    const ref = useRef();
 
     useEffect(() => {
         setLoader(true)
@@ -205,7 +207,13 @@ function UserProductPage({ key }) {
                     const response = await axios.get(`/api/v1/products/product/${productId}`, {
                         baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                     });
-                    setProduct(response.data.data[0]);
+                    let prod = null;
+                    response.data.data.map(res => {
+                        if (res._id === productId) prod = res;
+                    })
+                    setProduct(prod);
+                    setColor(prod.color);
+                    setAllVariants(response.data.data);
                 } catch (err) {
                     console.log(err)
                 } finally {
@@ -214,7 +222,41 @@ function UserProductPage({ key }) {
                 }
 
             })();
+        return () => window.scrollTo(0, 0)
     }, [productId]);
+
+    useEffect(() => {
+
+        setProduct(allVariants.filter(variant => {
+            return variant.color === color;
+        })[0])
+
+    }, [color])
+
+    const handleCarousel = () => {
+
+        let index = 0;
+
+        return (isIncrement) => {
+            const childNodes = ref.current.childNodes;
+            const length = ref.current.childNodes.length;
+            let i = length - index - 1; //pointer
+            console.log(ref.current)
+            if (isIncrement) {
+                if (i > 2) {
+                    childNodes[i].classList.replace('opacity-100', 'opacity-0');
+                    index++;
+                }
+            } else {
+                if (i < length - 1) {
+                    childNodes[i + 1].classList.replace('opacity-0', 'opacity-100');
+                    index--;
+                }
+            }
+        }
+    }
+
+    const handleCarouselClick = handleCarousel();
 
     const handleBuyNow = () => {
 
@@ -270,17 +312,30 @@ function UserProductPage({ key }) {
             {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
-                        <div className='md:w-[40%] w-full p-4 h-full'>
-                            <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
+                        <div ref={ref} className='md:w-[40%] w-full p-4 h-[85vh] relative'>
+                            {
+                                !product.image &&
+                                <>
+                                    <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                    <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                </>
+                            }
+                            {
+                                product.image ?
+                                    <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
+                                    :
+                                    product.images.map((image, index) => {
+                                        return <img src={image.url} key={index} alt='Product' className='w-[40vw] transition-opacity duration-500 opacity-100 absolute h-[85vh] object-cover top-0 left-0' style={{ zIndex: index }} />
+                                    })
+                            }
                         </div>
-
                         <div id='info' className='fixed md:top-14 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
                             <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
                         </div>
 
                         <form className='md:w-[40%] p-4 w-full relative h-[100%] flex flex-col items-start justify-start gap-6'>
                             <h1 className='text-2xl font-bold text-stone-800 tracking-wider dark:text-white'>{product.title}</h1>
-                            <h2 className='text-lg text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2>
+                            <h2 className='text-md text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2>
 
                             <div>
                                 <h1 className='text-md relative font-bold dark:text-gray-400 text-gray-500 w-fit'>
@@ -288,17 +343,28 @@ function UserProductPage({ key }) {
                                     {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' /> : 'Dhs.'}{isIndia ? product.comparePrice : Math.floor(product.comparePrice / dirham_to_rupees)}</h1>
                                 <h1 className='text-2xl font-bold dark:text-white text-stone-800 mt-2'>
                                     {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='mr-1' /> : 'Dhs.'}{isIndia ? product.price : Math.floor(product.price / dirham_to_rupees)}
-                                    <span className="bg-pink-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{((product.comparePrice - product.price) / product.comparePrice).toFixed(2) * 100}%</span>
+                                    <span className="bg-red-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{(((product.comparePrice - product.price) / product.comparePrice) * 100).toString().slice(0, 2)}%</span>
                                 </h1>
                             </div>
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
                                 <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
-                                    {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black dark:border-white' : 'border-gray-500'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
+                                    {sizes.map((size, index) => <div key={index} className={`border-[1px] ${size === productSize ? 'border-black dark:border-white bg-gray-100' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setSize(size)}>
                                         {size}
                                     </div>)}
                                 </div>
                             </div>
+                            {
+                                product.color &&
+                                <div>
+                                    <p className='text-sm text-stone-600 dark:text-white font-bold'>Color: <span className='font-medium'>{color}</span></p>
+                                    <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
+                                        {allVariants.map((variant, index) => <div key={index} className={`border-[1px] ${variant.color === color ? 'border-black dark:border-white bg-gray-100' : 'border-gray-400'} text-sm dark:text-white text-stone-700 rounded-none cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-500 px-3 font-medium transition-colors py-2`} onClick={() => setColor(variant.color)}>
+                                            {variant.color}
+                                        </div>)}
+                                    </div>
+                                </div>
+                            }
                             <div>
                                 <p className='text-sm font-bold dark:text-white text-stone-600'>Quantity:</p>
                                 <div className='flex items-center justify-around border-[1px] border-gray-300 rounded-none w-32 mt-2 py-3'>

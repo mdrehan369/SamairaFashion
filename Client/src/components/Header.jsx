@@ -84,7 +84,7 @@ function Header() {
                     </div>
                 </div>
             }
-            <nav className={`w-full md:h-[10vh] h-[8vh] animate-animate-appear sticky top-0 left-0 z-20 flex items-center md:justify-between justify-center md:gap-0 gap-4 shadow-md bg-white dark:bg-primary-color dark:text-white`}>
+            <nav className={`w-full md:h-[10vh] h-[8vh] animate-animate-appear sticky border-b-[1px] top-0 left-0 z-50 flex items-center md:justify-between justify-center md:gap-0 gap-4 shadow-sm bg-white dark:bg-primary-color dark:text-white`}>
                 <div className='md:hidden cursor-pointer' onClick={() => setSidebar((prev) => !prev)}><FontAwesomeIcon icon={faBars} className='size-6 absolute top-6 left-4' /></div>
 
 
@@ -99,7 +99,7 @@ function Header() {
                         >Shop
                             {
                                 dropdown &&
-                                <div className={`absolute top-10 divide-y-2 transition-all overflow-hidden flex flex-col items-center justify-start left-[-4vw] shadow-lg bg-white dark:bg-secondary-color dark:text-white text-black dark:divide-slate-950`} onClick={() => setDropdown(false)}>
+                                <div className={`absolute top-7 font-lato divide-y-2 transition-all overflow-hidden flex flex-col items-center justify-start left-[-4vw] shadow-lg bg-white dark:bg-secondary-color dark:text-white text-black dark:divide-slate-950`} onClick={() => setDropdown(false)}>
                                     <NavLink to={'/shop?category=Straight'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Straight</NavLink>
                                     <NavLink to={'/shop?category=Umbrella'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Umbrella</NavLink>
                                     <NavLink to={'/shop?category=Tye Dye'} className='px-4 py-4 w-52 text-start hover:underline hover:bg-gray-200 dark:hover:bg-[#132d6a]  transition-colors text-sm font-medium'>Tye Dye</NavLink>
@@ -150,28 +150,30 @@ function Header() {
 
                 {/* // className={({ isActive }) => isActive && `bg-black text-white pt-3 pb-2 px-4 rounded-full` */}
                 <div className='w-[30%] h-full hidden md:block'>
-                    <ul className='w-full h-full flex items-center justify-center gap-4 font-semibold text-xl'>
+                    <ul className='w-full h-full flex items-center pl-16 justify-center gap-4 font-semibold text-xl'>
                         <NavLink to='/search' className={({ isActive }) => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Search'] after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:dark:bg-blue-950 after:rounded-sm after:px-1 after:py-0.5 after:left-0`}>
                             <IoIosSearch size='22' />
                         </NavLink>
                         {status && <NavLink to='/cart' className={({ isActive }) => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Cart'] after:absolute after:text-xs relative after:font-normal after:dark:bg-blue-950 after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-2`}><IoCartOutline size='22' /></NavLink>}
                         {
-                            !status ?
-                                <>
-                                    <NavLink to='/signin'><Button className='transition py-2 px-3'>Sign In</Button></NavLink>
-                                    <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink>
-                                </>
-                                : <>
-                                    <NavLink to='/orders' className={({ isActive }) => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Orders'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><BsTruck size='22' /></NavLink>
-
-                                    <NavLink onClick={() => setOpenModal(true)} to='#' className={() => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Logout'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><IoExitOutline size='22' /></NavLink>
-                                </>
+                            status &&
+                            <>
+                                <NavLink to='/orders' className={({ isActive }) => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 ${isActive && 'bg-gray-300 dark:bg-blue-950'} transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Orders'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><BsTruck size='22' /></NavLink>
+                                <NavLink onClick={() => setOpenModal(true)} to='#' className={() => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 transition px-2 py-2 rounded-full after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Logout'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`}><IoExitOutline size='22' /></NavLink>
+                            </>
                         }
                         {
                             theme === 'light' ?
                                 <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300 after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:transition-opacity after:w-fit after:h-fit after:content-['Theme'] after:dark:bg-blue-950 after:absolute after:text-xs relative after:font-normal after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`} ><PiMoon size='22' /></NavLink>
                                 :
                                 <NavLink onClick={toggleTheme} id='switch' className={() => `hover:bg-[#e2e2e2] hover:dark:bg-blue-950 transition px-2 py-2 rounded-full duration-300 after:bg-gray-200 after:opacity-0 after:hover:opacity-100 after:dark:bg-blue-950 after:transition-opacity after:w-fit after:h-fit after:content-['Theme'] after:absolute after:text-xs relative after:font-light after:bottom-[-30px] after:rounded-sm after:px-1 after:py-0.5 after:left-0`} ><LuSun size='22' /></NavLink>
+                        }
+                        {
+                            !status &&
+                            <>
+                                <NavLink to='/signin'><Button className='transition py-2 px-3 bg-white text-sm border-2 hover:text-white text-black hover:bg-black'>Sign In</Button></NavLink>
+                                {/* <NavLink to='/signup'><Button className='transition box-border py-2 px-3'>Sign Up</Button></NavLink> */}
+                            </>
                         }
                     </ul>
                 </div>

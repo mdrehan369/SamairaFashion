@@ -57,7 +57,7 @@ const orderSchema = new mongoose.Schema({
 
     paymentMethod: {
         type: String,
-        default: "Online"
+        default: "COD"
     },
 
     shippingDetails: {
@@ -73,15 +73,10 @@ const orderSchema = new mongoose.Schema({
         number: Number
     },
 
-    sessionId: {
+    Id: {
         type: String,
         default: ""
     },
-
-    phonepeMerchantTransactionId: {
-        type: String,
-        default: ""
-    }
     
 }, {timestamps: true});
 
