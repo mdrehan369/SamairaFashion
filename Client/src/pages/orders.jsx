@@ -53,7 +53,7 @@ const OrderDetails = () => {
     const [orders, setOrders] = useState([]);
     const [loader, setLoader] = useState(true);
     const [spinLoader, setSpinLoader] = useState(false);
-    const [currOrder, setCurrOrder] = useState({});
+    const [currOrder, setCurrOrder] = useState(null);
     const { isIndia, dirham_to_rupees } = useSelector(state => state.auth.location);
     const [openModal, setOpenModal] = useState(false);
 
@@ -144,12 +144,12 @@ const OrderDetails = () => {
                                                     : <Batch text='Delivered' color='bg-green-400' darkColor='bg-green-600' />
                                         }
                                     </h1>
-                                    <p className="text-gray-600 dark:text-gray-400">Order date: {convertISOToDateString(currOrder.date).slice(0, 13)}</p>
+                                    <p className="text-gray-600 dark:text-gray-400">Order date: {convertISOToDateString(currOrder?.date).slice(0, 13)}</p>
                                     {
                                         !currOrder.isCancelled &&
                                         (currOrder.isPending ?
-                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder.date || new Date(), currOrder.shippingDetails.country.includes("United Arab Emirates") ? [3, 5] : [10, 15])}</p>
-                                            : <p className="text-green-500 mt-2">Delivered On: {convertISOToDateString(currOrder.deliveredDate).slice(0, 12)}</p>)
+                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder?.date || new Date(), currOrder.shippingDetails.country.includes("United Arab Emirates") ? [3, 5] : [10, 15])}</p>
+                                            : <p className="text-green-500 mt-2">Delivered On: {convertISOToDateString(currOrder?.deliveredDate).slice(0, 12)}</p>)
                                     }
                                 </div>
                                 {
