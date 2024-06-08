@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { twMerge } from 'tailwind-merge'
-import './style.css'
+import '../assets/style.css'
 
 function Spinner({ scroll = false, className = '' }) {
 
