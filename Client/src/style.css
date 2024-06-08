@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#body {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20%;
+    transform: translate(-50%, -50%);
+}
+
+.darkk path {
+    stroke: white;
+    stroke-dasharray: 816px;
+    stroke-dashoffset: 816px;
+    stroke-width: 5px;
+    animation: anim 2s ease-in-out infinite forwards 0s alternate, fill-dark 2s ease-in-out infinite 1s alternate;
+}
+
+.light path {
+    stroke: #2b2b2b;
+    stroke-dasharray: 816px;
+    stroke-dashoffset: 816px;
+    stroke-width: 5px;
+    animation: anim 2s ease-in-out infinite forwards 0s alternate, fill-light 2s ease-in-out infinite 1s alternate;
+}
+
+@keyframes anim {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fill-light {
+
+    70% {
+        fill: transparent;
+    }
+
+    100% {
+        fill: #424242;
+    }
+
+}
+
+@keyframes fill-dark {
+
+    70% {
+        fill: transparent;
+    }
+
+    100% {
+        fill: white;
+    }
+
+}
+
+@media only screen and (max-width: 500px) {
+    #logo{
+        width: 50%;
+    }
+}
