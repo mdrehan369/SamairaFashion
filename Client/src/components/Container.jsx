@@ -1,6 +1,5 @@
 import React from 'react'
 import { twMerge } from 'tailwind-merge'
-import bg from "../assets/bg.png";
 
 function Container({
     children, 

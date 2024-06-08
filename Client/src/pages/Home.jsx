@@ -72,7 +72,7 @@ function Home() {
 
     return (
         <Container className='relative'>
-            <Carousel onClick={() => window.scrollTo(0, 1225)} />
+            <Carousel onClick={() => window.scrollTo(0, 700)} />
             <div className='w-full h-full md:my-10 my-4 space-y-10 overflow-hidden'>
                 {/* <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>

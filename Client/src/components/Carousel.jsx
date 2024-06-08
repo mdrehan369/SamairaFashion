@@ -5,6 +5,7 @@ import pic3 from "../assets/banner3.webp"
 import pic4 from "../assets/banner5.png"
 import pic2ph from "../assets/pic2ph.webp"
 import pic1ph from "../assets/pic1ph.webp"
+// import pic5 from "../assets/Samaira4.png"
 // import pic4 from "../assets/pic4.jpg"
 // import { Button } from "./index"
 
@@ -49,11 +50,13 @@ function Carousel({ ...props }) {
                     <img src={window.screen.width > 500 ? pic1 : pic2ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full md:object-cover h-[90%]' />
                     <img src={window.screen.width > 500 ? pic2 : pic1ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
                     <img src={window.screen.width > 500 ? pic4 : pic2ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
-                    <div id='bar' className='absolute flex items-center shadow-xl border-[1px] border-black justify-center gap-2 rounded-md bg-black opacity-20 px-2 md:bottom-10 bottom-56 left-[50%] translate-x-[-50%] p-1'>
+                    {/* <img src={window.screen.width > 500 ? pic5 : pic1ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' /> */}
+                    <div id='bar' className='absolute flex items-center shadow-xl border-[1px] border-black justify-center gap-2 rounded-md bg-black opacity-40 px-2 md:bottom-10 bottom-56 left-[50%] translate-x-[-50%] p-1'>
                         <div className='rounded-full size-2 border-[1px] border-white bg-white scale-125'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>
+                        {/* <div className='rounded-full size-2 border-[1px] border-white'></div> */}
                     </div>
                 </div>
             </div>
