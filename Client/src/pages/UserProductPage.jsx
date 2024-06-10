@@ -197,6 +197,7 @@ function UserProductPage({ key }) {
     const status = useSelector(state => state.auth.status);
     const navigate = useNavigate();
     const [allVariants, setAllVariants] = useState([]);
+    const [productLoader, setProductLoader] = useState(false);
     const ref = useRef();
 
     useEffect(() => {
@@ -227,9 +228,11 @@ function UserProductPage({ key }) {
 
     useEffect(() => {
 
+        setProductLoader(true);
         setProduct(allVariants.filter(variant => {
             return variant.color === color;
         })[0])
+        setProductLoader(false);
 
     }, [color])
 
@@ -314,22 +317,24 @@ function UserProductPage({ key }) {
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
                         <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[85vh] h-[60vh] relative'>
                             {
-                                !product.image &&
+                                !productLoader && !product.image &&
                                 <>
                                     <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
                                     <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
                                 </>
                             }
                             {
+                                !productLoader ?
                                 product.image ?
                                     <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                                     :
                                     product.images.map((image, index) => {
-                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 left-[5%]' style={{ zIndex: index }} />
+                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 left-[0%]' style={{ zIndex: index }} />
                                     })
+                                    :<LightSpinner color={'fill-gray-500'} />
                             }
                         </div>
-                        <div id='info' className='fixed md:top-14 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
+                        <div id='info' className='fixed md:top-15 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
                             <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
                         </div>
 
@@ -346,6 +351,7 @@ function UserProductPage({ key }) {
                                     <span className="bg-red-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{(((product.comparePrice - product.price) / product.comparePrice) * 100).toString().slice(0, 2)}%</span>
                                 </h1>
                             </div>
+                            
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
                                 <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>

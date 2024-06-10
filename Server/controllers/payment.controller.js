@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import sha256 from "sha256"
 import axios from "axios"
 import { cartItemModel } from "../models/cartItem.model.js";
+import { userModel } from "../models/user.model.js";
 import { orderModel } from "../models/order.model.js";
 import "dotenv/config.js"
 
@@ -129,12 +130,37 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
 
     const cart = await cartItemModel.find({ user: req.user._id });
 
+    if (req.isBuyNow) {
+
+        const product = req.product;
+
+        const cartItems = {
+            product: product.productId,
+            quantity: product.quantity,
+            color: product.color,
+            size: product.size
+        }
+
+        await orderModel.create({
+            cart: cartItems,
+            user: req.user._id,
+            shippingDetails: req.cookies.shippingDetails,
+            Id: req.paymentId,
+            paymentMethod: req.payMethod
+        });
+
+        return res
+            .status(200)
+            .clearCookie("shippingDetails")
+            .json(new ApiResponse(200, { success: true }))
+    }
+
     const cartItems = cart.map((item) => ({
         product: item.product,
         quantity: item.quantity,
         color: item.color,
         size: item.size
-    }))
+    }));
 
     await orderModel.create({
         cart: cartItems,
@@ -161,7 +187,7 @@ const tabbyCheckoutController = async (req, res) => {
         const REF_ID = Date.now().toString();
         let amount = 0;
         const items = cart.map(cartItem => {
-            amount += cartItem.product[0].price * cartItem.quantity;
+            amount += cartItem.product[0].price * 100 * cartItem.quantity;
             return {
                 title: cartItem.product[0].title,
                 quantity: cartItem.quantity,
@@ -170,9 +196,9 @@ const tabbyCheckoutController = async (req, res) => {
             }
         });
 
-        amount = Math.floor((amount / dirham_to_rupees) * 100);
+        amount = Math.floor((amount / dirham_to_rupees));
         if (shippingDetails.deliveryCharge) {
-            amount += 20;
+            amount += 20 * 100;
         }
 
         const CHECKOUT_URL = 'https://api.tabby.ai/api/v2/checkout';
@@ -211,6 +237,10 @@ const tabbyCheckoutController = async (req, res) => {
 
         const response = await axios.post(CHECKOUT_URL, payload, { headers: { Authorization: `Bearer ${process.env.TABBY_PUBLIC_KEY}` } });
 
+        await userModel.findByIdAndUpdate(req.user._id, {
+            shippingDetails
+        });
+
         console.log(response);
 
         if (response.data.status !== 'rejected') {
@@ -239,14 +269,14 @@ const ziinaCheckoutController = async (req, res) => {
         cart.map(cartItem => {
             amount += cartItem.product[0].price * cartItem.quantity;
         });
-        amount = Math.floor(amount / dirham_to_rupees);
+        amount = Math.floor(amount / dirham_to_rupees) * 100;
         if (shippingDetails.deliveryCharge) {
-            amount += 20;
+            amount += 20 * 100;
         }
 
         const CHECKOUT_URL = 'https://api-v2.ziina.com/api/payment_intent';
         const payload = {
-            amount: amount * 100,
+            amount: amount,
             currency_code: 'AED',
             success_url: `${process.env.CLIENT_URL}/#/success`,
             cancel_url: process.env.CLIENT_URL,
@@ -255,12 +285,17 @@ const ziinaCheckoutController = async (req, res) => {
 
         const response = await axios.post(CHECKOUT_URL, payload, { headers: { Authorization: `Bearer ${process.env.ZIINA_API_KEY}` } });
 
+        await userModel.findByIdAndUpdate(req.user._id, {
+            shippingDetails
+        });
+
         console.log(response.data);
         return res
             .status(200)
             .cookie("shippingDetails", shippingDetails)
             .json(new ApiResponse(200, { id: response.data.id, url: response.data.redirect_url }, "Checkout Created SuccessFully"));
     } catch (err) {
+        console.log(err);
         return res
             .status(400)
             .json(new ApiError(400, err.message));
@@ -270,7 +305,7 @@ const ziinaCheckoutController = async (req, res) => {
 
 const retrieveTabbyCheckoutController = asyncHandler(async (req, res, next) => {
 
-    const { id } = req.params;
+    const { id, isBuyNow, product } = req.body;
 
     const response = await axios.get(`https://api.tabby.ai/api/v2/checkout/${id}`, {
         headers: {
@@ -278,11 +313,13 @@ const retrieveTabbyCheckoutController = asyncHandler(async (req, res, next) => {
         }
     });
 
-    console.log(response.data)
-
     if (response.data.status === 'approved') {
         req.paymentId = id;
         req.payMethod = 'Tabby';
+        if(req.isBuyNow) {
+            req.isBuyNow = isBuyNow;
+            req.product = product;
+        }
         next();
     } else {
         return res
@@ -295,7 +332,7 @@ const retrieveTabbyCheckoutController = asyncHandler(async (req, res, next) => {
 
 const retrieveZiinaCheckoutController = asyncHandler(async (req, res, next) => {
 
-    const { id } = req.params;
+    const { id, isBuyNow, product } = req.body;
 
     const response = await axios.get(`https://api-v2.ziina.com/api/payment_intent/${id}`, {
         headers: {
@@ -303,11 +340,15 @@ const retrieveZiinaCheckoutController = asyncHandler(async (req, res, next) => {
         }
     });
 
-    console.log(response.data)
+    console.log("Ziina retrieve ==========>", response.data)
 
     if (response.data.status === 'completed') {
         req.paymentId = id;
         req.payMethod = 'Ziina';
+        if (isBuyNow) {
+            req.isBuyNow = isBuyNow
+            req.product = product
+        }
         next();
     } else {
         return res

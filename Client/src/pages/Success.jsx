@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Button, Container, Spinner } from '../components';
 import tick from "../assets/tick.gif";
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,11 +18,12 @@ function Success() {
             setLoader(true);
             let url = '/api/v1/payments/';
             const paymentObj = JSON.parse(localStorage.getItem("paymentObj"));
+            const isBuyNow = JSON.parse(localStorage.getItem("product")) !== null ? true : false;
 
             if(paymentObj.type === 'ziina') {
-                url += `ziina/check/${paymentObj.id}`
+                url += `ziina/check`
             } else if(paymentObj.type === 'tabby') {
-                url += `tabby/check/${paymentObj.id}`
+                url += `tabby/check`
             } else {
                 setIsPaid(true);
                 setLoader(false);
@@ -30,7 +31,11 @@ function Success() {
             }
 
             try {
-                const response = await axios.get(url, {
+                const response = await axios.post(url, {
+                    id: paymentObj.id,
+                    isBuyNow: isBuyNow,
+                    product: JSON.parse(localStorage.getItem("product"))
+                }, {
                     withCredentials: true,
                     baseURL: import.meta.env.VITE_BACKEND_URL
                 });
@@ -44,6 +49,7 @@ function Success() {
             } finally {
                 setLoader(false);
                 localStorage.removeItem("paymentObj")
+                localStorage.removeItem("product")
             }
 
         })()

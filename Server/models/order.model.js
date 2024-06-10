@@ -30,8 +30,8 @@ const orderSchema = new mongoose.Schema({
                 default: 1
             },
             size: {
-                type: Number,
-                default: 52
+                type: String,
+                default: "52"
             },
             color: {
                 type: String,

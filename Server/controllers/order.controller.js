@@ -25,7 +25,12 @@ const addOrderController = asyncHandler(async (req, res) => {
         cart: cartItems,
         user: req.user._id,
         shippingDetails,
-        paymentMethod: 'COD'
+        paymentMethod: 'COD',
+        paymentPending: true
+    });
+
+    await userModel.findByIdAndUpdate(req.user._id, {
+        shippingDetails
     });
 
     await cartItemModel.deleteMany({ user: req.user._id });

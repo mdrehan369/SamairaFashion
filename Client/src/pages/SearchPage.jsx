@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Container, SearchBar } from '../components'
+import { Card, Container, SearchBar, Spinner } from '../components'
 import axios from 'axios';
 
 function SearchPage() {
@@ -7,6 +7,7 @@ function SearchPage() {
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
     const [productLoader, setProductLoader] = useState(true);
+    const [loader, setLoader] = useState(true);
 
     useEffect(() => {
         ; (async () => {
@@ -20,12 +21,14 @@ function SearchPage() {
                 console.log(err)
             } finally {
                 setProductLoader(false);
+                setLoader(false);
             }
         })();
     }, [search]);
 
 
     return (
+        !loader ?
         <Container className='flex flex-col items-center justify-start gap-10 animate-animate-appear'>
             <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
             <div className='grid md:grid-cols-4 grid-cols-2 md:m-0 m-4 gap-6'>
@@ -37,6 +40,7 @@ function SearchPage() {
                 Sorry! No Product Matched Your Query
             </div>}
         </Container>
+        : <Spinner />
     )
 }
 

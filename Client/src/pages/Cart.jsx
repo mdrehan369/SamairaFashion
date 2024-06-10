@@ -75,7 +75,7 @@ function Cart() {
                         <div className='flex flex-col items-center justify-start md:h-[80vh] h-auto md:gap-10 gap-4 overflow-y-scroll md:w-auto w-full animate-animate-appear'>
                             <h1 className='self-start font-bold md:text-2xl text-xl md:ml-0 ml-3'>My Cart</h1>
                             {cart.map((item, index) =>
-                                <div key={index} className='flex cursor-pointer items-center justify-start md:w-[60vw] w-[95%] md:h-[30vh] h-auto bg-[#f1f1f1] dark:bg-secondary-color divide-x-2 divide-gray-300 dark:divide-slate-800'>
+                                <div key={index} className='flex cursor-pointer items-center justify-start md:w-[60vw] w-[95%] md:h-[35vh] h-auto bg-[#f1f1f1] dark:bg-secondary-color divide-x-2 divide-gray-300 dark:divide-slate-800'>
                                     <div className='w-[25%] md:h-full h-[90%] md:p-3 p-1'>
                                         <img src={item.product[0].image?.url || item.product[0].images[0].url} className='w-full h-full object-cover' alt="Product" />
                                     </div>

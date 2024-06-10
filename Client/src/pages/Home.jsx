@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Carousel, Container, LightSpinner, Spinner } from '../components/index.js'
+import { Button, Card, Carousel, Container, LightSpinner, Offer, Spinner } from '../components/index.js'
 import straight from "../assets/straight.webp"
 import tyedye from "../assets/tyedye.jpg"
 import farasha from "../assets/farasha.webp"
@@ -9,6 +9,9 @@ import axios from 'axios'
 import policy from "../assets/policy.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import banner4 from "../assets/banner4.webp"
+// import { faSquareWhatsapp } from '@fortawesome/free-brands-svg-icons'
+import { IoLogoWhatsapp } from "react-icons/io";
 
 const hoverEffect = {
     onMouseEnter: (e) => {
@@ -48,6 +51,7 @@ function Home() {
     const [productLoader, setProductLoader] = useState(true);
     const [buttonLoader, setButtonLoader] = useState(true);
     const [response, setResponse] = useState([]);
+    const [response2, setResponse2] = useState([]);
     const [page, setPage] = useState(0);
 
 
@@ -60,6 +64,13 @@ function Home() {
                         withCredentials: true
                     });
                     setResponse((prev) => prev.concat(res.data.data));
+
+                    const res2 = await axios.get(`/api/v1/products?page=${page}`, {
+                        baseURL: import.meta.env.VITE_BACKEND_URL,
+                        withCredentials: true
+                    });
+                    setResponse2((prev) => prev.concat(res2.data.data));
+
                 } catch (err) {
                     console.log(err)
                 } finally {
@@ -73,6 +84,7 @@ function Home() {
     return (
         <Container className='relative'>
             <Carousel onClick={() => window.scrollTo(0, 700)} />
+            <Offer />
             <div className='w-full h-full md:my-10 my-4 space-y-10 overflow-hidden'>
                 {/* <div className=''>
                     <div className='flex items-center justify-center gap-6 mb-10'>
@@ -128,18 +140,41 @@ function Home() {
                             : 'Show More'
                     }</Button>
                 </div>
+
+                    <img src={banner4} alt="Banner" />
+
+                <div className='flex items-center justify-center gap-6 md:mb-10 mb-4'>
+                    <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
+                    <h1 id='h1' className='font-bold text-stone-800 dark:text-[#e4e4e4] text-center text-[1.35rem] decoration-stone-700 font-heading md:w-[30%] w-full'>BEST SELLERS</h1>
+                    <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
+                </div>
+                <div className='flex flex-col items-center justify-start overflow-x-hidden'>
+                    {!loader ?
+                        <div className='grid md:grid-cols-4 grid-cols-2 w-full overflow-scroll overflow-x-hidden md:gap-6 gap-4 px-4 m-10 bg-transparent'>
+                            {response2.map((res, index) => <Card className='card' res={res} key={index} productLoader={productLoader} />)}
+                        </div>
+                        : <Spinner />}
+                    <Button onClick={() => setPage((prev) => prev + 1)} disabled={buttonLoader} className='mb-10 bg-white text-black hover:bg-black hover:text-white border-2 border-black text-sm transition-colors'>{
+                        buttonLoader ?
+                            <LightSpinner color='fill-gray-600' />
+                            : 'Show More'
+                    }</Button>
+                </div>
             </div>
             <div className='flex items-center justify-around gap-4 uppercase font-bold text-xl'>
                 <div className='bg-black md:w-[30%] w-0 h-[3px]'></div>
                 What Our Customers Say
                 <div className='bg-black md:w-[30%] w-0 h-[3px]'></div>
             </div>
-            <div className='flex md:flex-row w-full flex-col items-center justify-center gap-6 md:m-16'>
+            <div className='flex md:flex-row w-full flex-col items-center justify-center gap-6 md:my-16'>
                 <BlogPost text={`Never seen such variety of Abaya's with anyone. Really amazed with the quality and prices. A regular Customer Now`} name={`Fiza`} image={`http://res.cloudinary.com/dumndb22c/image/upload/v1717610371/c5gaoffccfux4tixexx6.jpg`} />
                 <BlogPost text={`The best thing about them after their quality is Buy now Pay later service which makes it easy for me to shop without any hesitation.`} name={`Umaima Azmat`} image={`http://res.cloudinary.com/dumndb22c/image/upload/v1717668882/pas9izbckfxmlyll5zrd.jpg`} />
                 <BlogPost text={`Really surprised with the quality and Free Delivery service they are providing. Amazing, Would easily recommend to everyone.`} name={`Ambreen Abdul Malik`} image={`http://res.cloudinary.com/dumndb22c/image/upload/v1717667935/e4bynxn3pqcsjkjlcmci.jpg`} />
             </div>
             <img src={policy} />
+
+            {/* <IoLogoWhatsapp className='fixed text-green-500 bottom-10 right-10 z-40 shadow-md cursor-pointer size-20' /> */}
+
         </Container>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Container, Input, Button, Spinner, LightSpinner } from "../components/index.js"
 import { useForm } from "react-hook-form"
 import axios from 'axios';
@@ -24,11 +24,12 @@ function CheckoutPage() {
     const [total, setTotal] = useState();
     const [isCOD, setIsCOD] = useState(false);
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
-    const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails?.country === 'India' || true);
+    const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails ? user?.shippingDetails.country === 'India' ? true : false : true);
     const [deliveryCharge, setDeliveryCharge] = useState(0);
     const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
     const [buttonLoader, setButtonLoader] = useState(false);
     const [error, setErr] = useState(null);
+    const isBook = useRef(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -71,8 +72,9 @@ function CheckoutPage() {
         })();
 
         return () => {
-            localStorage.clear("product");
+            !isBook.current && localStorage.removeItem("product")
         }
+
     }, []);
 
     const handlePhonepePayment = async (shippingDetails) => {
@@ -93,20 +95,25 @@ function CheckoutPage() {
     }
 
     const validateData = (shippingDetails) => {
-
         let isError = false;
+        if (shippingDetails.country !== "India") {
+            shippingDetails.city = "NA";
+            shippingDetails.state = "NA";
+            shippingDetails.pincode = "000000";
+        }
         Object.keys(shippingDetails).map((key) => {
             if (!shippingDetails[key] || shippingDetails[key] === '') {
                 setError(key, { type: "required", message: "Please Fill Out This Field" });
                 isError = true;
             }
         })
+        console.log(shippingDetails);
 
         if (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(shippingDetails.email) === false) setError("email", { type: "pattern", message: "Please Enter The Correct Email Address" }, { shouldFocus: true }), isError = true;
 
         if (isNaN(shippingDetails.number)) setError("number", { type: 'pattern', message: "Please Enter A Valid Number" }, { shouldFocus: true }), isError = true;
 
-        if (isNaN(shippingDetails.pincode)) setError("pincode", { type: 'pattern', message: "Please Enter A Valid Number" }, { shouldFocus: true }), isError = true;
+        if (isNaN(shippingDetails.pincode) && shippingDetails.pincode !== "000000") setError("pincode", { type: 'pattern', message: "Please Enter A Valid Number" }, { shouldFocus: true }), isError = true;
 
         if (isError) {
             window.scrollTo(0, 0);
@@ -166,6 +173,7 @@ function CheckoutPage() {
             dispatch(setShippingDetails(shippingDetails));
 
             window.open(response.data.data.url, '_self');
+            isBook.current = true;
 
         } catch (error) {
             console.log(error);
@@ -195,6 +203,7 @@ function CheckoutPage() {
 
             dispatch(setShippingDetails(shippingDetails));
             localStorage.setItem("paymentObj", JSON.stringify({ type: 'COD' }))
+            isBook.current = true;
             return navigate('/success')
         }
 
@@ -454,7 +463,7 @@ function CheckoutPage() {
                         </div>
                     </div>
                 </>
-                : <Spinner />
+                : <Spinner scroll={true} />
             }
         </Container>
     )
