@@ -241,8 +241,6 @@ const tabbyCheckoutController = async (req, res) => {
             shippingDetails
         });
 
-        console.log(response);
-
         if (response.data.status !== 'rejected') {
             return res
                 .status(200)

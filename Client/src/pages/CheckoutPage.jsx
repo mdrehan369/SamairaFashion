@@ -8,13 +8,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import visa from "../assets/visa.svg";
 import mastercard from "../assets/mastercard.svg";
 import tabby from "../assets/tabby.webp";
+import phonepe from "../assets/phonepe.svg";
 import { useNavigate } from 'react-router-dom';
 import { setShippingDetails } from "../store/authslice.js"
 
 function CheckoutPage() {
 
     const user = useSelector(state => state.auth.user);
-    const { register, handleSubmit, setError, formState: { errors } } = useForm({
+    const { register, handleSubmit, setError, formState: { errors }, getValues } = useForm({
         defaultValues: user?.shippingDetails || null
     })
     const [cart, setCart] = useState([]);
@@ -124,33 +125,6 @@ function CheckoutPage() {
 
     }
 
-    const handleZiinaCheckout = async (shippingDetails) => {
-
-        if (!validateData(shippingDetails)) return;
-
-        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
-
-        try {
-
-            const response = await axios.post('/api/v1/payments/ziina/pay', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
-                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-            });
-
-            const paymentObj = {
-                type: '',
-                id: '',
-
-            }
-
-            localStorage.setItem("ziinaId", response.data.data.id);
-            window.open(response.data.data.url);
-            // console.log(response);
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
 
     const handleCheckout = async (shippingDetails) => {
 
@@ -205,38 +179,6 @@ function CheckoutPage() {
             localStorage.setItem("paymentObj", JSON.stringify({ type: 'COD' }))
             isBook.current = true;
             return navigate('/success')
-        }
-
-    }
-
-    const handleTabbyCheckout = async (shippingDetails) => {
-
-        if (!validateData(shippingDetails)) return;
-
-        const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
-
-        if (isCOD) {
-
-            await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
-                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-            });
-
-            dispatch(setShippingDetails(shippingDetails));
-
-            return navigate('/success?cod=cod')
-        }
-
-        try {
-
-            const response = await axios.post('/api/v1/payments/tabby/pay', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
-                baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
-            });
-
-            localStorage.setItem("tabbyId", response.data.data.id);
-            window.open(response.data.data.url);
-
-        } catch (error) {
-            console.log(error);
         }
 
     }
@@ -375,27 +317,41 @@ function CheckoutPage() {
                             <h1 className='text-xl dark:text-white font-bold text-black self-start'>Payment</h1>
                             <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>
                         </div>
-                        <div className='md:w-[80%] w-full'>
-                            <div onClick={() => { setIsCOD(false); setCheckoutMethod('ziina') }} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-0'>
-                                <div className={`${checkoutMethod === 'ziina' ? 'border-4' : 'border-2'} size-4 border-black dark:border-white rounded-full`}></div>
-                                <div>Pay with Ziina</div>
-                                <div className='flex items-center justify-end flex-grow'>
-                                    <img src={visa} alt="visa" />
-                                    <img src={mastercard} alt="mastercard" />
-                                </div>
-                            </div>
-                            <div className='w-full p-3 h-[30vh] bg-gray-100 dark:bg-secondary-color dark:text-white flex flex-col items-center justify-start'>
-                                <FontAwesomeIcon icon={faCreditCard} className='size-32 text-stone-600 dark:text-white' />
-                                <div className='md:w-[60%] w-full text-center text-black text-md dark:text-white'>
-                                    After clicking “Pay now”, you will be redirected to Pay by card with Ziina to complete your purchase securely.
-                                </div>
-                            </div>
-                        </div>
 
-                        <div onClick={() => { setIsCOD(false); setCheckoutMethod('tabby') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
-                            <div className={`${checkoutMethod === 'tabby' ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
-                            <span>Pay in 4 easy installments with Tabby</span>
-                            <img src={tabby} alt="tabby" className='w-14 mx-0 justify-self-end' />
+                        {
+                            !isIndianDelivery &&
+                            <div className='md:w-[80%] w-full'>
+                                <div onClick={() => { setIsCOD(false); setCheckoutMethod('ziina') }} className='flex cursor-pointer items-center dark:bg-secondary-color  justify-start gap-2 bg-gray-100 border-[1px] border-gray-300 w-[100%] p-3 border-b-black dark:border-b-slate-800 dark:border-0'>
+                                    <div className={`${checkoutMethod === 'ziina' ? 'border-4' : 'border-2'} size-4 border-black dark:border-white rounded-full`}></div>
+                                    <div>Pay with Ziina</div>
+                                    <div className='flex items-center justify-end flex-grow'>
+                                        <img src={visa} alt="visa" />
+                                        <img src={mastercard} alt="mastercard" />
+                                    </div>
+                                </div>
+                                <div className='w-full p-3 h-[30vh] bg-gray-100 dark:bg-secondary-color dark:text-white flex flex-col items-center justify-start'>
+                                    <FontAwesomeIcon icon={faCreditCard} className='size-32 text-stone-600 dark:text-white' />
+                                    <div className='md:w-[60%] w-full text-center text-black text-md dark:text-white'>
+                                        After clicking “Pay now”, you will be redirected to Pay by card with Ziina to complete your purchase securely.
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                        {
+                            getValues().country.includes('United Arab Emirates') &&
+                            <div onClick={() => { setIsCOD(false); setCheckoutMethod('tabby') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                                <div className={`${checkoutMethod === 'tabby' ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                                <span>Pay in 4 easy installments with Tabby</span>
+                                <img src={tabby} alt="tabby" className='w-14 ml-auto justify-self-end' />
+                            </div>
+                        }
+
+                        <div onClick={() => { setIsCOD(false); setCheckoutMethod('phonepe') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
+                            <div className={`${checkoutMethod === 'phonepe' ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
+                            <span>Pay With Phone Pe (Only Indian Customers)</span>
+                            <img src={phonepe} alt="phonepe" className='w-14 ml-auto justify-self-end' />
                         </div>
 
                         {
