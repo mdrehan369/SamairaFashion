@@ -44,6 +44,7 @@ const OtpPage = ({ email, otp }) => {
                 navigate('/admin/overview');
                 return;
             }
+            if (localStorage.getItem("product") !== null) return navigate("/checkoutPage");
             navigate("/");
 
         } catch (err) {
@@ -183,6 +184,7 @@ function Signin() {
                     );
 
                     dispatch(login(response.data.data));
+                    if (localStorage.getItem("product") !== null) return navigate("/checkoutPage");
                     navigate('/');
 
                 })
@@ -229,11 +231,11 @@ function Signin() {
         }
     }
 
-    const handleWithoutLogin = async() => {
+    const handleWithoutLogin = async () => {
         try {
 
             let uuid = localStorage.getItem("uuid");
-            if(uuid === null) {
+            if (uuid === null) {
                 uuid = Date.now().toString();
             }
 
@@ -245,6 +247,7 @@ function Signin() {
             localStorage.setItem("uuid", uuid);
 
             dispatch(login(data.data));
+            if (localStorage.getItem("product") !== null) return navigate("/checkoutPage");
             navigate('/');
 
         } catch (err) {

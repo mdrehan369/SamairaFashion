@@ -28,10 +28,6 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
 
     const handleBuyNow = () => {
 
-        if (!status) {
-            return navigate('/signin')
-        }
-
         const data = {
             productId: product._id,
             product: [{ ...product }],
@@ -41,6 +37,10 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
         }
 
         localStorage.setItem("product", JSON.stringify(data));
+
+        if (!status) {
+            return navigate('/signin')
+        }
 
         navigate('/checkoutPage');
     }

@@ -262,11 +262,7 @@ function UserProductPage({ key }) {
     const handleCarouselClick = handleCarousel();
 
     const handleBuyNow = () => {
-
-        if (!status) {
-            return navigate('/signin')
-        }
-
+        
         const data = {
             productId: productId,
             product: [{ ...product }],
@@ -274,8 +270,12 @@ function UserProductPage({ key }) {
             size: productSize,
             color: color
         }
-
+        
         localStorage.setItem("product", JSON.stringify(data));
+
+        if (!status) {
+            return navigate('/signin')
+        }
 
         navigate('/checkoutPage');
     }
