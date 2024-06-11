@@ -81,14 +81,14 @@ const sendOtpController = asyncHandler(async (req, res) => {
     Hi ${email},\n
     Thank you for using Samaira Fashion. To proceed with your request, please use the following One-Time Password (OTP):\n
     Your OTP: ${otp}\n
-    This OTP is valid for the next 10 minutes. Please do not share this code with anyone.\n
+    This OTP is valid for the next 10 minutes. Please do not share this code with anyone.
     If you did not request this code, please contact our support team immediately.\n
-    Thank you,\n
-    Samaira Fashion\n
-    Contact Us:\n
-    samaira.shop1@gmail.com\n
-    +97 15216 60581\n
-    Deira, Dubai. UAE\n
+    Thank you,
+    Samaira Fashion
+    Contact Us:
+    samaira.shop1@gmail.com
+    +97 15216 60581
+    Deira, Dubai. UAE
     `);
 
     return res
@@ -96,6 +96,35 @@ const sendOtpController = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, otp, "OTP sent successfully"));
 
 });
+
+const sendSuccessMessage = async (email, orderId, products) => {
+
+    const prodArr = products.map((prod) => {
+        return `ProductId: #${prod.product},   Quantity:${prod.quantity},   Color:${prod.color},   Size:${prod.size}`
+    });
+
+    const productStr = prodArr.join('\n');
+
+    await sendEmail(email, `Order Confirmation!`, `
+        Thank you for your purchase from Samaira Fashion!
+
+        Your order has been successfully placed and is being processed. Here are the details:
+
+        Order Number: #${orderId}
+
+        Order Summary:
+        ${productStr}
+        
+        You can check other details of your order in our website.
+        If you have any questions or need further assistance, please feel free to contact our customer support.
+
+        Thank you for shopping with us!
+
+        Best regards,
+        Samaira Fashion
+        `)
+
+}
 
 const loginController = asyncHandler(async (req, res) => {
 
@@ -316,5 +345,6 @@ export {
     getCartLengthController,
     googleSigninController,
     sendOtpController,
-    loginWithUUIDController
+    loginWithUUIDController,
+    sendSuccessMessage
 }

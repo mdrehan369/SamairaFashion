@@ -5,6 +5,7 @@ import { orderModel } from "../models/order.model.js"
 import { userModel } from "../models/user.model.js"
 import mongoose from "mongoose"
 import { cartItemModel } from "../models/cartItem.model.js"
+import { sendSuccessMessage } from "./user.controller.js"
 
 const addOrderController = asyncHandler(async (req, res) => {
 
@@ -36,6 +37,8 @@ const addOrderController = asyncHandler(async (req, res) => {
     await cartItemModel.deleteMany({ user: req.user._id });
 
     await userModel.findByIdAndUpdate(req.user._id, { shippingDetails });
+    await sendSuccessMessage(shippingDetails.email, newOrder._id.toString().slice(0, 10), cartItems);
+
 
     return res
         .status(200)

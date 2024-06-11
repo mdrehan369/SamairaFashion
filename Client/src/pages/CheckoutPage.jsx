@@ -163,16 +163,19 @@ function CheckoutPage() {
         if (!validateData(shippingDetails)) return;
 
         const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
-
+        
         if (isCOD) {
-
+            
             try {
+                setButtonLoader(true);
                 await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
                     baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
                 });
             } catch (err) {
                 console.log(err);
                 setErr("Sorry! Some Error Occured. Please Try Again Later");
+            } finally {
+                setButtonLoader(false);
             }
 
             dispatch(setShippingDetails(shippingDetails));

@@ -7,6 +7,7 @@ import { cartItemModel } from "../models/cartItem.model.js";
 import { userModel } from "../models/user.model.js";
 import { orderModel } from "../models/order.model.js";
 import "dotenv/config.js"
+import { sendSuccessMessage } from "./user.controller.js";
 
 const phonepePayController = (req, res) => {
 
@@ -141,13 +142,15 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
             size: product.size
         }
 
-        await orderModel.create({
+        const order = await orderModel.create({
             cart: cartItems,
             user: req.user._id,
             shippingDetails: req.cookies.shippingDetails,
             Id: req.paymentId,
             paymentMethod: req.payMethod
         });
+
+        await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), [cartItems]);
 
         return res
             .status(200)
@@ -162,13 +165,15 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
         size: item.size
     }));
 
-    await orderModel.create({
+    const order = await orderModel.create({
         cart: cartItems,
         user: req.user._id,
         shippingDetails: req.cookies.shippingDetails,
         Id: req.paymentId,
         paymentMethod: req.payMethod
     });
+
+    await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), cartItems);
 
     await cartItemModel.deleteMany({ user: req.user._id })
 
@@ -314,7 +319,7 @@ const retrieveTabbyCheckoutController = asyncHandler(async (req, res, next) => {
     if (response.data.status === 'approved') {
         req.paymentId = id;
         req.payMethod = 'Tabby';
-        if(req.isBuyNow) {
+        if (req.isBuyNow) {
             req.isBuyNow = isBuyNow;
             req.product = product;
         }
