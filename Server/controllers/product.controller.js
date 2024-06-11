@@ -191,9 +191,7 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
             '$skip': page ? (page - 1) * limit : 0
         },
         {
-            '$sample': {
-                'size': limit
-            }
+            '$limit': limit
         }
     ];
 

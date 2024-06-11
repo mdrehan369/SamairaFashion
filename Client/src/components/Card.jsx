@@ -126,8 +126,8 @@ function Card({ res, productLoader, ...props }) {
 
                 onMouseEnter={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.remove('invisible'); e.currentTarget.lastElementChild.classList.add('translatee-y-[-4em]'); e.currentTarget.lastElementChild.classList.add('animate-animate-appear') }}
 
-                onMouseLeave={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.replace('translate-y-[-4em]', ''); e.currentTarget.lastElementChild.classList.remove('animate-animate-appear') }}
-                // onClick={() => window.scrollTo(0, 0)}
+                onMouseLeave={(e) => { !productLoader && e.currentTarget.lastElementChild.classList.add('invisible'); e.currentTarget.lastElementChild.classList.remove('translate-y-[-4em]'); e.currentTarget.lastElementChild.classList.remove('animate-animate-appear') }}
+                // onClick={() => window.scrollTo(0, 0)}first
                 {...props}
             >
                 {

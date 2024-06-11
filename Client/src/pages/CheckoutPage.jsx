@@ -213,25 +213,27 @@ function CheckoutPage() {
                         <div className='md:w-[80%] w-full'>
                             <h1 className='text-stone-800 dark:text-white font-[450] text-sm'>Country</h1>
                             <select
+                                defaultValue={'India'}
                                 className='md:w-[100%] p-3 rounded dark:bg-secondary-color dark:border-0 bg-white border-[1px] w-full border-gray-400 cursor-pointer'
                                 onInput={(e) => {
                                     e.currentTarget.value === 'India' ? setIsIndianDelivery(true) : setIsIndianDelivery(false);
+                                    (e.currentTarget.value === 'India' || e.currentTarget.value.includes("Dubai") || e.currentTarget.value.includes("Ajman") || e.currentTarget.value.includes("Sharjah")) ? setDeliveryCharge(0) : setDeliveryCharge(20)
                                     e.currentTarget.value.includes('United Arab Emirates') ? setIsCODAvailable(true) : setIsCODAvailable(false);
                                 }}
                                 {...register('country', { required: true })}>
-                                <option value="India" selected onClick={() => setDeliveryCharge(0)}>India</option>
-                                <option value="Bahrain" onClick={() => setDeliveryCharge(20)}>Bahrain</option>
-                                <option value="Kuwait" onClick={() => setDeliveryCharge(20)}>Kuwait</option>
-                                <option value="Oman" onClick={() => setDeliveryCharge(20)}>Oman</option>
-                                <option value="Qatar" onClick={() => setDeliveryCharge(20)}>Qatar</option>
-                                <option value="Saudi Arabia" onClick={() => setDeliveryCharge(20)}>Saudi Arabia</option>
-                                <option value="United Arab Emirates, Dubai" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Dubai</option>
-                                <option value="United Arab Emirates, Sharjah" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Sharjah</option>
-                                <option value="United Arab Emirates, Ajman" onClick={() => setDeliveryCharge(0)}>United Arab Emirates, Ajman</option>
-                                <option value="United Arab Emirates, Abu Dhabi" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Abu Dhabi</option>
-                                <option value="United Arab Emirates, Umm Al Quwain" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Umm Al Quwain</option>
-                                <option value="United Arab Emirates, Ras Al Khaimah" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Ras Al Khaimah</option>
-                                <option value="United Arab Emirates, Fujairah" onClick={() => setDeliveryCharge(20)}>United Arab Emirates, Fujairah</option>
+                                <option value="India">India</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Kuwait">Kuwait</option>
+                                <option value="Oman">Oman</option>
+                                <option value="Qatar">Qatar</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="United Arab Emirates, Dubai">United Arab Emirates, Dubai</option>
+                                <option value="United Arab Emirates, Sharjah">United Arab Emirates, Sharjah</option>
+                                <option value="United Arab Emirates, Ajman">United Arab Emirates, Ajman</option>
+                                <option value="United Arab Emirates, Abu Dhabi">United Arab Emirates, Abu Dhabi</option>
+                                <option value="United Arab Emirates, Umm Al Quwain">United Arab Emirates, Umm Al Quwain</option>
+                                <option value="United Arab Emirates, Ras Al Khaimah">United Arab Emirates, Ras Al Khaimah</option>
+                                <option value="United Arab Emirates, Fujairah">United Arab Emirates, Fujairah</option>
                             </select>
                         </div>
 
@@ -340,7 +342,7 @@ function CheckoutPage() {
                         }
 
                         {
-                            getValues().country.includes('United Arab Emirates') &&
+                            getValues().country?.includes('United Arab Emirates') &&
                             <div onClick={() => { setIsCOD(false); setCheckoutMethod('tabby') }} className='bg-gray-100 dark:bg-secondary-color cursor-pointer md:w-[80%] w-full p-3 flex items-center gap-2'>
                                 <div className={`${checkoutMethod === 'tabby' ? 'border-4' : 'border-2'} size-4 border-2 border-black dark:border-white rounded-full`}></div>
                                 <span>Pay in 4 easy installments with Tabby</span>

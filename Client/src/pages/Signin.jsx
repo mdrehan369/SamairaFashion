@@ -231,13 +231,18 @@ function Signin() {
 
     const handleWithoutLogin = async() => {
         try {
-            const response = await axios.get('https://api.ipify.org?format=json');
-            const ip = response.data.ip
 
-            const { data } = await axios.get(`/api/v1/users/ip/${ip}`, {
+            let uuid = localStorage.getItem("uuid");
+            if(uuid === null) {
+                uuid = Date.now().toString();
+            }
+
+            const { data } = await axios.get(`/api/v1/users/uuid/${uuid}`, {
                 withCredentials: true,
                 baseURL: import.meta.env.VITE_BACKEND_URL,
             });
+
+            localStorage.setItem("uuid", uuid);
 
             dispatch(login(data.data));
             navigate('/');

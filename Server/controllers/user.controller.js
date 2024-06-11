@@ -126,17 +126,17 @@ const loginController = asyncHandler(async (req, res) => {
 
 });
 
-const loginWithIpController = asyncHandler(async (req, res) => {
+const loginWithUUIDController = asyncHandler(async (req, res) => {
 
-    const { ip } = req.params;
+    const { uuid } = req.params;
 
-    if (!ip) throw new ApiError(400, "No IP");
+    if (!uuid) throw new ApiError(400, "No UUID");
 
-    const user = await userModel.findOne({ ipAddress: ip });
+    const user = await userModel.findOne({ uuid: uuid });
 
     if (!user) {
 
-        const newUser = await userModel.create({ ipAddress: ip });
+        const newUser = await userModel.create({ uuid: uuid });
         const accessToken = newUser.generateAccessToken();
 
         return res
@@ -316,5 +316,5 @@ export {
     getCartLengthController,
     googleSigninController,
     sendOtpController,
-    loginWithIpController
+    loginWithUUIDController
 }

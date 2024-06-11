@@ -45,13 +45,24 @@ function Shop() {
                 <div className='self-end md:mr-20 my-10 flex items-center justify-start gap-6 md:w-auto w-full'>
                     <div className='w-fit ml-4'>
                         <label htmlFor="sort" className='text-stone-700 dark:text-white font-bold text-xs mr-3'>SORT BY</label>
-                        <select name='sort' className='text-gray-600 dark:text-gray-400 bg-transparent border-[1px] text-sm font-medium border-gray-400 rounded-none px-5 py-3'>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'price', 'order': 1 })} value='Price, Low To High'>Price, Low To High</option>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'price', 'order': -1 })} value='Price, High To Low'>Price, High To Low</option>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'createdAt', 'order': 1 })} value='Date, Old To New'>Date, Old To New</option>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'createdAt', 'order': -1 })} value='Date, New To Old' selected>Date, New To Old</option>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'title', 'order': 1 })} value='Alphabetically, A-Z'>Alphabetically, A-Z</option>
-                            <option className='bg-red-500 hover:bg-green-50 outline-none' onClick={() => setSort({ 'attribute': 'title', 'order': -1 })} value='Alphabetically, Z-A'>Alphabetically, Z-A</option>
+                        <select name='sort' defaultValue={'price,-1'} className='text-gray-600 dark:text-gray-400 bg-transparent border-[1px] text-sm font-medium border-gray-400 rounded-none px-5 py-3'
+                        onInput={(e) => {
+                            const val = e.currentTarget.value.split(',');
+                            console.log(val)
+                            const attribute = val[0];
+                            const order = Number(val[1]);
+                            setSort({
+                                attribute,
+                                order
+                            })
+                        }}
+                        >
+                            <option className='outline-none' value='price,1'>Price, Low To High</option>
+                            <option className='outline-none' value='price,-1'>Price, High To Low</option>
+                            <option className='outline-none' value='createdAt,1'>Date, Old To New</option>
+                            <option className='outline-none' value='createdAt,-1'>Date, New To Old</option>
+                            <option className='outline-none' value='title,1'>Alphabetically, A-Z</option>
+                            <option className='outline-none' value='title,-1'>Alphabetically, Z-A</option>
                         </select>
                     </div>
                     <div className='w-fit'>
@@ -65,7 +76,7 @@ function Shop() {
                         </select>
                     </div>
                 </div>
-                <div className='w-[95%] h-auto md:flex grid grid-cols-2 flex-wrap flex-row items-center justify-center gap-4'>
+                <div className='w-[95%] h-auto grid grid-cols-2 md:grid-cols-4 gap-4'>
                     {products.map((res, index) => <Card res={res} key={index} productLoader={productLoader} />)}
                 </div>
                 <div className='w-[85%] flex items-center justify-between'>
