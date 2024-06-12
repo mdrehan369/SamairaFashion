@@ -26,7 +26,7 @@ function CheckoutPage() {
     const [isCOD, setIsCOD] = useState(false);
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
     const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails ? user?.shippingDetails.country === 'India' ? true : false : true);
-    const [deliveryCharge, setDeliveryCharge] = useState(((user?.shippingDetails.country.includes('Dubai') || user?.shippingDetails.country.includes('Sharjah') || user?.shippingDetails.country.includes('Ajman') || user?.shippingDetails.country.includes('India')) ? 0 : 20) || 0);
+    const [deliveryCharge, setDeliveryCharge] = useState(((user?.shippingDetails?.country.includes('Dubai') || user?.shippingDetails?.country.includes('Sharjah') || user?.shippingDetails?.country.includes('Ajman') || user?.shippingDetails?.country.includes('India')) ? 0 : 20) || 0);
     const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
     const [buttonLoader, setButtonLoader] = useState(false);
     const [error, setErr] = useState(null);
