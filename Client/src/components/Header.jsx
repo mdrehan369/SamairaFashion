@@ -65,7 +65,7 @@ function Header() {
         !window.location.hash.includes('signin') &&
         <>
             {
-                <div className={`fixed w-[100vw] h-[100vh] ${!openModal ? 'bg-opacity-0 backdrop-blur-0 -z-30' : 'bg-opacity-50 backdrop-blur-md z-30'} flex items-center justify-center transition-all bg-black duration-900`}>
+                <div className={`fixed w-[100vw] h-[100vh] ${!openModal ? 'bg-opacity-0 backdrop-blur-0 -z-30' : 'bg-opacity-50 backdrop-blur-md z-40'} flex items-center justify-center transition-all bg-black duration-900`}>
                     <div className={`${openModal ? 'md:w-[30%] w-[90%] h-[30%]' : 'w-0 h-0'} overflow-hidden bg-[#f1f1f1] rounded-lg shadow-md transition-all dark:bg-secondary-color duration-300 flex flex-col items-center justify-center gap-6 z-30`}>
                         {
                             openModal &&
@@ -132,7 +132,7 @@ function Header() {
                                     !status ?
                                         <>
                                             <NavLink to={'/signin'} className='w-full py-4 px-6 text-sm'>Sign In</NavLink>
-                                            <NavLink to={'/signup'} className='w-full py-4 px-6 text-sm'>Sign Up</NavLink>
+                                            {/* <NavLink to={'/signup'} className='w-full py-4 px-6 text-sm'>Sign Up</NavLink> */}
                                         </>
                                         :
                                         <>

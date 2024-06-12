@@ -99,7 +99,7 @@ const OrderDetails = () => {
 
     return (
         !loader ?
-            <Container className='flex items-start justify-between min-h-[100vh]'>
+            <Container className='flex md:flex-row flex-col-reverse md:items-start items-center md:p-0 p-4 justify-between min-h-[100vh]'>
                 {currOrder ?
                     <>
                         {
@@ -122,17 +122,20 @@ const OrderDetails = () => {
                                 </div>
                             </div>
                         }
-                        <div className='bg-gray-100 dark:bg-secondary-color overflow-scroll py-4 md:flex flex-col items-center justify-start pt-4 w-[20%] h-[100vh] gap-2 hidden'>
+                        <div className='bg-gray-100 dark:bg-secondary-color overflow-scroll py-4 flex flex-col items-center justify-start pt-4 md:w-[20%] w-full md:h-[100vh] h-auto gap-2'>
                             {
                                 Object.keys(orders).map((order, index) => <div
                                     key={index}
-                                    onClick={() => setCurrOrder(orders[order])}
+                                    onClick={() => {setCurrOrder(orders[order]); window.screen.width < 500 && window.scrollTo(0, 0)}}
                                     className={`w-[90%] rounded-md p-4 bg-gray-200 dark:bg-blue-950 dark:border-0 dark:hover:border-0 dark:hover:bg-[#2c4682] dark:text-white cursor-pointer hover:border-gray-400 hover:bg-gray-300 transition-colors border-[1px] text-sm font-medium ${currOrder._id.slice(0, 10) === order && 'border-gray-400 bg-gray-300 dark:bg-[#2c4682]'} text-gray-800 tracking-wider`}>
                                     <span className='font-bold text-xs text-gray-700 dark:text-gray-300 mr-4'>ORDER ID: </span>#{order || Date.now()}
                                 </div>)
                             }
                         </div>
-                        <div className='min-h-[90vh] md:w-[75%] w-full flex flex-col items-start pt-10 justify-start divide-y-2 md:m-0 m-6 dark:divide-gray-400 overflow-y-scroll'>
+
+                        <h1 className='text-xl md:hidden block font-bold text-stone-800 mb-3'>All Orders</h1>
+
+                        <div className='md:min-h-[90vh] md:w-[75%] w-full flex flex-col items-start pt-10 justify-start divide-y-2 md:m-0 m-6 dark:divide-gray-400 overflow-y-scroll'>
                             <div className='mb-4 flex items-start justify-between w-[80%]'>
                                 <div>
                                     <h1 className="text-2xl font-bold mb-2"><span className='mr-4'>Order ID:</span> <span className='tracking-wider text-gray-600 dark:text-gray-400'>#{currOrder._id.slice(0, 10)}</span>
@@ -154,7 +157,7 @@ const OrderDetails = () => {
                                 </div>
                                 {
                                     !currOrder.isCancelled &&
-                                    <button className='self-end bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 px-6 hover:bg-red-500 transition-colors py-2 rounded text-sm font-bold' onClick={() => setOpenModal(true)}>Cancel</button>
+                                    <button className='self-end bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 md:px-6 px-2 hover:bg-red-500 transition-colors py-2 rounded text-sm font-bold' onClick={() => setOpenModal(true)}>Cancel</button>
                                 }
                             </div>
                             <div className='w-[100%] md:w-[80%] flex flex-col items-start justify-start gap-4 py-4'>
@@ -170,11 +173,11 @@ const OrderDetails = () => {
                                             <div className='flex flex-col h-full items-start justify-evenly max-w-[70%]'>
                                                 <span className='font-bold mt-4 md:text-md text-sm'>{currOrder.products[index].title}</span>
                                                 <pre className='text-gray-600 dark:text-gray-400 text-xs'>
-                                                    Color: <span className='text-sm font-bold'>{item.color}</span> | Size: <span className='text-sm font-bold'>{item.size}</span> | Quantity: <span className='text-sm font-bold'>{item.quantity}</span>
+                                                Color:<span className='md:text-sm text-xs font-bold'>{item.color}</span>|Size:<span className='md:text-sm text-xs font-bold'>{item.size}</span>|Quantity:<span className='md:text-sm text-xs font-bold'>{item.quantity}</span>
                                                 </pre>
                                             </div>
                                         </div>
-                                        <div className='flex flex-col items-center h-full justify-center self-end min-w-[20%]'>
+                                        <div className='flex flex-col items-center md:pb-0 pb-20 h-full justify-center self-end min-w-[20%]'>
                                             <div className='relative text-gray-500 dark:text-gray-400 w-auto'>
                                                 {
                                                     isIndia ?

@@ -13,20 +13,22 @@ function Success() {
 
     useEffect(() => {
 
-        ;(async () => {
-            
+        ; (async () => {
+
             setLoader(true);
             let url = '/api/v1/payments/';
             const paymentObj = JSON.parse(localStorage.getItem("paymentObj"));
             const isBuyNow = JSON.parse(localStorage.getItem("product")) !== null ? true : false;
 
-            if(paymentObj.type === 'ziina') {
+            if (paymentObj.type === 'ziina') {
                 url += `ziina/check`
-            } else if(paymentObj.type === 'tabby') {
+            } else if (paymentObj.type === 'tabby') {
                 url += `tabby/check`
             } else {
                 setIsPaid(true);
                 setLoader(false);
+                localStorage.removeItem("paymentObj")
+                localStorage.removeItem("product")
                 return;
             }
 
@@ -39,7 +41,7 @@ function Success() {
                     withCredentials: true,
                     baseURL: import.meta.env.VITE_BACKEND_URL
                 });
-                if(response.data.data.success) {
+                if (response.data.data.success) {
                     setIsPaid(true);
                 } else {
                     setIsPaid(false);

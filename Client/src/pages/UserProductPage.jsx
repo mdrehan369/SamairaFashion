@@ -233,6 +233,7 @@ function UserProductPage({ key }) {
             return variant.color === color;
         })[0])
         setProductLoader(false);
+        window.screen.width < 500 && window.scrollTo(0, 0);
 
     }, [color])
 
@@ -319,8 +320,8 @@ function UserProductPage({ key }) {
                             {
                                 !productLoader && !product.image &&
                                 <>
-                                    <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
-                                    <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] dark:text-black dark:hover:bg-white z-40 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                    <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] dark:text-black dark:hover:bg-white z-30 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
+                                    <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] dark:text-black dark:hover:bg-white z-30 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
                                 </>
                             }
                             {
@@ -329,7 +330,7 @@ function UserProductPage({ key }) {
                                     <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
                                     :
                                     product.images.map((image, index) => {
-                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 left-[0%]' style={{ zIndex: index }} />
+                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
                                     })
                                     :<LightSpinner color={'fill-gray-500'} />
                             }
@@ -381,8 +382,8 @@ function UserProductPage({ key }) {
                                 <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
-                                <Button type='button' className='w-[70%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={handleBuyNow}>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
-                                <Button type='button' className='w-[70%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)} disabled={cartLoader}>{cartLoader ? <LightSpinner color='fill-gray-500' /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
+                                <Button type='button' className='md:w-[70%] w-[95%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={handleBuyNow}>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
+                                <Button type='button' className='md:w-[70%] w-[95%] p-0 h-[7.5vh] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={(e) => handleAddToCart(e)} disabled={cartLoader}>{cartLoader ? <LightSpinner color='fill-gray-500' /> : <>ADD TO CART<FontAwesomeIcon icon={faCartShopping} className='ml-2' /></>}</Button>
                             </div>
                         </form>
                     </div>

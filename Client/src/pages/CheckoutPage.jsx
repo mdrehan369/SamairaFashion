@@ -26,7 +26,7 @@ function CheckoutPage() {
     const [isCOD, setIsCOD] = useState(false);
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
     const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails ? user?.shippingDetails.country === 'India' ? true : false : true);
-    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [deliveryCharge, setDeliveryCharge] = useState(((user?.shippingDetails.country.includes('Dubai') || user?.shippingDetails.country.includes('Sharjah') || user?.shippingDetails.country.includes('Ajman') || user?.shippingDetails.country.includes('India')) ? 0 : 20) || 0);
     const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
     const [buttonLoader, setButtonLoader] = useState(false);
     const [error, setErr] = useState(null);
@@ -35,6 +35,7 @@ function CheckoutPage() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+
         ; (async () => {
             setLoader(true);
             try {
@@ -68,11 +69,13 @@ function CheckoutPage() {
             } catch (err) {
                 console.log(err)
             } finally {
+                window.scrollTo(0, 0)
                 setLoader(false);
-            }
+                }
         })();
 
         return () => {
+            console.log(isBook.current)
             !isBook.current && localStorage.removeItem("product")
         }
 
@@ -146,8 +149,8 @@ function CheckoutPage() {
             localStorage.setItem("paymentObj", JSON.stringify(paymentObj));
             dispatch(setShippingDetails(shippingDetails));
 
-            window.open(response.data.data.url, '_self');
             isBook.current = true;
+            window.open(response.data.data.url, '_self');
 
         } catch (error) {
             console.log(error);
@@ -163,9 +166,9 @@ function CheckoutPage() {
         if (!validateData(shippingDetails)) return;
 
         const { firstName, lastName, email, number, country, city, state, address, nearBy, pincode } = shippingDetails;
-        
+
         if (isCOD) {
-            
+
             try {
                 setButtonLoader(true);
                 await axios.post('/api/v1/orders', { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
