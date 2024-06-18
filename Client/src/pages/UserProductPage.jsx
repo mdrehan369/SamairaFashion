@@ -161,13 +161,13 @@ function RelatedProducts({ category }) {
         <>
             <h1 className='font-extrabold tracking-wide text-2xl text-stone-900 relative'><div className='w-full h-[2px] bg-black absolute bottom-0'></div>Related Products</h1>
             <div className='w-[100vw] overflow-x-clip relative'>
-                <button className='absolute top-[40%] left-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
+                <button className='absolute top-[40%] left-10 z-30 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
                     if (counter.current > 0) {
                         counter.current -= 1;
                         document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
                     }
                 }}><FontAwesomeIcon className='size-6' icon={faChevronLeft} /></button>
-                <button className='absolute top-[40%] right-10 z-10 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
+                <button className='absolute top-[40%] right-10 z-30 bg-gray-200 hover:bg-gray-300 hover:scale-[1.1] transition-transform shadow-xl md:size-16 size-10 text-black rounded-full border-2 border-gray-500 disabled:text-gray-600 disabled:opacity-80' onClick={() => {
                     if ((window.screen.width > 500 && counter.current < 2) || (window.screen.width < 500 && counter.current < 4)) {
                         counter.current += 1;
                         document.getElementById('scroll').style.transform = `translateX(${-100 * counter.current}vw)`;
@@ -318,7 +318,7 @@ function UserProductPage({ key }) {
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
                         <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[85vh] h-[60vh] relative'>
                             {
-                                !productLoader && !product.image &&
+                                !productLoader && !product.image && product.images?.length !== 1 &&
                                 <>
                                     <div onClick={() => handleCarouselClick(false)}><FontAwesomeIcon icon={faArrowLeft} className='absolute top-[50%] left-[1rem] dark:text-black dark:hover:bg-white z-30 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
                                     <div onClick={() => handleCarouselClick(true)}><FontAwesomeIcon icon={faArrowRight} className='absolute top-[50%] right-[1rem] dark:text-black dark:hover:bg-white z-30 border-2 p-3 hover:bg-gray-800 hover:text-white transition-all cursor-pointer border-gray-800 bg-transparent' /></div>
@@ -327,7 +327,7 @@ function UserProductPage({ key }) {
                             {
                                 !productLoader ?
                                 product.image ?
-                                    <img src={product.image.url} alt="Product" className='w-full h-auto object-cover' />
+                                    <img src={product.image.url} className='w-full h-auto object-cover' />
                                     :
                                     product.images.map((image, index) => {
                                         return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />

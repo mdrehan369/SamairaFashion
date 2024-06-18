@@ -26,7 +26,7 @@ function Header() {
     const [sidebar, setSidebar] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [loader, setLoader] = useState(false);
-
+   
     const toggleTheme = (e) => {
         e.preventDefault();
         if (!localStorage.getItem("theme") || localStorage.getItem("theme") === 'dark') {
@@ -116,7 +116,7 @@ function Header() {
                 <img src={theme == 'dark' ? darkLogo : logo} className='md:w-[20%] w-[60%] h-auto md:mx-auto' />
                 {/* <img src={darkLogo} className='md:w-[20%] w-[60%] h-auto md:mx-auto' /> */}
                 <NavLink to={'/search'} className='md:hidden absolute top-6 right-4'><FontAwesomeIcon icon={faSearch} className='size-6 cursor-pointer' /></NavLink>
-                <div className={`md:hidden absolute ${sidebar ? 'w-[100vw]' : 'w-0'} z-20 bg-black bg-opacity-50 overflow-hidden overscroll-x-contain h-[100vh] overscroll-contain left-0 top-[8vh]`} onClick={() => setSidebar(false)}>
+                <div className={`md:hidden absolute ${sidebar ? 'w-[100vw]' : 'w-0'} z-20 bg-black bg-opacity-50 overflow-hidden overscroll-x-contain h-[100vh] overscroll-contain left-0 top-[8vh]`} onClick={() => { setSidebar(false) }}>
                     <div className={`bg-gray-100 dark:bg-secondary-color divide-y-2 dark:divide-slate-800 flex flex-col items-start ${sidebar ? 'w-[80%]' : 'w-0'} ease-in-out duration-300 transition-all overflow-hidden shadow-sm h-full justify-start`}>
                         {
                             sidebar &&

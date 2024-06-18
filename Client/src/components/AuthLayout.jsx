@@ -30,15 +30,20 @@ function AuthLayout({ children }) {
         ; (async () => {
             try {
                 let country;
-                if(import.meta.env.MODE === 'development') {
-                    const response = await axios.get(`http://ip-api.com/json`);
-                    if(response.data.countryCode === 'IN') country = 'IN'
-                    else country = 'AED'
-                } else {
-                    const response = await axios.get('https://api.geoapify.com/v1/ipinfo?apiKey=e47441749036429f9aee54829ae38eae')
-                    if(response.data.country.iso_code === 'IN') country = 'IN'
-                    else country = 'AED'
-                }
+                // if(import.meta.env.MODE === 'development') {
+                //     const response = await axios.get(`http://ip-api.com/json`);
+                //     if(response.data.countryCode === 'IN') country = 'IN'
+                //     else country = 'AED'
+                // } else {
+                //     const response = await axios.get('https://api.geoapify.com/v1/ipinfo?apiKey=e47441749036429f9aee54829ae38eae')
+                //     if(response.data.country.iso_code === 'IN') country = 'IN'
+                //     else country = 'AED'
+                // }
+
+                const response = await axios.get(`https://api.geoapify.com/v1/ipinfo?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`)
+                if(response.data.country.iso_code === 'IN') country = 'IN'
+                else country = 'AED'
+
                 if(country === 'IN') {
                     dispatch(setLocation({ isIndia: true }))
                 } else {

@@ -121,7 +121,7 @@ function Card({ res, productLoader, ...props }) {
                 {
                     !productLoader ?
                         <>
-                            <div onClick={(e) => e.target.classList.contains('fa-cart-shopping') === true && navigate(`/product/${res?._id}`)} className='relative z-20'>
+                            <div onClick={(e) => {console.log(e.target.classList);e.target.classList.length !== 0 && navigate(`/product/${res?._id}`)}} className='relative z-20'>
                                 <span className="bg-red-600 z-10 text-white text-md font-medium me-2 md:px-2.5 px-1.5 py-0.5 rounded-none dark:bg-blue-900 dark:text-blue-300 absolute md:top-2 top-2 md:right-2 right-2 md:text-xs text-xs">-{(((res?.comparePrice - res?.price) / res?.comparePrice) * 100).toString().slice(0, 2)}% OFF</span>
                                 <div className='overflow-hidden relative'>
 
@@ -140,7 +140,7 @@ function Card({ res, productLoader, ...props }) {
                                     </h2>
                                 </div>
                             </div>
-                            <Button className='text-sm w-[100%] mt-4 py-3 transition-transform duration-300 border-2 border-black rounded-sm font-bold invisible md:block hidden' onClick={() => setOpenModal(true)}>QUICK BUY</Button>
+                            <Button className='text-sm w-[100%] mt-4 py-3 transition-transform duration-300 border-2 border-black hover:border-transparent rounded-sm font-bold invisible md:block hidden' onClick={() => setOpenModal(true)}>QUICK BUY</Button>
                         </>
                         : <Hourglass
                             visible={true}
