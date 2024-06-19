@@ -63,7 +63,7 @@ function Reviews({ product }) {
                                 <div className='text-2xl dark:text-white mb-2 text-start text-stone-700 font-bold italic'>{review.title}</div>
                                 <div className='font-medium dark:text-[#e2e2e2] text-stone-700 tracking-wide'>{review.description}</div>
                             </div>
-                            {review.image && <img src={review.image.url} alt="product" className='w-[20%] h-full object-cover' />}
+                            {review.image && <img src={review.image.url} className='w-[20%] h-full object-cover' />}
                         </div>
                     </div>)}
                 </div>
@@ -330,7 +330,7 @@ function UserProductPage({ key }) {
                                     <img src={product.image.url} className='w-full h-auto object-cover' />
                                     :
                                     product.images.map((image, index) => {
-                                        return <img src={image.url} key={index} alt='Product' className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
+                                        return <img src={image.url} key={index} className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
                                     })
                                     :<LightSpinner color={'fill-gray-500'} />
                             }

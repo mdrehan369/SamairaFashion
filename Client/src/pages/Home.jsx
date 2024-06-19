@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Carousel, Container, LightSpinner, Offer, Spinner } from '../components/index.js'
-import straight from "../assets/straight.webp"
-import tyedye from "../assets/tyedye.jpg"
-import farasha from "../assets/farasha.webp"
-import umbrella from "../assets/umbrella.webp"
-import { NavLink } from 'react-router-dom'
 import axios from 'axios'
 import policy from "../assets/policy.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import banner4 from "../assets/banner4.webp"
-// import { faSquareWhatsapp } from '@fortawesome/free-brands-svg-icons'
-import { IoLogoWhatsapp } from "react-icons/io";
 
 const hoverEffect = {
     onMouseEnter: (e) => {

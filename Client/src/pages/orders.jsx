@@ -151,7 +151,7 @@ const OrderDetails = () => {
                                     {
                                         !currOrder.isCancelled &&
                                         (currOrder.isPending ?
-                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder?.date || new Date(), currOrder.shippingDetails.country.includes("United Arab Emirates") ? [3, 5] : [10, 15])}</p>
+                                            <p className="text-green-500 mt-2">Estimated delivery: {addDays(currOrder?.date || new Date(), currOrder.shippingDetails?.country.includes("United Arab Emirates") ? [3, 5] : [10, 15])}</p>
                                             : <p className="text-green-500 mt-2">Delivered On: {convertISOToDateString(currOrder?.deliveredDate).slice(0, 12)}</p>)
                                     }
                                 </div>
@@ -207,10 +207,10 @@ const OrderDetails = () => {
                                 <div className=''>
                                     <span className='font-bold'>Delivery</span>
                                     <div className='text-sm font-medium mt-2 text-gray-500 dark:text-gray-400'>
-                                        <p>{currOrder.shippingDetails.address}</p>
-                                        <p>{currOrder.shippingDetails.city}</p>
-                                        <p>{currOrder.shippingDetails.state}</p>
-                                        <p>{currOrder.shippingDetails.country}</p>
+                                        <p>{currOrder.shippingDetails?.address}</p>
+                                        <p>{currOrder.shippingDetails?.city}</p>
+                                        <p>{currOrder.shippingDetails?.state}</p>
+                                        <p>{currOrder.shippingDetails?.country}</p>
                                     </div>
                                 </div>
                             </div>
