@@ -75,7 +75,7 @@ function Success() {
                     <div className='flex flex-col items-center md:justify-center justify-start md:w-[40%] shadow-none border-gray-200 border-0 md:h-[40%] w-full gap-4 p-6'>
                         <FontAwesomeIcon icon={faTriangleExclamation} className='text-red-500 size-48' />
                         <h1 className='md:text-4xl text-2xl text-center font-bold dark:text-stone-200 text-stone-700'>Sorry! Something Went Wrong</h1>
-                        <p className='text-center dark:text-stone-300 text-stone-500'>Something wrong happened while placing your order<br />Please try again or you can contact us <NavLink to={'/contact'} className={'text-blue-800'}>here</NavLink></p>
+                        <p className='text-center dark:text-stone-300 text-stone-500'>Something wrong happened while placing your order<br />Please try again or you can contact us <NavLink to={'/policies/contact'} className={'text-blue-800'}>here</NavLink></p>
                         <Button className='bg-red-400 text-sm font-bold dark:bg-red-600 text-red-900 dark:text-red-950 dark:hover:bg-red-500 dark:hover:text-red-800'>
                             <NavLink to={'/'}>Continue Shopping</NavLink>
                         </Button>
