@@ -9,6 +9,14 @@ import { orderModel } from "../models/order.model.js";
 import "dotenv/config.js"
 import { sendSuccessMessage } from "./user.controller.js";
 
+const options = {
+    httpOnly: true,
+    path: "/",
+    sameSite: 'none',
+    secure: true,
+    expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
+}
+
 const phonepePayController = (req, res) => {
 
     const amount = +req.query.amount;
@@ -249,7 +257,7 @@ const tabbyCheckoutController = async (req, res) => {
         if (response.data.status !== 'rejected') {
             return res
                 .status(200)
-                .cookie("shippingDetails", shippingDetails)
+                .cookie("shippingDetails", shippingDetails, options)
                 .json(new ApiResponse(200, { id: response.data.id, url: response.data.configuration.available_products.installments[0].web_url }, "Checkout Initiated"));
         } else {
             throw new ApiError(300, "Some Error Occurred While Creating A Checkout Session");
@@ -295,7 +303,7 @@ const ziinaCheckoutController = async (req, res) => {
         console.log(response.data);
         return res
             .status(200)
-            .cookie("shippingDetails", shippingDetails)
+            .cookie("shippingDetails", shippingDetails, options)
             .json(new ApiResponse(200, { id: response.data.id, url: response.data.redirect_url }, "Checkout Created SuccessFully"));
     } catch (err) {
         console.log(err);
