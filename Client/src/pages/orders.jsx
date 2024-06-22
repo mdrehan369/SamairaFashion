@@ -128,7 +128,7 @@ const OrderDetails = () => {
                                     key={index}
                                     onClick={() => {setCurrOrder(orders[order]); window.screen.width < 500 && window.scrollTo(0, 0)}}
                                     className={`w-[90%] rounded-md p-4 bg-gray-200 dark:bg-blue-950 dark:border-0 dark:hover:border-0 dark:hover:bg-[#2c4682] dark:text-white cursor-pointer hover:border-gray-400 hover:bg-gray-300 transition-colors border-[1px] text-sm font-medium ${currOrder._id.slice(0, 10) === order && 'border-gray-400 bg-gray-300 dark:bg-[#2c4682]'} text-gray-800 tracking-wider`}>
-                                    <span className='font-bold text-xs text-gray-700 dark:text-gray-300 mr-4'>ORDER ID: </span>#{order || Date.now()}
+                                    <span className='font-bold text-xs text-gray-700 dark:text-gray-300 mr-4'>ORDER ID: </span>#{`SF0${order.slice(5, 10)}` || Date.now()}
                                 </div>)
                             }
                         </div>
@@ -138,7 +138,7 @@ const OrderDetails = () => {
                         <div className='md:min-h-[90vh] md:w-[75%] w-full flex flex-col items-start pt-10 justify-start divide-y-2 md:m-0 m-6 dark:divide-gray-400 overflow-y-scroll'>
                             <div className='mb-4 flex items-start justify-between w-[80%]'>
                                 <div>
-                                    <h1 className="text-2xl font-bold mb-2"><span className='mr-4'>Order ID:</span> <span className='tracking-wider text-gray-600 dark:text-gray-400'>#{currOrder._id.slice(0, 10)}</span>
+                                    <h1 className="text-2xl font-bold mb-2"><span className='mr-4'>Order ID:</span> <span className='tracking-wider text-gray-600 dark:text-gray-400'>#SF0{currOrder._id.slice(5, 10)}</span>
                                         {
                                             currOrder.isCancelled ?
                                                 <Batch text='Cancelled' color='bg-red-400' darkColor='bg-red-500' />

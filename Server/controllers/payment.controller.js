@@ -92,8 +92,6 @@ const phonepeCheckStatusController = asyncHandler(async (req, res) => {
         },
     });
 
-    console.log("Response ->", response.data)
-
     if (response.data.code === "PAYMENT_SUCCESS") {
 
         const cart = await cartItemModel.find({ user: req.user._id });
@@ -300,7 +298,6 @@ const ziinaCheckoutController = async (req, res) => {
             shippingDetails
         });
 
-        console.log(response.data);
         return res
             .status(200)
             .cookie("shippingDetails", shippingDetails, options)
@@ -350,8 +347,6 @@ const retrieveZiinaCheckoutController = asyncHandler(async (req, res, next) => {
             Authorization: `Bearer ${process.env.ZIINA_API_KEY}`
         }
     });
-
-    console.log("Ziina retrieve ==========>", response.data)
 
     if (response.data.status === 'completed') {
         req.paymentId = id;

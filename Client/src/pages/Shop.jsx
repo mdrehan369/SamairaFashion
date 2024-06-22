@@ -48,7 +48,6 @@ function Shop() {
                         <select name='sort' defaultValue={'price,-1'} className='text-gray-600 dark:text-gray-400 bg-transparent border-[1px] text-sm font-medium border-gray-400 rounded-none px-5 py-3'
                         onInput={(e) => {
                             const val = e.currentTarget.value.split(',');
-                            console.log(val)
                             const attribute = val[0];
                             const order = Number(val[1]);
                             setSort({

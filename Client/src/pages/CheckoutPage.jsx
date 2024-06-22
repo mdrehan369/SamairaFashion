@@ -71,11 +71,10 @@ function CheckoutPage() {
             } finally {
                 window.scrollTo(0, 0)
                 setLoader(false);
-                }
+            }
         })();
 
         return () => {
-            console.log(isBook.current)
             !isBook.current && localStorage.removeItem("product")
         }
 
@@ -111,7 +110,6 @@ function CheckoutPage() {
                 isError = true;
             }
         })
-        console.log(shippingDetails);
 
         if (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(shippingDetails.email) === false) setError("email", { type: "pattern", message: "Please Enter The Correct Email Address" }, { shouldFocus: true }), isError = true;
 
@@ -223,7 +221,7 @@ function CheckoutPage() {
                                 className='md:w-[100%] p-3 rounded dark:bg-secondary-color dark:border-0 bg-white border-[1px] w-full border-gray-400 cursor-pointer'
                                 onInput={(e) => {
                                     e.currentTarget.value === 'India' ? setIsIndianDelivery(true) : setIsIndianDelivery(false);
-                                    (e.currentTarget.value === 'India' || e.currentTarget.value.includes("Dubai") || e.currentTarget.value.includes("Ajman") || e.currentTarget.value.includes("Sharjah")) ? setDeliveryCharge(0) : setDeliveryCharge(20)
+                                    (e.currentTarget.value === 'India' || e.currentTarget.value.includes("Dubai") || e.currentTarget.value.includes("Ajman") || e.currentTarget.value.includes("Sharjah")) ? setDeliveryCharge(0) : e.currentTarget.value.includes("United Arab Emirates") ? setDeliveryCharge(20) : setDeliveryCharge(70)
                                     e.currentTarget.value.includes('United Arab Emirates') ? setIsCODAvailable(true) : setIsCODAvailable(false);
                                 }}
                                 {...register('country', { required: true })}>
@@ -316,11 +314,16 @@ function CheckoutPage() {
                             className='md:w-[80%] w-full bg-white'
                             errors={errors} />
 
-                        <h1 className='font-bold text-black text-xl self-start dark:text-white'>Shipping Method</h1>
-                        <div className='md:w-[80%] w-full bg-gray-100 dark:bg-secondary-color border-[1px] border-gray-300 p-4 flex justify-between'>
-                            <span>Pan India : Free Delivery Offer</span>
-                            <span>Free</span>
-                        </div>
+                        {
+                            isIndianDelivery &&
+                            <>
+                                <h1 className='font-bold text-black text-xl self-start dark:text-white'>Shipping Method</h1>
+                                <div className='md:w-[80%] w-full bg-gray-100 dark:bg-secondary-color border-[1px] border-gray-300 p-4 flex justify-between'>
+                                    <span>Pan India : Free Delivery Offer</span>
+                                    <span>Free</span>
+                                </div>
+                            </>
+                        }
                         <div className='w-full'>
                             <h1 className='text-xl dark:text-white font-bold text-black self-start'>Payment</h1>
                             <p className='text-stone-600 text-sm dark:text-gray-400'>All transactions are secure and encrypted.</p>

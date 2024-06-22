@@ -41,14 +41,22 @@ function AuthLayout({ children }) {
                 // }
 
                 const response = await axios.get(`https://api.geoapify.com/v1/ipinfo?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`)
-                if(response.data.country.iso_code === 'IN') country = 'IN'
+                if (response.data.country.iso_code === 'IN') country = 'IN'
                 else country = 'AED'
+                const rateResponse = await axios.get('https://www.floatrates.com/daily/aed.json');
+                const dirham_to_rupees = Math.round(rateResponse.data.inr.rate);
+                console.log(dirham_to_rupees)
+                // if(country === 'IN') {
+                //     dispatch(setLocation({ isIndia: true }))
+                // } else {
+                //     const response = await axios.get('https://www.floatrates.com/daily/aed.json');
+                //     const dirham_to_rupees = Math.floor(response.data.inr.rate);
 
-                if(country === 'IN') {
-                    dispatch(setLocation({ isIndia: true }))
+                //     dispatch(setLocation({ isIndia: false, dirham_to_rupees }))
+                // }
+                if (country === 'IN') {
+                    dispatch(setLocation({ isIndia: true, dirham_to_rupees }))
                 } else {
-                    const response = await axios.get('https://www.floatrates.com/daily/aed.json');
-                    const dirham_to_rupees = Math.floor(response.data.inr.rate);
                     dispatch(setLocation({ isIndia: false, dirham_to_rupees }))
                 }
             } catch (err) {
@@ -60,7 +68,7 @@ function AuthLayout({ children }) {
     }, []);
 
     useEffect(() => {
-        ;(async () => {
+        ; (async () => {
             try {
                 const response = await axios.get("/api/v1/users/user", {
                     baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -75,7 +83,7 @@ function AuthLayout({ children }) {
     }, [])
 
     return (
-            !loader ?
+        !loader ?
             <>
                 {children}
             </> :

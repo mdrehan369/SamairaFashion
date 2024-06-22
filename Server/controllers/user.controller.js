@@ -49,12 +49,12 @@ const sendEmail = async (to, subject, text) => {
         port: 587,
         secure: false,
         auth: {
-            user: 'mdrehan4650@gmail.com',
-            pass: 'tlrqrwlogevtafip',
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD,
         },
     });
     const mailOptions = {
-        from: 'mdrehan4650@gmail.com',
+        from: process.env.EMAIL,
         to,
         subject,
         text
@@ -105,24 +105,7 @@ const sendSuccessMessage = async (email, orderId, products) => {
 
     const productStr = prodArr.join('\n');
 
-    await sendEmail(email, `Order Confirmation!`, `
-        Thank you for your purchase from Samaira Fashion!
-
-        Your order has been successfully placed and is being processed. Here are the details:
-
-        Order Number: #${orderId}
-
-        Order Summary:
-        ${productStr}
-        
-        You can check other details of your order in our website.
-        If you have any questions or need further assistance, please feel free to contact our customer support.
-
-        Thank you for shopping with us!
-
-        Best regards,
-        Samaira Fashion
-        `)
+    await sendEmail(email, `Order Confirmation!`, `Thank you for your purchase from Samaira Fashion!\nYour order has been successfully placed and is being processed. Here are the details:\n\nOrder Number: #${orderId}\nOrder Summary:\n${productStr}\n\nYou can check other details of your order in our website.\nIf you have any questions or need further assistance, please feel free to contact our customer support.\n\nThank you for shopping with us!\nBest regards,\nSamaira Fashion`)
 
 }
 

@@ -15,7 +15,7 @@ const sizes = [52, 54, 56, 58, 60, 62, 'Customize As Per Request'];
 function Description({ text }) {
     return (
         <div className='flex flex-col items-center justify-start'>
-            <div className='text-md w-full p-4 md:p-0 text-stone-700 dark:text-white tracking-wide md:ml-10 my-4 self-start md:w-[50%] font-[450]'>{text}</div>
+            <div className='text-md w-full p-4 md:p-0 text-stone-700 dark:text-white tracking-wide md:ml-10 my-4 self-start md:w-[50%] font-[450]' dangerouslySetInnerHTML={{ __html: text.replace(/\n/g, "<br>") }}></div>
             <img src={sizeChart} alt="size chart" className='md:self-start md:ml-10 w-[90%] md:w-auto' />
         </div>
     )
@@ -245,7 +245,6 @@ function UserProductPage({ key }) {
             const childNodes = ref.current.childNodes;
             const length = ref.current.childNodes.length;
             let i = length - index - 1; //pointer
-            console.log(ref.current)
             if (isIncrement) {
                 if (i > 2) {
                     childNodes[i].classList.replace('opacity-100', 'opacity-0');
@@ -263,7 +262,7 @@ function UserProductPage({ key }) {
     const handleCarouselClick = handleCarousel();
 
     const handleBuyNow = () => {
-        
+
         const data = {
             productId: productId,
             product: [{ ...product }],
@@ -271,7 +270,7 @@ function UserProductPage({ key }) {
             size: productSize,
             color: color
         }
-        
+
         localStorage.setItem("product", JSON.stringify(data));
 
         if (!status) {
@@ -316,7 +315,7 @@ function UserProductPage({ key }) {
             {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
-                        <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[85vh] h-[60vh] relative'>
+                        <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[100vh] md:min-h-[85vh] h-[60vh] relative'>
                             {
                                 !productLoader && !product.image && product.images?.length !== 1 &&
                                 <>
@@ -326,13 +325,13 @@ function UserProductPage({ key }) {
                             }
                             {
                                 !productLoader ?
-                                product.image ?
-                                    <img src={product.image.url} className='w-full h-auto object-cover' />
-                                    :
-                                    product.images.map((image, index) => {
-                                        return <img src={image.url} key={index} className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
-                                    })
-                                    :<LightSpinner color={'fill-gray-500'} />
+                                    product.image ?
+                                        <img src={product.image.url} className='w-full h-auto object-cover' />
+                                        :
+                                        product.images.map((image, index) => {
+                                            return <img src={image.url} key={index} className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
+                                        })
+                                    : <LightSpinner color={'fill-gray-500'} />
                             }
                         </div>
                         <div id='info' className='fixed md:top-15 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
@@ -341,7 +340,7 @@ function UserProductPage({ key }) {
 
                         <form className='md:w-[40%] p-4 w-full relative h-[100%] flex flex-col items-start justify-start gap-6'>
                             <h1 className='text-2xl font-bold text-stone-800 tracking-wider dark:text-white'>{product.title}</h1>
-                            <h2 className='text-md text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2>
+                            {/* <h2 className='text-md text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2> */}
 
                             <div>
                                 <h1 className='text-md relative font-bold dark:text-gray-400 text-gray-500 w-fit'>
@@ -352,7 +351,7 @@ function UserProductPage({ key }) {
                                     <span className="bg-red-500 z-10 text-white text-sm font-medium me-2 px-1 py-0.5 ml-3 rounded-sm dark:bg-blue-900 dark:text-blue-300">-{(((product.comparePrice - product.price) / product.comparePrice) * 100).toString().slice(0, 2)}%</span>
                                 </h1>
                             </div>
-                            
+
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
                                 <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
