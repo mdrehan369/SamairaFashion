@@ -37,12 +37,12 @@ function Carousel({ ...props }) {
             if (slider) {
                 if (counter.current === 4) {
                     counter.current = 0;
-                    slider.childNodes.forEach(node => node.classList.replace('opacity-0', 'opacity-100'))
+                    slider?.childNodes?.forEach(node => node.classList.replace('opacity-0', 'opacity-100'))
                 } else {
-                    slider.childNodes[5 - counter.current - 1].classList.replace('opacity-100', 'opacity-0');
+                    slider?.childNodes[5 - counter.current - 1]?.classList.replace('opacity-100', 'opacity-0');
                     counter.current+=1;
                 }
-                bar.childNodes.forEach((node, index) => {
+                bar?.childNodes?.forEach((node, index) => {
                     if (index === counter.current) {
                         node.classList.add('bg-white')
                         node.classList.add('scale-125')
