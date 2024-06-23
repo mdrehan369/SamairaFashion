@@ -29,41 +29,27 @@ function AuthLayout({ children }) {
     useEffect(() => {
         ; (async () => {
             try {
+
                 let country;
-                // if(import.meta.env.MODE === 'development') {
-                //     const response = await axios.get(`http://ip-api.com/json`);
-                //     if(response.data.countryCode === 'IN') country = 'IN'
-                //     else country = 'AED'
-                // } else {
-                //     const response = await axios.get('https://api.geoapify.com/v1/ipinfo?apiKey=e47441749036429f9aee54829ae38eae')
-                //     if(response.data.country.iso_code === 'IN') country = 'IN'
-                //     else country = 'AED'
-                // }
 
                 const response = await axios.get(`https://api.geoapify.com/v1/ipinfo?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`)
                 if (response.data.country.iso_code === 'IN') country = 'IN'
                 else country = 'AED'
                 const rateResponse = await axios.get('https://www.floatrates.com/daily/aed.json');
                 const dirham_to_rupees = Math.round(rateResponse.data.inr.rate);
-                console.log(dirham_to_rupees)
-                // if(country === 'IN') {
-                //     dispatch(setLocation({ isIndia: true }))
-                // } else {
-                //     const response = await axios.get('https://www.floatrates.com/daily/aed.json');
-                //     const dirham_to_rupees = Math.floor(response.data.inr.rate);
 
-                //     dispatch(setLocation({ isIndia: false, dirham_to_rupees }))
-                // }
                 if (country === 'IN') {
                     dispatch(setLocation({ isIndia: true, dirham_to_rupees }))
                 } else {
                     dispatch(setLocation({ isIndia: false, dirham_to_rupees }))
                 }
+                
             } catch (err) {
                 console.log(err);
             } finally {
                 setLoader(false);
             }
+
         })();
     }, []);
 

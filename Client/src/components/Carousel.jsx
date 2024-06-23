@@ -1,32 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import pic1 from "../assets/banner1.webp"
 import pic2 from "../assets/banner2.webp"
 import pic3 from "../assets/banner3.webp"
 import pic4 from "../assets/banner5.png"
+import pic5 from "../assets/banner5.webp"
 import pic2ph from "../assets/pic2ph.webp"
 import pic1ph from "../assets/pic1ph.webp"
-// import pic5 from "../assets/Samaira4.png"
-// import pic4 from "../assets/pic4.jpg"
-// import { Button } from "./index"
 
 function Carousel({ ...props }) {
-
+    
+    // let counter = useRef(Math.floor(Math.random().toFixed(2) * 5));
+    let counter = 0;
+    // console.log(counter);
     useEffect(() => {
         const slider = document.getElementById('slider');
         const bar = document.getElementById('bar');
-        let counter = 0;
+        // slider.childNodes.forEach((node, index) => index >= counter.current && node.classList.replace('opacity-0', 'opacity-100'))
+
+        // for(let i = counter.current + 1; i < 5; i++) {
+        //     slider?.childNodes[i].classList.replace('opacity-100', 'opacity-0')
+        // }
+
+        // bar.childNodes.forEach((node, index) => {
+        //     if (index === counter.current) {
+        //         node.classList.add('bg-white')
+        //         node.classList.add('scale-125')
+        //     }
+        //     else {
+        //         node.classList.remove('bg-white')
+        //         node.classList.remove('scale-125')
+        //     }
+        // })
 
         setInterval(() => {
+            // console.log(counter)
             if (slider) {
-                if (counter === 3) {
-                    counter = 0;
+                if (counter.current === 4) {
+                    counter.current = 0;
                     slider.childNodes.forEach(node => node.classList.replace('opacity-0', 'opacity-100'))
                 } else {
-                    slider.childNodes[4 - counter - 1].classList.replace('opacity-100', 'opacity-0');
-                    counter++;
+                    slider.childNodes[5 - counter.current - 1].classList.replace('opacity-100', 'opacity-0');
+                    counter.current+=1;
                 }
                 bar.childNodes.forEach((node, index) => {
-                    if (index === counter) {
+                    if (index === counter.current) {
                         node.classList.add('bg-white')
                         node.classList.add('scale-125')
                     }
@@ -49,10 +66,12 @@ function Carousel({ ...props }) {
                     <img src={window.screen.width > 500 ? pic3 : pic1ph} className='absolute left-0 top-0 w-full md:h-full h-[90%] transition-opacity duration-500 opacity-100  md:object-cover object-cover' />
                     <img src={window.screen.width > 500 ? pic1 : pic2ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full md:object-cover h-[90%]' />
                     <img src={window.screen.width > 500 ? pic2 : pic1ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
+                    <img src={window.screen.width > 500 ? pic5 : pic1ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
                     <img src={window.screen.width > 500 ? pic4 : pic2ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' />
                     {/* <img src={window.screen.width > 500 ? pic5 : pic1ph} className='absolute transition-opacity duration-500 opacity-100 left-0 top-0 w-full md:h-full h-[90%] md:object-cover' /> */}
                     <div id='bar' className='absolute flex items-center shadow-xl border-[1px] border-black justify-center gap-2 rounded-md bg-black opacity-40 px-2 md:bottom-10 bottom-56 left-[50%] translate-x-[-50%] p-1'>
                         <div className='rounded-full size-2 border-[1px] border-white bg-white scale-125'></div>
+                        <div className='rounded-full size-2 border-[1px] border-white'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>
                         <div className='rounded-full size-2 border-[1px] border-white'></div>

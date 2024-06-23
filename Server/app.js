@@ -6,8 +6,12 @@ import orderRouter from "./routes/order.routes.js";
 import paymentRouter from "./routes/payment.routes.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://samairafashion-1.onrender.com'],
@@ -16,14 +20,11 @@ app.use(cors({
     credentials: true
 }))
 
-// app.use(cors({
-//     origin: '*',
-//     credentials: true
-// }))
+app.use(express.static(path.join(__dirname, "/dist")));
 
 app.use(cookieParser());
-app.use(express.json({limit: '16kb'}));
-app.use(express.urlencoded({extended: true}))
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true }))
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);

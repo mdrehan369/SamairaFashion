@@ -5,17 +5,11 @@ import policy from "../assets/policy.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import banner4 from "../assets/banner4.webp"
-
-const hoverEffect = {
-    onMouseEnter: (e) => {
-        e.currentTarget.childNodes[0].classList.remove('h-0');
-        e.currentTarget.childNodes[0].classList.add('h-full')
-    },
-    onMouseLeave: (e) => {
-        e.currentTarget.childNodes[0].classList.add('h-0');
-        e.currentTarget.childNodes[0].classList.remove('h-full')
-    }
-}
+import ig1 from "../assets/ig1.png";
+import ig2 from "../assets/ig2.png";
+import ig3 from "../assets/ig3.png";
+import ig4 from "../assets/ig4.png";
+import { faInstagram } from '@fortawesome/free-brands-svg-icons'
 
 function BlogPost({ image, text, name }) {
     return (
@@ -33,6 +27,17 @@ function BlogPost({ image, text, name }) {
             </div>
             <div className='font-bold text-md'>
                 {name}
+            </div>
+        </div>
+    )
+}
+
+function IgPage({image}) {
+    return (
+        <div className='md:w-[25%] w-[100%] h-full overflow-hidden'>
+            <div className='relative hover:scale-125 transition-all duration-1000 ease-in-out'>
+                <a href="https://www.instagram.com/samaira.fashion/" target='__blank' className='flex items-center justify-center absolute w-full h-full bg-black bg-opacity-0 opacity-0 hover:bg-opacity-50 hover:opacity-100 transition-all duration-300'><FontAwesomeIcon icon={faInstagram} className='size-10' /></a>
+                <img src={image} className='w-full h-full object-cover' />
             </div>
         </div>
     )
@@ -134,7 +139,7 @@ function Home() {
                     }</Button>
                 </div>
 
-                    <img src={banner4} alt="Banner" />
+                <img src={banner4} alt="Banner" />
 
                 <div className='flex items-center justify-center gap-6 md:mb-10 mb-4'>
                     <div className='h-[3px] bg-stone-800 dark:bg-[#e4e4e4] w-[30%] rounded-full md:block hidden'></div>
@@ -164,9 +169,22 @@ function Home() {
                 <BlogPost text={`The best thing about them after their quality is Buy now Pay later service which makes it easy for me to shop without any hesitation.`} name={`Umaima Azmat`} image={`http://res.cloudinary.com/dumndb22c/image/upload/v1717668882/pas9izbckfxmlyll5zrd.jpg`} />
                 <BlogPost text={`Really surprised with the quality and Free Delivery service they are providing. Amazing, Would easily recommend to everyone.`} name={`Ambreen Abdul Malik`} image={`http://res.cloudinary.com/dumndb22c/image/upload/v1717667935/e4bynxn3pqcsjkjlcmci.jpg`} />
             </div>
-            <img src={policy} />
 
-            {/* <IoLogoWhatsapp className='fixed text-green-500 bottom-10 right-10 z-40 shadow-md cursor-pointer size-20' /> */}
+            <div className='flex flex-col w-full h-[60vh] items-center justify-center mb-10'>
+                <div className='flex justify-around w-full items-center'>
+                    <div className='md:w-[30%] w-0 h-[3px] bg-black'></div>
+                    <h1 className='my-10 font-bold md:text-xl text-lg'>@ FOLLOW US ON INSTAGRAM</h1>
+                    <div className='md:w-[30%] w-0 h-[3px] bg-black'></div>
+                </div>
+                <div className='md:flex grid grid-cols-2 grid-rows-2 w-[100%] h-full gap-0'>
+                    <IgPage image={ig1} />
+                    <IgPage image={ig2} />
+                    <IgPage image={ig3} />
+                    <IgPage image={ig4} />
+                </div>
+            </div>
+
+            <img src={policy} />
 
         </Container>
     )
