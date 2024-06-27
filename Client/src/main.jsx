@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import "./index.css"
 import { RouterProvider, createHashRouter } from "react-router-dom"
-import { AddProduct, AdminDashboard, Cart, Contact, Home, Orders, ProductPage, Products, Shop, Signin, Signup, Users, UserProductPage, Privacy, Shipping, Refund, Terms, AboutUs, CheckoutPage, Success, OrderDetails, SearchPage, Overview } from './pages/index.js'
+import { Cart, Contact, Home, Shop, Signin, Signup, UserProductPage, Privacy, Shipping, Refund, Terms, AboutUs, CheckoutPage, Success, OrderDetails, SearchPage, NotFound } from './pages/index.js'
 import AuthLayout from './components/AuthLayout.jsx'
 import { store } from "./store/store.js";
 import { Provider } from "react-redux"
@@ -56,36 +56,36 @@ const router = createHashRouter([
             }
         ],
     },
-    {
-        path: '/admin',
-        element: <AdminDashboard />,
-        children: [
-            {
-                path: '/admin/overview',
-                element: <Overview />
-            },
-            {
-                path: '/admin/users',
-                element: <Users />
-            },
-            {
-                path: '/admin/products',
-                element: <Products />
-            },
-            {
-                path: '/admin/orders',
-                element: <Orders />
-            },
-            {
-                path: '/admin/addProduct',
-                element: <AddProduct />
-            },
-            {
-                path: '/admin/product/:productId',
-                element: <ProductPage />
-            }
-        ]
-    },
+    // {
+    //     path: '/admin',
+    //     element: <AdminDashboard />,
+    //     children: [
+    //         {
+    //             path: '/admin/overview',
+    //             element: <Overview />
+    //         },
+    //         {
+    //             path: '/admin/users',
+    //             element: <Users />
+    //         },
+    //         {
+    //             path: '/admin/products',
+    //             element: <Products />
+    //         },
+    //         {
+    //             path: '/admin/orders',
+    //             element: <Orders />
+    //         },
+    //         {
+    //             path: '/admin/addProduct',
+    //             element: <AddProduct />
+    //         },
+    //         {
+    //             path: '/admin/product/:productId',
+    //             element: <ProductPage />
+    //         }
+    //     ]
+    // },
     {
         path: '/policies',
         element: <AuthLayout><App /></AuthLayout>,
@@ -115,6 +115,10 @@ const router = createHashRouter([
                 element: <Terms />
             },
         ]
+    },
+    {
+        path: '*',
+        element: <NotFound />
     }
 ])
 
