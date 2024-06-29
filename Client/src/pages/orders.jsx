@@ -193,7 +193,7 @@ const OrderDetails = () => {
                                                         <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' />
                                                         : 'Dhs. '
                                                 }
-                                                {isIndia ? currOrder.products[index].price * item.quantity : Math.floor(currOrder.products[index].price / dirham_to_rupees) * item.quantity}
+                                                {isIndia ? currOrder.products[index].price * item.quantity - Math.floor(item.quantity >= 6 ? currOrder.products[index].price * item.quantity * 0.15 : currOrder.products[index].price * item.quantity * 0.1) : Math.floor(currOrder.products[index].price / dirham_to_rupees) * item.quantity - (item.quantity >= 6 ? Math.floor(currOrder.products[index].price * item.quantity * 0.15) : Math.floor(currOrder.products[index].price * item.quantity * 0.1))}
                                             </div>
                                         </div>
                                     </div>)

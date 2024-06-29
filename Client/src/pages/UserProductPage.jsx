@@ -4,11 +4,13 @@ import axios from "axios"
 import { useForm } from "react-hook-form"
 import { Button, Card, Container, Input, LightSpinner, Spinner, TextArea } from "../components/index.js"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faChevronLeft, faChevronRight, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faComment, faIndianRupee, faMinus, faPlus, faShoppingBag, faStar, faArrowUpFromBracket, faTriangleExclamation, faUser, faChevronLeft, faChevronRight, faCheck, faArrowLeft, faArrowRight, faXmark, faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 import sizeChart from "../assets/sizeChart.webp"
 import { faStar as hollowStar } from "@fortawesome/free-regular-svg-icons"
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
+import { RiDiscountPercentFill } from "react-icons/ri";
+import sale from "../assets/sale.gif";
 
 const sizes = [52, 54, 56, 58, 60, 62, 'Customize As Per Request'];
 
@@ -136,6 +138,23 @@ function Write({ setPage, product }) {
     )
 }
 
+const Modal = ({ setModal, total, discount, isIndia, dirham_to_rupees, quantity }) => {
+    return (
+        <div className='fixed z-40 top-0 left-0 w-full h-[100vh] flex items-center justify-center bg-opacity-50 backdrop-blur-sm bg-black'>
+            <div className='bg-white p-4 rounded-md w-[20%] h-[70%] animate-animate-appear space-y-3 relative'>
+                <div><FontAwesomeIcon icon={faXmark} className='absolute top-2 right-2 bg-transparent hover:bg-gray-200 transition-colors rounded p-1 size-4 cursor-pointer text-gray-400' onClick={() => setModal(false)} /></div>
+                <img src={sale} className='' />
+                <h1 className='text-lg font-bold text-center w-full px-6'>Congratulations!</h1>
+                <p className='w-full text-center text-gray-500 text-sm'>You got additional {quantity >= 6 ? '15%' : '10%'} discount as you ordered {quantity} items</p>
+                <div className='w-full px-6 text-center text-gray-500 text-sm'>
+                    <p>Total Price: {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs. '}{isIndia ? total : Math.floor(total / dirham_to_rupees)}</p>
+                    <p>Discounted Price: {isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs. '}{isIndia ? total - discount : Math.floor((total - discount) / dirham_to_rupees)}</p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 function RelatedProducts({ category }) {
 
     const [products, setProducts] = useState([]);
@@ -198,6 +217,8 @@ function UserProductPage({ key }) {
     const navigate = useNavigate();
     const [allVariants, setAllVariants] = useState([]);
     const [productLoader, setProductLoader] = useState(false);
+    const [discount, setDiscount] = useState(0);
+    const [openModel, setOpenModal] = useState(false);
     const ref = useRef();
 
     useEffect(() => {
@@ -228,14 +249,34 @@ function UserProductPage({ key }) {
 
     useEffect(() => {
 
-        setProductLoader(true);
-        setProduct(allVariants.filter(variant => {
-            return variant.color === color;
-        })[0])
-        setProductLoader(false);
-        window.screen.width < 500 && window.scrollTo(0, 0);
+        if (color) {
+            const vari = allVariants.find((variant) => {
+                return variant.color === color
+            });
+            if (productId !== vari._id) {
+                setQuantity(1);
+                navigate(`/product/${vari._id}`)
+            }
+            window.screen.width < 500 && window.scrollTo(0, 0);
+        }
 
     }, [color])
+
+    useEffect(() => {
+
+        if (quantity > 2 && quantity < 6) {
+            let total = quantity * product.price;
+            let discount = 0.1 * total;
+            setDiscount(discount);
+        } else if (quantity >= 6) {
+            let total = quantity * product.price;
+            let discount = 0.15 * total;
+            setDiscount(discount);
+        } else {
+            setDiscount(0);
+        }
+
+    }, [quantity]);
 
     const handleCarousel = () => {
 
@@ -296,12 +337,15 @@ function UserProductPage({ key }) {
                 baseURL: import.meta.env.VITE_BACKEND_URL,
                 withCredentials: true
             });
+
             document.getElementById('info').classList.replace('opacity-0', 'opacity-100');
             document.getElementById('info').classList.add('translate-y-3');
             setTimeout(() => {
                 document.getElementById('info').classList.replace('opacity-100', 'opacity-0');
                 document.getElementById('info').classList.remove('translate-y-3');
             }, 4000);
+
+            setTimeout(() => { quantity > 2 && setOpenModal(true) }, 2000);
 
         } catch (err) {
             console.log(err)
@@ -312,6 +356,10 @@ function UserProductPage({ key }) {
 
     return (
         <Container className='flex flex-col justify-start items-center gap-10 relative min-h-[1900px]'>
+            {
+                openModel &&
+                <Modal discount={discount} isIndia={isIndia} dirham_to_rupees={dirham_to_rupees} total={quantity * product.price} quantity={quantity} setModal={setOpenModal} />
+            }
             {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
@@ -352,6 +400,11 @@ function UserProductPage({ key }) {
                                 </h1>
                             </div>
 
+                            <div className='text-sm font-[450] text-gray-600 space-y-1'>
+                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>3</p> or more products to get additional <p className='text-red-500 inline'>10% Off</p></p></div>
+                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>6</p> or more products to get additional <p className='text-red-500 inline'>15% Off</p></p></div>
+                            </div>
+
                             <div>
                                 <p className='text-sm text-stone-600 dark:text-white font-bold'>Size: <span className='font-medium'>{productSize}</span></p>
                                 <div className='flex items-center justify-start flex-wrap gap-4 mt-2'>
@@ -378,7 +431,7 @@ function UserProductPage({ key }) {
                                     <div className='text-stone-600 dark:text-white'>{quantity}</div>
                                     <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
                                 </div>
-                                <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
+                                <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity - discount : Math.floor(product.price / dirham_to_rupees) * quantity - Math.floor(discount / dirham_to_rupees)}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
                                 <Button type='button' className='md:w-[70%] w-[95%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={handleBuyNow}>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>

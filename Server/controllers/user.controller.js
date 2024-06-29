@@ -225,7 +225,7 @@ const addToCartController = asyncHandler(async (req, res) => {
     const cartItem = await cartItemModel.findOne({ user: req.user._id, product: productId });
 
     if (cartItem) {
-        cartItem.quantity += 1;
+        cartItem.quantity += quantity;
         await cartItem.save();
     } else {
         await cartItemModel.create({

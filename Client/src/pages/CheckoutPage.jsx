@@ -26,11 +26,12 @@ function CheckoutPage() {
     const [isCOD, setIsCOD] = useState(false);
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
     const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails ? user?.shippingDetails.country === 'India' ? true : false : true);
-    const [deliveryCharge, setDeliveryCharge] = useState(((user?.shippingDetails?.country.includes('Dubai') || user?.shippingDetails?.country.includes('Sharjah') || user?.shippingDetails?.country.includes('Ajman') || user?.shippingDetails?.country.includes('India')) ? 0 : 20) || 0);
+    const [deliveryCharge, setDeliveryCharge] = useState( user?.shippingDetails ? ((user?.shippingDetails?.country.includes('Dubai') || user?.shippingDetails?.country.includes('Sharjah') || user?.shippingDetails?.country.includes('Ajman') || user?.shippingDetails?.country.includes('India')) ? 0 : 20) || 70 : 0);
     const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
     const [buttonLoader, setButtonLoader] = useState(false);
     const [error, setErr] = useState(null);
     const isBook = useRef(false);
+    const [discount, setDiscount] = useState(0);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -38,7 +39,10 @@ function CheckoutPage() {
 
         ; (async () => {
             setLoader(true);
+            let quantity = 0;
+            let sum = 0;
             try {
+
                 if (data === null) {
                     const response = await axios.get(`/api/v1/users/cart`, {
                         baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -46,14 +50,13 @@ function CheckoutPage() {
                     });
                     setCart(response.data.data);
 
-                    let sum = 0;
-
                     for (let item of response.data.data) {
                         if (!isIndia) {
                             sum += Math.floor((item.quantity * item.product[0].price) / dirham_to_rupees)
                         } else {
                             sum += item.quantity * item.product[0].price
                         }
+                        quantity += item.quantity;
                     }
                     setTotal(sum)
                 }
@@ -64,6 +67,17 @@ function CheckoutPage() {
                     } else {
                         setTotal(data.quantity * data.product[0].price / dirham_to_rupees);
                     }
+                    quantity = data.quantity;
+                    // console.log(quantity)
+                }
+                
+                // console.log(quantity)
+                if(quantity >= 6) {
+                    setDiscount(Math.floor(data.quantity * data.product[0].price * 0.15));
+                } else if(quantity >= 3) {
+                    setDiscount(Math.floor(data.quantity * data.product[0].price * 0.1));
+                } else {
+                    setDiscount(0);
                 }
 
             } catch (err) {
@@ -135,7 +149,7 @@ function CheckoutPage() {
 
         try {
 
-            const response = await axios.post(`/api/v1/payments/${checkoutMethod}/pay`, { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge } }, {
+            const response = await axios.post(`/api/v1/payments/${checkoutMethod}/pay`, { cart, isIndia, dirham_to_rupees, shippingDetails: { firstName, lastName, email, number, country, city, state, address, nearBy, pincode, deliveryCharge: deliveryCharge, discount: discount } }, {
                 baseURL: import.meta.env.VITE_BACKEND_URL, withCredentials: true
             });
 
@@ -417,13 +431,14 @@ function CheckoutPage() {
                             </div>
                             <div className='w-full space-y-2'>
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
+                                { discount !== 0 && <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Discount:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{discount}</span></div> }
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{
                                     deliveryCharge ?
                                         isIndia ? <><FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /><span>{dirham_to_rupees * deliveryCharge}</span></>
                                             : 'Dhs. 20'
                                         : 'Free'
                                 }</span></div>
-                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge)}</span></div>
+                                <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge) - discount}</span></div>
                             </div>
                         </div>
                         <div>

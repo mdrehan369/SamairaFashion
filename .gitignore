@@ -2,3 +2,7 @@ node_modules
 extract.py
 /Client/dist
 /Server/dist
+.env
+.idea
+.vscode
+

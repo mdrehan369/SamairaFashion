@@ -209,7 +209,15 @@ const tabbyCheckoutController = async (req, res) => {
 
         amount = Math.floor((amount / dirham_to_rupees));
         if (shippingDetails.deliveryCharge) {
-            amount += 20 * 100;
+            amount += shippingDetails.deliveryCharge * 100;
+        }
+
+        if(shippingDetails.discount) {
+            if(isIndia) {
+                amount -= Math.floor(shippingDetails.discount / dirham_to_rupees) * 100;
+            } else {
+                amount -= shippingDetails.discount * 100;
+            }
         }
 
         const CHECKOUT_URL = 'https://api.tabby.ai/api/v2/checkout';
@@ -275,12 +283,22 @@ const ziinaCheckoutController = async (req, res) => {
         const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
 
         let amount = 0;
+        let quantity = 0;
         cart.map(cartItem => {
             amount += cartItem.product[0].price * cartItem.quantity;
+            quantity += cartItem.quantity;
         });
         amount = Math.floor(amount / dirham_to_rupees) * 100;
         if (shippingDetails.deliveryCharge) {
-            amount += 20 * 100;
+            amount += shippingDetails.deliveryCharge * 100;
+        }
+
+        if(shippingDetails.discount) {
+            if(isIndia) {
+                amount -= Math.floor(shippingDetails.discount / dirham_to_rupees) * 100;
+            } else {
+                amount -= shippingDetails.discount * 100;
+            }
         }
 
         const CHECKOUT_URL = 'https://api-v2.ziina.com/api/payment_intent';
