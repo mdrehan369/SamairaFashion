@@ -11,7 +11,7 @@ import sale from "../assets/sale.gif";
 const Modal = ({ setModal, total, discount, isIndia, dirham_to_rupees, quantity }) => {
     return (
         <div className='fixed z-40 top-0 left-0 w-full h-[100vh] flex items-center justify-center bg-opacity-50 backdrop-blur-sm bg-black'>
-            <div className='bg-white p-4 rounded-md w-[20%] h-[70%] animate-animate-appear space-y-3 relative'>
+            <div className='bg-white p-4 rounded-md md:w-[20%] w-[90%] h-[70%] animate-animate-appear space-y-3 relative'>
                 <div><FontAwesomeIcon icon={faXmark} className='absolute top-2 right-2 bg-transparent hover:bg-gray-200 transition-colors rounded p-1 size-4 cursor-pointer text-gray-400' onClick={() => setModal(false)} /></div>
                 <img src={sale} className='' />
                 <h1 className='text-lg font-bold text-center w-full px-6'>Congratulations!</h1>
@@ -165,7 +165,7 @@ function Cart() {
                             </div>
                             <div className='flex items-center justify-between w-full'><span className='font-bold text-sm text-black dark:text-white'>Total:</span><span className='text-xl font-bold'>{isIndia ? <FontAwesomeIcon className='mr-2' icon={faIndianRupeeSign} /> : 'Dhs.'}{total - discount}</span></div>
                             <div className='w-full space-y-4'>
-                                <Button className='w-full rounded-none text-sm font-extrabold tracking-wider hover:bg-transparent hover:text-black shadow-none hover:shadow-none border-2 transition-colors duration-200'><NavLink to='/checkoutPage'>PROCEED TO CHECKOUT</NavLink></Button>
+                                <NavLink to='/checkoutPage'><Button className='w-full rounded-none text-sm font-extrabold tracking-wider hover:bg-transparent hover:text-black shadow-none hover:shadow-none border-2 transition-colors duration-200'>PROCEED TO CHECKOUT</Button></NavLink>
                                 <Button className='w-full rounded-none text-sm font-extrabold tracking-wider shadow-none hover:shadow-none bg-transparent hover:bg-black hover:text-white text-black border-2 transition-colors duration-200'><NavLink to='/'>CONTINUE SHOPPING</NavLink></Button>
                             </div>
                         </div>

@@ -26,7 +26,7 @@ function CheckoutPage() {
     const [isCOD, setIsCOD] = useState(false);
     const [isCODAvailable, setIsCODAvailable] = useState(user?.shippingDetails?.country.includes('United Arab Emirates') || false);
     const [isIndianDelivery, setIsIndianDelivery] = useState(user?.shippingDetails ? user?.shippingDetails.country === 'India' ? true : false : true);
-    const [deliveryCharge, setDeliveryCharge] = useState( user?.shippingDetails.country ? ((user?.shippingDetails?.country.includes('Dubai') || user?.shippingDetails?.country.includes('Sharjah') || user?.shippingDetails?.country.includes('Ajman') || user?.shippingDetails?.country.includes('India')) ? 0 : user.shippingDetails?.country.includes('United Arab Emirates') ? 20 : 70) : 0);
+    const [deliveryCharge, setDeliveryCharge] = useState(user?.shippingDetails.country ? ((user?.shippingDetails?.country.includes('Dubai') || user?.shippingDetails?.country.includes('Sharjah') || user?.shippingDetails?.country.includes('Ajman') || user?.shippingDetails?.country.includes('India')) ? 0 : user.shippingDetails?.country.includes('United Arab Emirates') ? 20 : 70) : 0);
     const [checkoutMethod, setCheckoutMethod] = useState(!isIndia ? 'phonepe' : 'ziina');
     const [buttonLoader, setButtonLoader] = useState(false);
     const [error, setErr] = useState(null);
@@ -64,22 +64,22 @@ function CheckoutPage() {
                     setCart([{ ...data }]);
                     if (isIndia) {
                         setTotal(data.quantity * data.product[0].price);
+                        sum = data.quantity * data.product[0].price;
                     } else {
-                        setTotal(data.quantity * data.product[0].price / dirham_to_rupees);
+                        setTotal(Math.floor(data.quantity * data.product[0].price / dirham_to_rupees));
+                        sum = Math.floor(data.quantity * data.product[0].price / dirham_to_rupees);
                     }
                     quantity = data.quantity;
-                    // console.log(quantity)
                 }
-                
-                // console.log(quantity)
-                if(quantity >= 6) {
-                    setDiscount(Math.floor(data.quantity * data.product[0].price * 0.15));
-                } else if(quantity >= 3) {
-                    setDiscount(Math.floor(data.quantity * data.product[0].price * 0.1));
+
+                if (quantity >= 6) {
+                    setDiscount(Math.floor(sum * 0.15));
+                } else if (quantity >= 3) {
+                    setDiscount(Math.floor(sum * 0.1));
                 } else {
                     setDiscount(0);
                 }
-
+                
             } catch (err) {
                 console.log(err)
             } finally {
@@ -394,7 +394,8 @@ function CheckoutPage() {
                                         : 'Dhs. 20'
                                     : 'Free'
                             }</span></div>
-                            <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees : deliveryCharge)}</span></div>
+                            {discount !== 0 && <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Discount:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{discount}</span></div>}
+                            <div className='flex items-center justify-between text-xl font-medium'><span>Total:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total + (isIndia ? deliveryCharge * dirham_to_rupees - discount : deliveryCharge) - discount}</span></div>
                         </div>
                         <Button type='submit' className='md:w-[80%] w-full' disabled={loader}>
                             {
@@ -431,7 +432,7 @@ function CheckoutPage() {
                             </div>
                             <div className='w-full space-y-2'>
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Subtotal:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{total}</span></div>
-                                { discount !== 0 && <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Discount:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{discount}</span></div> }
+                                {discount !== 0 && <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Discount:</span><span>{isIndia ? <FontAwesomeIcon icon={faIndianRupeeSign} className='mr-1' /> : 'Dhs.'}{discount}</span></div>}
                                 <div className='flex items-center justify-between text-md font-medium text-stone-700 dark:text-white'><span>Shipping:</span><span>{
                                     deliveryCharge ?
                                         isIndia ? <><FontAwesomeIcon icon={faIndianRupeeSign} className='mr-2' /><span>{dirham_to_rupees * deliveryCharge}</span></>

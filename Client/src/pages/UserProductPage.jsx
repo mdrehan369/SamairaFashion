@@ -385,7 +385,7 @@ function UserProductPage({ key }) {
                                     : <LightSpinner color={'fill-gray-500'} />
                             }
                         </div>
-                        <div id='info' className='fixed md:top-15 top-16 md:w-full w-fit z-20 rounded left-0 right-0 font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
+                        <div id='info' className='fixed md:top-14 top-16 md:w-full w-fit z-20 rounded md:left-0 md:right-0 left-[50%] translate-x-[-50%] font-bold text-sm bg-green-300 text-green-900 transition-all opacity-0 transition-duration-300 text-center px-6 py-2 uppercase'>
                             <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
                         </div>
 
