@@ -141,7 +141,7 @@ function Write({ setPage, product }) {
 const Modal = ({ setModal, total, discount, isIndia, dirham_to_rupees, quantity }) => {
     return (
         <div className='fixed z-40 top-0 left-0 w-full h-[100vh] flex items-center justify-center bg-opacity-50 backdrop-blur-sm bg-black'>
-            <div className='bg-white p-4 rounded-md w-[20%] h-[70%] animate-animate-appear space-y-3 relative'>
+            <div className='bg-white p-4 rounded-md md:w-[20%] w-[90%] h-[70%] animate-animate-appear space-y-3 relative'>
                 <div><FontAwesomeIcon icon={faXmark} className='absolute top-2 right-2 bg-transparent hover:bg-gray-200 transition-colors rounded p-1 size-4 cursor-pointer text-gray-400' onClick={() => setModal(false)} /></div>
                 <img src={sale} className='' />
                 <h1 className='text-lg font-bold text-center w-full px-6'>Congratulations!</h1>
@@ -267,11 +267,11 @@ function UserProductPage({ key }) {
         if (quantity > 2 && quantity < 6) {
             let total = quantity * product.price;
             let discount = 0.1 * total;
-            setDiscount(discount);
+            setDiscount(Math.floor(discount));
         } else if (quantity >= 6) {
             let total = quantity * product.price;
             let discount = 0.15 * total;
-            setDiscount(discount);
+            setDiscount(Math.floor(discount));
         } else {
             setDiscount(0);
         }
@@ -363,7 +363,7 @@ function UserProductPage({ key }) {
             {!loader ?
                 <div className='flex flex-col justify-start items-center gap-10 relative animate-animate-appear'>
                     <div className='w-[100%] h-auto flex md:flex-row flex-col items-start justify-evenly pt-10 dark:text-white'>
-                        <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[100vh] md:min-h-[85vh] h-[60vh] relative'>
+                        <div ref={ref} className='md:w-[40%] w-full p-4 md:h-[100vh] md:min-h-[85vh] h-[60vh] relative opacity-0'>
                             {
                                 !productLoader && !product.image && product.images?.length !== 1 &&
                                 <>
@@ -377,6 +377,9 @@ function UserProductPage({ key }) {
                                         <img src={product.image.url} className='w-full h-auto object-cover' />
                                         :
                                         product.images.map((image, index) => {
+                                            if (index === product.images.length - 1) {
+                                                return <img src={image.url} key={index} className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} onLoad={(e) => e.currentTarget.parentElement.classList.replace('opacity-0', 'opacity-100')} />
+                                            }
                                             return <img src={image.url} key={index} className='md:w-[40vw] w-[90%] md:m-0 transition-opacity duration-500 opacity-100 absolute md:h-[85vh] h-[60vh] scale-105 object-cover top-0 md:left-[0%] mx-auto' style={{ zIndex: index }} />
                                         })
                                     : <LightSpinner color={'fill-gray-500'} />
@@ -386,7 +389,7 @@ function UserProductPage({ key }) {
                             <FontAwesomeIcon icon={faCheck} className='mr-4 font-bold text-lg' />{message}
                         </div>
 
-                        <form className='md:w-[40%] p-4 w-full relative h-[100%] flex flex-col items-start justify-start gap-6'>
+                        <form className='md:w-[40%] mt-6 p-4 w-full relative h-[100%] flex flex-col items-start justify-start gap-6'>
                             <h1 className='text-2xl font-bold text-stone-800 tracking-wider dark:text-white'>{product.title}</h1>
                             {/* <h2 className='text-md text-stone-700 tracking-wide w-[90%] dark:text-gray-200 font-[450]'>{product.description.slice(0, 100)}...</h2> */}
 
@@ -401,8 +404,8 @@ function UserProductPage({ key }) {
                             </div>
 
                             <div className='text-sm font-[450] text-gray-600 space-y-1'>
-                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>3</p> or more products to get additional <p className='text-red-500 inline'>10% Off</p></p></div>
-                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>6</p> or more products to get additional <p className='text-red-500 inline'>15% Off</p></p></div>
+                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>3</p> or more to get additional <p className='text-red-500 inline'>10% Off</p></p></div>
+                                <div><RiDiscountPercentFill className='mr-2 text-green-500 inline size-5' /><p className='inline'>Buy <p className='inline text-gray-800'>6</p> or more to get additional <p className='text-red-500 inline'>15% Off</p></p></div>
                             </div>
 
                             <div>

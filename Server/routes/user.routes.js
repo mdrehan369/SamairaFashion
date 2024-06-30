@@ -1,6 +1,5 @@
 import express from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { verifyAdmin } from "../middlewares/admin.middleware.js";
 import {
     addToCartController,
     deleteAllCartItemsController,

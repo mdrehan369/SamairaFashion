@@ -14,6 +14,7 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
     const [color, setColor] = useState(product.color);
     // const [allVariants, setAllVariants] = useState([]);
     const status = useSelector(state => state.auth.status);
+    const [discount, setDiscount] = useState(0);
     const navigate = useNavigate();
 
     const sizes = [52, 54, 56, 58, 60, 62, 'Customize As Per Request'];
@@ -25,6 +26,22 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
             setIsExiting(false);
         }, 300);
     }
+
+    useEffect(() => {
+
+        if (quantity > 2 && quantity < 6) {
+            let total = quantity * product.price;
+            let discount = 0.1 * total;
+            setDiscount(Math.floor(discount));
+        } else if (quantity >= 6) {
+            let total = quantity * product.price;
+            let discount = 0.15 * total;
+            setDiscount(Math.floor(discount));
+        } else {
+            setDiscount(0);
+        }
+
+    }, [quantity]);
 
     const handleBuyNow = () => {
 
@@ -70,7 +87,7 @@ function Modal({ product, setOpenModal, isExiting, setIsExiting }) {
                             <div className='text-stone-600 dark:text-white'>{quantity}</div>
                             <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
                         </div>
-                        <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity : Math.floor(product.price / dirham_to_rupees) * quantity}</span></span>
+                        <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity - discount : Math.floor(product.price / dirham_to_rupees) * quantity - discount}</span></span>
                     </div>
                     <Button className=' self-center md:text-sm text-xs uppercase hover:bg-transparent hover:text-black border-2 hover:shadow-none duration-300 bg-[#1b1b1b] border-[#1b1b1b] md:py-auto py-3 w-[90%] md:my-auto my-0 justify-self-end text-white transition-colors' onClick={handleBuyNow}>Proceed To Checkout</Button>
                 </div>

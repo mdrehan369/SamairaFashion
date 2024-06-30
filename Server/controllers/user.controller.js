@@ -77,19 +77,7 @@ const sendOtpController = asyncHandler(async (req, res) => {
 
     const otp = String(Math.random() * 10000).slice(0, 4);
 
-    await sendEmail(email, 'Your One-Time Password (OTP) for Samaira Fashion', `
-    Hi ${email},\n
-    Thank you for using Samaira Fashion. To proceed with your request, please use the following One-Time Password (OTP):\n
-    Your OTP: ${otp}\n
-    This OTP is valid for the next 10 minutes. Please do not share this code with anyone.
-    If you did not request this code, please contact our support team immediately.\n
-    Thank you,
-    Samaira Fashion
-    Contact Us:
-    samaira.shop1@gmail.com
-    +97 15216 60581
-    Deira, Dubai. UAE
-    `);
+    await sendEmail(email, 'Your One-Time Password (OTP) for Samaira Fashion', `Hi ${email},\nThank you for using Samaira Fashion. To proceed with your request, please use the following One-Time Password (OTP):\nYour OTP: ${otp}\nThis OTP is valid for the next 10 minutes. Please do not share this code with anyone.If you did not request this code, please contact our support team immediately.\n\nThank you,\nSamaira Fashion\nContact Us:\nsamaira.shop1@gmail.com\n+97 15216 60581\nDeira, Dubai. UAE`);
 
     return res
         .status(200)
@@ -97,7 +85,7 @@ const sendOtpController = asyncHandler(async (req, res) => {
 
 });
 
-const sendSuccessMessage = async (email, orderId, products) => {
+const sendSuccessMessage = async (email, orderId, products, shippingDetails) => {
 
     const prodArr = products.map((prod) => {
         return `ProductId: #${prod.product},   Quantity:${prod.quantity},   Color:${prod.color},   Size:${prod.size}`
@@ -106,8 +94,11 @@ const sendSuccessMessage = async (email, orderId, products) => {
     const productStr = prodArr.join('\n');
 
     await sendEmail(email, `Order Confirmation!`, `Thank you for your purchase from Samaira Fashion!\nYour order has been successfully placed and is being processed. Here are the details:\n\nOrder Number: #${orderId}\nOrder Summary:\n${productStr}\n\nYou can check other details of your order in our website.\nIf you have any questions or need further assistance, please feel free to contact our customer support.\n\nThank you for shopping with us!\nBest regards,\nSamaira Fashion`)
+    await sendEmail(process.env.ADMIN_EMAIL, `Order Successfully Processed - Order #${orderId}`, `Hi Admin,\nI hope this message finds you well.\nI wanted to inform you that an order has been successfully processed through our system. Below are the details:\n\nOrder Number: #${orderId}\nOrder Date: ${new Date().toLocaleDateString()}\nCustomer Name: ${shippingDetails.firstName + ' ' + shippingDetails.lastName}\nCustomer Email: ${email}\n${productStr}\n\nShipping Address:\n${shippingDetails.address}\n${shippingDetails.country === 'India' && shippingDetails.city + ', ' + shippingDetails.state + ', ' + shippingDetails.pincode}\n${shippingDetails.country}`)
 
 }
+
+// const sendEmailToAdmin = async ()
 
 const loginController = asyncHandler(async (req, res) => {
 

@@ -10,7 +10,6 @@ import {
     getSearchProductsController,
     retriveCheckoutSessionController
 } from "../controllers/product.controller.js";
-import { verifyAdmin } from "../middlewares/admin.middleware.js";
 import { upload } from "../utils/cloudinary.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 

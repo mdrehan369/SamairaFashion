@@ -14,7 +14,6 @@ const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(cors({
-    // origin: ['http://localhost:5173', 'https://samairafashion-1.onrender.com'],
     origin: process.env.CLIENT_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],

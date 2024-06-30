@@ -156,8 +156,8 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
             paymentMethod: req.payMethod
         });
 
-        await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), [cartItems]);
-
+        await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), [cartItems], req.cookies.shippingDetails);
+        
         return res
             .status(200)
             .clearCookie("shippingDetails")
@@ -179,7 +179,7 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
         paymentMethod: req.payMethod
     });
 
-    await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), cartItems);
+    await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), cartItems, req.cookies.shippingDetails);
 
     await cartItemModel.deleteMany({ user: req.user._id })
 
