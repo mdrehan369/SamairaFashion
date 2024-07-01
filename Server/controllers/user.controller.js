@@ -184,6 +184,35 @@ const googleSigninController = asyncHandler(async (req, res) => {
         .cookie("accessToken", accessToken, options)
         .json(new ApiResponse(200, user, "Orders Fetched Successfully"));
 
+});
+
+const facebookSigninController = asyncHandler(async (req, res) => {
+
+    const { id } = req.params;
+    if (!id) throw new ApiError("No Facebook Id found");
+
+    const user = await userModel.findOne({ facebookId: id });
+
+    if (!user) {
+
+        const newUser = await userModel.create({ facebookId: id });
+        const accessToken = newUser.generateAccessToken();
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .json(new ApiResponse(200, newUser, "New User Created Successfully"));
+
+    }
+
+    const accessToken = user.generateAccessToken();
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .json(new ApiResponse(200, user, "Orders Fetched Successfully"));
+
+
 })
 
 const logoutController = asyncHandler(async (req, res) => {
@@ -320,5 +349,6 @@ export {
     googleSigninController,
     sendOtpController,
     loginWithUUIDController,
-    sendSuccessMessage
+    sendSuccessMessage,
+    facebookSigninController
 }

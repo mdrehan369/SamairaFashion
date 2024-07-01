@@ -4,6 +4,7 @@ import {
     addToCartController,
     deleteAllCartItemsController,
     deleteCartItemController,
+    facebookSigninController,
     getAllCartItems,
     getCartLengthController,
     getCurrentUserController,
@@ -34,5 +35,6 @@ router.route("/cart/:id").delete(verifyJWT, deleteCartItemController);
 router.route("/cartLength").get(verifyJWT, getCartLengthController);
 router.route("/send/:email").get(sendOtpController);
 router.route("/uuid/:uuid").get(loginWithUUIDController);
+router.route("/facebookLogin/:id").get(facebookSigninController);
 
 export default router;

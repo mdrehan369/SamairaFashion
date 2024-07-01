@@ -374,7 +374,7 @@ function UserProductPage({ key }) {
                             {
                                 !productLoader ?
                                     product.image ?
-                                        <img src={product.image.url} className='w-full h-auto object-cover' />
+                                        <img src={product.image.url} className='w-full h-auto object-cover' onLoad={(e) => e.currentTarget.parentElement.classList.replace('opacity-0', 'opacity-100')} />
                                         :
                                         product.images.map((image, index) => {
                                             if (index === product.images.length - 1) {

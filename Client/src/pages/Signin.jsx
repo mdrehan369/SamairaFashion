@@ -255,6 +255,31 @@ function Signin() {
         }
     }
 
+    const handleFacebookLogin = () => {
+        FB.login(function (response) {
+            console.log(response)
+                ; (async () => {
+                    if (response.authResponse) {
+                        // console.log('Welcome!  Fetching your information.... ');
+                        // FB.api('/me', { fields: 'name, email' }, function (response) {
+                        //     document.getElementById("profile").innerHTML = "Good to see you, " + response.name + ". i see your email address is " + response.email
+                        // });
+                        const res = await axios.get(`/api/v1/users/facebookLogin/${response.userID}`, {
+                            baseURL: import.meta.env.VITE_BACKEND_URL,
+                            withCredentials: true
+                        });
+
+                        dispatch(login(res.data.data));
+                        if (localStorage.getItem("product") !== null) return navigate("/checkoutPage");
+                        navigate('/');
+
+                    } else {
+                        console.log('User cancelled login or did not fully authorize.');
+                    }
+                })();
+        });
+    }
+
     return (
         <Container className='flex items-center justify-center gap-0 relative h-[100vh] w-[100vw] bg-[#fff]'>
             <img src={signin} alt="Stock" className='w-[70%] h-full animate-animate-appear hidden md:block' />
@@ -289,7 +314,7 @@ function Signin() {
                                     <span>Continue with Google</span>
                                 </button>
 
-                                <button className='flex w-[80%] items-center bg-[#fffcf7] dark:bg-gray-900 border-0 border-gray-300 rounded-md shadow-sm md:w-[20vw] justify-center py-3 text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-gray-500'>
+                                <button className='flex w-[80%] items-center bg-[#fffcf7] dark:bg-gray-900 border-0 border-gray-300 rounded-md shadow-sm md:w-[20vw] justify-center py-3 text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-gray-500' onClick={handleFacebookLogin}>
                                     <FontAwesomeIcon icon={faFacebook} className='mr-2 text-blue-500 size-6' />
                                     Continue With Facebook</button>
 
