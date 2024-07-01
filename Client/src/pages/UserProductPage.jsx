@@ -434,7 +434,7 @@ function UserProductPage({ key }) {
                                     <div className='text-stone-600 dark:text-white'>{quantity}</div>
                                     <div><FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={() => setQuantity(quantity + 1)} /></div>
                                 </div>
-                                <span className='text-xs mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity - discount : Math.floor(product.price / dirham_to_rupees) * quantity - Math.floor(discount / dirham_to_rupees)}</span></span>
+                                <span className='text-sm mt-4 dark:text-white text-stone-700 font-medium'>Subtotal: {isIndia ? <FontAwesomeIcon icon={faIndianRupee} className='font-normal mr-0.5 ml-1' /> : 'Dhs.'}<span className='font-bold dark:text-white text-stone-700'>{isIndia ? product.price * quantity - discount : Math.floor(product.price / dirham_to_rupees) * quantity - Math.floor(discount / dirham_to_rupees)}</span></span>
                             </div>
                             <div className='w-full flex flex-col items-center justify-center gap-4'>
                                 <Button type='button' className='md:w-[70%] w-[95%] rounded-none text-sm font-bold tracking-wide hover:bg-transparent hover:text-[#232323] transition-colors duration-200 hover:shadow-none border-2 border-[#232323]' onClick={handleBuyNow}>BUY IT NOW<FontAwesomeIcon icon={faShoppingBag} className='ml-2' /></Button>
