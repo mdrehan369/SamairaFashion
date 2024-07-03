@@ -5,9 +5,8 @@ import { orderModel } from "../models/order.model.js"
 import { userModel } from "../models/user.model.js"
 import mongoose from "mongoose"
 import { cartItemModel } from "../models/cartItem.model.js"
-import { sendSuccessMessage } from "./user.controller.js"
 
-const addOrderController = asyncHandler(async (req, res) => {
+const addOrderController = asyncHandler(async (req, res, next) => {
 
     const { cart, shippingDetails, sessionId } = req.body;
 
@@ -37,12 +36,10 @@ const addOrderController = asyncHandler(async (req, res) => {
     await cartItemModel.deleteMany({ user: req.user._id });
 
     await userModel.findByIdAndUpdate(req.user._id, { shippingDetails });
-    await sendSuccessMessage(shippingDetails.email, newOrder._id.toString().slice(0, 10), cartItems);
 
+    req.order_id = newOrder._id;
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, newOrder, "Order Placed Successfully"));
+    next();
 
 });
 

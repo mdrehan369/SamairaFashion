@@ -8,6 +8,7 @@ import { userModel } from "../models/user.model.js";
 import { orderModel } from "../models/order.model.js";
 import "dotenv/config.js"
 import { sendSuccessMessage } from "./user.controller.js";
+import mongoose from "mongoose";
 
 const options = {
     httpOnly: true,
@@ -133,7 +134,51 @@ const phonepeCheckStatusController = asyncHandler(async (req, res) => {
 
 });
 
-const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
+const sendEmailsController = asyncHandler(async (req, res) => {
+
+    const order_id = req.order_id;
+    if (!order_id) throw new ApiError(404, "No Order ID Given");
+
+    const orderDetails = await orderModel.aggregate([
+        {
+            '$match': {
+                '_id': new mongoose.Types.ObjectId(order_id)
+            }
+        }, {
+            '$lookup': {
+                'from': 'products',
+                'localField': 'cart.product',
+                'foreignField': '_id',
+                'as': 'products',
+                'pipeline': [
+                    {
+                        '$project': {
+                            'title': 1,
+                            'price': 1
+                        }
+                    }
+                ]
+            }
+        }, {
+            '$project': {
+                'cart': 1,
+                'shippingDetails': 1,
+                'paymentMethod': 1,
+                'products': 1
+            }
+        }
+    ]);
+
+    await sendSuccessMessage(orderDetails[0]);
+
+    return res
+        .status(200)
+        .clearCookie("shippingDetails")
+        .json(new ApiResponse(200, { success: true }))
+
+})
+
+const clearCartAndPlaceOrderController = asyncHandler(async (req, res, next) => {
 
     const cart = await cartItemModel.find({ user: req.user._id });
 
@@ -156,37 +201,33 @@ const clearCartAndPlaceOrderController = asyncHandler(async (req, res) => {
             paymentMethod: req.payMethod
         });
 
-        await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), [cartItems], req.cookies.shippingDetails);
-        
-        return res
-            .status(200)
-            .clearCookie("shippingDetails")
-            .json(new ApiResponse(200, { success: true }))
+        req.order_id = order._id;
+
+        // await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(5, 10), [cartItems], req.cookies.shippingDetails);
+        next();
+
+    } else {
+
+        const cartItems = cart.map((item) => ({
+            product: item.product,
+            quantity: item.quantity,
+            color: item.color,
+            size: item.size
+        }));
+
+        const order = await orderModel.create({
+            cart: cartItems,
+            user: req.user._id,
+            shippingDetails: req.cookies.shippingDetails,
+            Id: req.paymentId,
+            paymentMethod: req.payMethod
+        });
+
+        await cartItemModel.deleteMany({ user: req.user._id });
+        req.order_id = order._id;
+
+        next();
     }
-
-    const cartItems = cart.map((item) => ({
-        product: item.product,
-        quantity: item.quantity,
-        color: item.color,
-        size: item.size
-    }));
-
-    const order = await orderModel.create({
-        cart: cartItems,
-        user: req.user._id,
-        shippingDetails: req.cookies.shippingDetails,
-        Id: req.paymentId,
-        paymentMethod: req.payMethod
-    });
-
-    await sendSuccessMessage(req.cookies.shippingDetails.email, order._id.toString().slice(0, 10), cartItems, req.cookies.shippingDetails);
-
-    await cartItemModel.deleteMany({ user: req.user._id })
-
-    return res
-        .status(200)
-        .clearCookie("shippingDetails")
-        .json(new ApiResponse(200, { success: true }, "Success"));
 
 })
 
@@ -212,8 +253,8 @@ const tabbyCheckoutController = async (req, res) => {
             amount += shippingDetails.deliveryCharge * 100;
         }
 
-        if(shippingDetails.discount) {
-            if(isIndia) {
+        if (shippingDetails.discount) {
+            if (isIndia) {
                 amount -= Math.floor(shippingDetails.discount / dirham_to_rupees) * 100;
             } else {
                 amount -= shippingDetails.discount * 100;
@@ -293,8 +334,8 @@ const ziinaCheckoutController = async (req, res) => {
             amount += shippingDetails.deliveryCharge * 100;
         }
 
-        if(shippingDetails.discount) {
-            if(isIndia) {
+        if (shippingDetails.discount) {
+            if (isIndia) {
                 amount -= Math.floor(shippingDetails.discount / dirham_to_rupees) * 100;
             } else {
                 amount -= shippingDetails.discount * 100;
@@ -389,5 +430,6 @@ export {
     retrieveTabbyCheckoutController,
     ziinaCheckoutController,
     retrieveZiinaCheckoutController,
-    clearCartAndPlaceOrderController
+    clearCartAndPlaceOrderController,
+    sendEmailsController
 }

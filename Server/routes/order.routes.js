@@ -8,10 +8,11 @@ import {
     getOrderController,
     getCountsController,
 } from "../controllers/order.controller.js"
+import { sendEmailsController } from "../controllers/payment.controller.js";
 
 const router = express.Router();
 
-router.route("/").post(verifyJWT, addOrderController);
+router.route("/").post(verifyJWT, addOrderController, sendEmailsController);
 router.route("/").get(verifyJWT, getAllOrdersController);
 router.route("/count").get(verifyJWT, getCountsController);
 router.route("/order/:orderId").get(verifyJWT, getOrderController);

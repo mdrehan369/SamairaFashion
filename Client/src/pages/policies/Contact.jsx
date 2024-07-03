@@ -44,7 +44,7 @@ function Contact() {
                         <p><FontAwesomeIcon icon={faLocationPin} className='mr-2 size-4' />Deira, Dubai. UAE</p>
                     </div>
                     <div className='w-full h-[2px] bg-gray-200'></div>
-                    <div>Proprietor : Samaira Fashion</div>
+                    <div>Proprietor : Mohammad Bhupen</div>
                 </div>
             </div>
         </Container>

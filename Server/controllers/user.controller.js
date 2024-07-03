@@ -4,7 +4,11 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { cartItemModel } from "../models/cartItem.model.js"
 import mongoose from "mongoose";
-import nodemailer from "nodemailer"
+import "dotenv/config.js"
+import { Resend } from "resend";
+import { sendOtpTemplate, orderConfirmationTemplate, orderConfirmationTemplateAdmin } from "../emailTemplates.js"
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const options = {
     httpOnly: true,
@@ -44,29 +48,19 @@ const signupController = asyncHandler(async (req, res) => {
 
 const sendEmail = async (to, subject, text) => {
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-        },
+    const { data, error } = await resend.emails.send({
+        from: "support@samairafashion.com",
+        to: [to],
+        subject: subject,
+        html: text,
     });
-    const mailOptions = {
-        from: process.env.EMAIL,
-        to,
-        subject,
-        text
-    };
-    try {
-        const response = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
-        return response;
-    } catch (error) {
-        console.log('Error Occured while sending email');
-        return error;
+
+    if (error) {
+        console.log(error)
+        throw new ApiError(500, "Some Error Occured While Sending Email");
     }
+
+    return data;
 
 }
 
@@ -77,7 +71,7 @@ const sendOtpController = asyncHandler(async (req, res) => {
 
     const otp = String(Math.random() * 10000).slice(0, 4);
 
-    await sendEmail(email, 'Your One-Time Password (OTP) for Samaira Fashion', `Hi ${email},\nThank you for using Samaira Fashion. To proceed with your request, please use the following One-Time Password (OTP):\nYour OTP: ${otp}\nThis OTP is valid for the next 10 minutes. Please do not share this code with anyone.If you did not request this code, please contact our support team immediately.\n\nThank you,\nSamaira Fashion\nContact Us:\nsamaira.shop1@gmail.com\n+97 15216 60581\nDeira, Dubai. UAE`);
+    await sendEmail(email, 'Your One-Time Password (OTP) for Samaira Fashion', sendOtpTemplate(otp, email));
 
     return res
         .status(200)
@@ -85,16 +79,10 @@ const sendOtpController = asyncHandler(async (req, res) => {
 
 });
 
-const sendSuccessMessage = async (email, orderId, products, shippingDetails) => {
+const sendSuccessMessage = async (orderDetails) => {
 
-    const prodArr = products.map((prod) => {
-        return `ProductId: #${prod.product},   Quantity:${prod.quantity},   Color:${prod.color},   Size:${prod.size}`
-    });
-
-    const productStr = prodArr.join('\n');
-
-    await sendEmail(email, `Order Confirmation!`, `Thank you for your purchase from Samaira Fashion!\nYour order has been successfully placed and is being processed. Here are the details:\n\nOrder Number: #${orderId}\nOrder Summary:\n${productStr}\n\nYou can check other details of your order in our website.\nIf you have any questions or need further assistance, please feel free to contact our customer support.\n\nThank you for shopping with us!\nBest regards,\nSamaira Fashion`)
-    await sendEmail(process.env.ADMIN_EMAIL, `Order Successfully Processed - Order #${orderId}`, `Hi Admin,\nI hope this message finds you well.\nI wanted to inform you that an order has been successfully processed through our system. Below are the details:\n\nOrder Number: #${orderId}\nOrder Date: ${new Date().toLocaleDateString()}\nCustomer Name: ${shippingDetails.firstName + ' ' + shippingDetails.lastName}\nCustomer Email: ${email}\n${productStr}\n\nShipping Address:\n${shippingDetails.address}\n${shippingDetails.country === 'India' && shippingDetails.city + ', ' + shippingDetails.state + ', ' + shippingDetails.pincode}\n${shippingDetails.country}`)
+    await sendEmail(orderDetails.shippingDetails.email, 'Order Confirmation!', await orderConfirmationTemplate(orderDetails));
+    await sendEmail(process.env.ADMIN_EMAIL, `New Order Successfully Processed!`, await orderConfirmationTemplateAdmin(orderDetails));
 
 }
 
