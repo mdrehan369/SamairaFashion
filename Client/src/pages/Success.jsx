@@ -24,6 +24,8 @@ function Success() {
                 url += `ziina/check`
             } else if (paymentObj.type === 'tabby') {
                 url += `tabby/check`
+            } else if(paymentObj.type === 'phonepe') {
+                url += `phonepe/check`
             } else {
                 setIsPaid(true);
                 setLoader(false);

@@ -4,8 +4,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.route('/phonepe/pay').get(verifyJWT, phonepePayController);
-router.route('/phonepe/check').post(verifyJWT, phonepeCheckStatusController);
+router.route('/phonepe/pay').post(verifyJWT, phonepePayController);
+router.route('/phonepe/check').post(verifyJWT, phonepeCheckStatusController, clearCartAndPlaceOrderController, sendEmailsController);
 router.route('/tabby/pay').post(verifyJWT, tabbyCheckoutController);
 router.route('/tabby/check').post(verifyJWT, retrieveTabbyCheckoutController, clearCartAndPlaceOrderController, sendEmailsController);
 router.route('/ziina/pay').post(verifyJWT, ziinaCheckoutController);

@@ -20,7 +20,20 @@ const options = {
 
 const phonepePayController = (req, res) => {
 
-    const amount = +req.query.amount;
+    const { cart, isIndia, dirham_to_rupees, shippingDetails } = req.body;
+    let amount = 0;
+
+    cart.map(cartItem => {
+        amount += cartItem.product[0].price * 100 * cartItem.quantity;
+    });
+
+    if (shippingDetails.discount) {
+        if (isIndia) {
+            amount -= Math.floor(shippingDetails.discount / dirham_to_rupees) * 100;
+        } else {
+            amount -= shippingDetails.discount * 100;
+        }
+    }
 
     let userId = `MUID${Date.now()}`;
 
@@ -30,10 +43,10 @@ const phonepePayController = (req, res) => {
         merchantId: process.env.PHONEPE_MERCHANT_ID,
         merchantTransactionId: merchantTransactionId,
         merchantUserId: userId,
-        amount: amount * 100, // converting to paise
-        redirectUrl: `${process.env.CLIENT_URL}/success?phonepeMerchantTransactionID=${merchantTransactionId}`,
+        amount: amount, // converting to paise
+        redirectUrl: `${process.env.CLIENT_URL}/#/success`,
         redirectMode: "REDIRECT",
-        mobileNumber: "6290197361",
+        mobileNumber: shippingDetails.number,
         paymentInstrument: {
             type: "PAY_PAGE",
         },
@@ -58,11 +71,19 @@ const phonepePayController = (req, res) => {
                 accept: "application/json",
             },
         }
-    ).then(function (response) {
+    ).then(async function (response) {
         // res.redirect(response.data.data.instrumentResponse.redirectInfo.url);
-        res.send(response.data);
+        console.log(response.data)
+        await userModel.findByIdAndUpdate(req.user._id, {
+            shippingDetails
+        });
+        return res
+        .status(200)
+        .cookie("shippingDetails", shippingDetails, options)
+        .json(new ApiResponse(200, {url: response.data.data.instrumentResponse.redirectInfo.url, id: response.data.data.merchantTransactionId}, "Checkout Initiated"))
     })
         .catch(function (error) {
+            console.log(error)
             res.send(error);
         });
 
@@ -70,17 +91,16 @@ const phonepePayController = (req, res) => {
 
 const phonepeCheckStatusController = asyncHandler(async (req, res) => {
 
-    const { merchantTransactionId, shippingDetails } = req.body;
+    const { id, isBuyNow, product } = req.body;
 
-
-    if (!merchantTransactionId) throw new ApiError(400, "No Merchant ID");
+    if (!id) throw new ApiError(400, "No Merchant ID");
 
     let statusUrl =
-        `${PHONE_PE_HOST_URL}/pg/v1/status/${process.env.PHONEPE_MERCHANT_ID}/` +
-        merchantTransactionId;
+        `${process.env.PHONEPE_HOST_URL}/pg/v1/status/${process.env.PHONEPE_MERCHANT_ID}/` +
+        id;
 
     let string =
-        `/pg/v1/status/${process.env.PHONEPE_MERCHANT_ID}/` + merchantTransactionId + process.env.PHONEPE_SALT_KEY;
+        `/pg/v1/status/${process.env.PHONEPE_MERCHANT_ID}/` + id + process.env.PHONEPE_SALT_KEY;
     let sha256_val = sha256(string);
     let xVerifyChecksum = sha256_val + "###" + process.env.PHONEPE_SALT_INDEX;
 
@@ -88,30 +108,37 @@ const phonepeCheckStatusController = asyncHandler(async (req, res) => {
         headers: {
             "Content-Type": "application/json",
             "X-VERIFY": xVerifyChecksum,
-            "X-MERCHANT-ID": merchantTransactionId,
+            "X-MERCHANT-ID": id,
             accept: "application/json",
         },
     });
 
     if (response.data.code === "PAYMENT_SUCCESS") {
 
-        const cart = await cartItemModel.find({ user: req.user._id });
+        // const cart = await cartItemModel.find({ user: req.user._id });
 
-        const cartItems = cart.map((item) => ({
-            product: item.product,
-            quantity: item.quantity,
-            color: item.color,
-            size: item.size
-        }))
+        // const cartItems = cart.map((item) => ({
+        //     product: item.product,
+        //     quantity: item.quantity,
+        //     color: item.color,
+        //     size: item.size
+        // }))
 
-        await orderModel.create({
-            cart: cartItems,
-            user: req.user._id,
-            shippingDetails,
-            phonepeMerchantTransactionId: merchantTransactionId
-        });
+        // await orderModel.create({
+        //     cart: cartItems,
+        //     user: req.user._id,
+        //     shippingDetails,
+        //     phonepeMerchantTransactionId: merchantTransactionId
+        // });
 
-        await cartItemModel.deleteMany({ user: req.user._id })
+        // await cartItemModel.deleteMany({ user: req.user._id })
+        req.paymentId = id;
+        req.payMethod = 'Phonepe';
+        if (req.isBuyNow) {
+            req.isBuyNow = isBuyNow;
+            req.product = product;
+        }
+        next();
     }
 
     return res
