@@ -49,7 +49,7 @@ const signupController = asyncHandler(async (req, res) => {
 const sendEmail = async (to, subject, text) => {
 
     const { data, error } = await resend.emails.send({
-        from: "support@samairafashion.com",
+        from: "support@samairafashion.in",
         to: [to],
         subject: subject,
         html: text,
